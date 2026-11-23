@@ -606,7 +606,7 @@ end</code></pre>
         maquette, elle provoque <code>% Invalid input detected</code>. Le constat 8 ne se prouve
         donc pas dans Packet&nbsp;Tracer, et ne s’y corrige pas non plus. Vous appliquerez ce bloc
         sur le routeur réel, à l’étape 5 de la phase&nbsp;2, et vous le contrôlerez avec le test V20
-        de la <a href="#recette">fiche de recette</a>. Retenez la leçon pour le compte rendu&nbsp;:
+        de la <a href="fiches-a-remplir/Projet01-Fiche-Recette.html" target="_blank" rel="noopener">fiche de recette</a>. Retenez la leçon pour le compte rendu&nbsp;:
         une maquette ne reproduit que ce que son simulateur sait faire.
       </p>
     </div>
@@ -640,7 +640,7 @@ copy running-config startup-config</code></pre>
     </p>
     <div class="note good">
       <span class="label">Pour passer au matériel</span>
-      <p>Sur la maquette, les tests V1 à V3, V6 à V19 et V21 de la <a href="#recette">fiche de recette</a> donnent le résultat attendu, avec <code>ssh</code> depuis le Command Prompt et FTP pour V21. Quatre d’entre eux demandent une adaptation&nbsp;:</p>
+      <p>Sur la maquette, les tests V1 à V3, V6 à V19 et V21 de la <a href="fiches-a-remplir/Projet01-Fiche-Recette.html" target="_blank" rel="noopener">fiche de recette</a> donnent le résultat attendu, avec <code>ssh</code> depuis le Command Prompt et FTP pour V21. Quatre d’entre eux demandent une adaptation&nbsp;:</p>
       <ul>
         <li><strong>V3.</strong> La déconnexion automatique se vérifie sur les deux commutateurs. La console du routeur simulé ne l’applique pas&nbsp;: sur GW-NUBLAR, lisez seulement <code>exec-timeout 5 0</code> dans <code>show running-config | section line con</code>.</li>
         <li><strong>V9.</strong> La taille de la clé ne s’affiche pas&nbsp;: c’est le message de génération (<code>The key modulus size is 2048 bits</code>) qui la prouve.</li>
@@ -798,7 +798,7 @@ end</code></pre>
     </p>
 
     <h3>Étape 7 — Dérouler la recette</h3>
-    <p>Déroulez toute la <a href="#recette">fiche</a>, proposez vos propres tests, puis gardez les sorties <code>show</code> et les captures pour l’annexe du compte rendu.</p>
+    <p>Ouvrez la <a href="fiches-a-remplir/Projet01-Fiche-Recette.html" target="_blank" rel="noopener">fiche de recette</a> (un fichier à part, dans le dossier <code>fiches-a-remplir</code>) et déroulez-la en entier, proposez vos propres tests, puis gardez les sorties <code>show</code> et les captures pour l’annexe du compte rendu.</p>
 
     <h3>Étape 8 — Rendre le matériel</h3>
     <ol class="steps">
