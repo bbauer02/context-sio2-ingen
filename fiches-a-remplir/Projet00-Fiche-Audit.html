@@ -1,0 +1,630 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>InGen — Fiche d’audit — Projet 00</title>
+<style>
+  :root {
+    --ground:#F7F4EE; --surface:#FFFFFF; --sunken:#F0EADE;
+    --ink:#1C1913; --ink-muted:#5E5647; --ink-faint:#726958;
+    --rule:#E2DACA; --rule-strong:#C4B89F;
+    --accent:#8A5407; --accent-soft:#F7EBD6;
+    --signal:#A32A1E; --signal-soft:#FAE5E1;
+    --okc:#0E6A4E; --ok-soft:#E3F0E7;
+    --zebra:#FBF8F3; --ctrl:#85785F;
+    --shadow:0 1px 2px rgba(28,25,19,.05), 0 8px 24px -16px rgba(28,25,19,.3);
+    --f-display:Constantia,"Sitka Text",Cambria,Georgia,serif;
+    --f-body:Corbel,"Segoe UI","Helvetica Neue",system-ui,sans-serif;
+    --f-mono:"Cascadia Mono",Consolas,ui-monospace,monospace;
+    --measure:70ch;
+  }
+  @media screen and (prefers-color-scheme: dark) {
+    :root {
+      --ground:#131109; --surface:#1C1911; --sunken:#262218;
+      --ink:#EFEADD; --ink-muted:#ADA290; --ink-faint:#9A907F;
+      --rule:#302B20; --rule-strong:#4A4232;
+      --accent:#E4A84F; --accent-soft:#2E2210;
+      --signal:#F0907E; --signal-soft:#331A14;
+      --okc:#6FBE96; --ok-soft:#14261C;
+      --zebra:#211E15; --ctrl:#857A63;
+      --shadow:0 1px 2px rgba(0,0,0,.45), 0 10px 28px -18px rgba(0,0,0,.85);
+    }
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--ground); color:var(--ink); font-family:var(--f-body);
+         font-size:16px; line-height:1.55; -webkit-font-smoothing:antialiased; }
+  .shell { max-width:96rem; margin:0 auto; padding:0 1.5rem 4rem; }
+  a { color:var(--accent); }
+  code { font-family:var(--f-mono); font-size:.88em; }
+  td code { background:var(--sunken); padding:.05em .3em; border-radius:2px; }
+
+  /* En-tête */
+  .masthead { border-bottom:2px solid var(--ink); padding:2rem 0 1.1rem; margin-bottom:1.2rem; }
+  .eyebrow { font-size:.75rem; letter-spacing:.14em; text-transform:uppercase; color:var(--accent);
+             font-weight:700; margin:0 0 .6rem; }
+  h1 { font-family:var(--f-display); font-size:clamp(1.7rem,4vw,2.4rem); line-height:1.1; margin:0 0 .5rem; }
+  .consigne { max-width:var(--measure); color:var(--ink-muted); margin:0 0 .6rem; }
+  .retour { font-size:.88rem; margin:0; }
+  .ident-impression { display:none; }
+
+  /* Barre d’outils */
+  .barre { position:sticky; top:0; z-index:20; display:flex; flex-wrap:wrap; gap:.5rem .7rem; align-items:center;
+           margin:0 -1.5rem 1rem; padding:.55rem 1.5rem; background:var(--ground); border-bottom:1px solid var(--rule); }
+  .barre[hidden] { display:none; }
+  .barre button { font:inherit; font-size:.88rem; font-weight:700; padding:.4rem .85rem; cursor:pointer;
+                  color:var(--ink); background:var(--surface); border:1px solid var(--ctrl); border-radius:4px; }
+  .barre button:hover { border-color:var(--accent); color:var(--accent); }
+  .barre button.principal { background:var(--accent); border-color:var(--accent); color:var(--surface); }
+  .barre button.principal:hover { filter:brightness(1.1); color:var(--surface); }
+  .barre button.danger { color:var(--signal); border-color:var(--signal); margin-left:auto; }
+  .etat { font-size:.84rem; color:var(--ink-muted); }
+  .etat.alerte { color:var(--signal); font-weight:700; }
+
+  /* Mode d’emploi */
+  .aide { max-width:var(--measure); border-left:3px solid var(--accent); background:var(--accent-soft);
+          padding:.75rem 1rem; margin:0 0 1.6rem; border-radius:0 3px 3px 0; font-size:.92rem; }
+  .aide ol { margin:.2rem 0 0; padding-left:1.2rem; }
+  .aide li { margin-bottom:.3rem; }
+  .aide b.titre { display:block; font-size:.72rem; letter-spacing:.11em; text-transform:uppercase; color:var(--accent); }
+
+  /* Tableaux */
+  h3 { font-family:var(--f-display); font-size:1.2rem; margin:2.2rem 0 .7rem; }
+  .table-wrap { overflow-x:auto; border:1px solid var(--rule); border-radius:3px; background:var(--surface);
+                box-shadow:var(--shadow); }
+  .table-wrap + .table-wrap { margin-top:1.4rem; }
+  table { border-collapse:collapse; width:100%; font-size:.87rem; }
+  caption { caption-side:top; text-align:left; font-size:.76rem; letter-spacing:.09em; text-transform:uppercase;
+            font-weight:700; color:var(--ink-faint); padding:.6rem .75rem .5rem; }
+  th, td { padding:.45rem .65rem; text-align:left; vertical-align:top; border-bottom:1px solid var(--rule); }
+  thead th { background:var(--sunken); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase;
+             font-weight:700; color:var(--ink-muted); }
+  tbody tr:last-child > * { border-bottom:0; }
+  .row-head { font-weight:700; white-space:nowrap; }
+  .mono, td.mono { font-family:var(--f-mono); font-size:.8rem; white-space:nowrap; }
+
+  /* Champs */
+  /* Une case vide n’a pas de contenu pour régler sa largeur : on lui réserve sa place */
+  td.fill { background:var(--zebra); min-width:7rem; padding:0; }
+  td.col-saisie { width:20%; }
+  td.fill textarea { display:block; width:100%; min-height:2.3rem; margin:0; padding:.5rem .65rem; border:0;
+                     background:transparent; color:var(--ink); font:inherit; font-size:.88rem; line-height:1.45;
+                     resize:none; overflow:hidden; }
+  td.fill textarea:focus { outline:2px solid var(--accent); outline-offset:-2px; background:var(--surface); }
+  td.conf { text-align:center; vertical-align:middle; width:5.5rem; }
+  td.conf input { width:1.2rem; height:1.2rem; accent-color:var(--okc); cursor:pointer; }
+  .pv { display:none; }
+
+  /* Petit écran : chaque ligne devient une carte */
+  @media screen and (max-width:640px) {
+    .stack-sm table, .stack-sm tbody, .stack-sm tr, .stack-sm td { display:block; width:100%; }
+    .stack-sm thead { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
+    .stack-sm tr { padding:.6rem .8rem; border-bottom:1px solid var(--rule-strong); }
+    .stack-sm td { border:0; }
+    .stack-sm [data-label]::before { content:attr(data-label); display:block; margin-top:.3rem; font-size:.68rem;
+      letter-spacing:.08em; text-transform:uppercase; font-weight:700; color:var(--ink-faint); }
+    .stack-sm td.conf { text-align:left; width:auto; }
+  }
+
+  footer { margin-top:3rem; border-top:1px solid var(--rule); padding-top:.8rem; font-size:.8rem; color:var(--ink-faint); }
+
+  /* Impression : A4 paysage, sans les outils, valeurs en clair, cases à cocher lisibles */
+  @page { size:A4 landscape; margin:10mm 10mm 12mm; }
+  @media print {
+    :root { --ground:#fff; --surface:#fff; --sunken:#ECE7DC; --ink:#000; --ink-muted:#222; --ink-faint:#333;
+            --rule:#999; --rule-strong:#666; --zebra:#fff; --accent:#6B3F04; }
+    body { font-size:9pt; line-height:1.35; }
+    .shell { max-width:none; padding:0; }
+    .barre, .aide, .retour, .consigne, footer, noscript { display:none !important; }
+    .masthead { padding:0 0 2.5mm; margin:0 0 3mm; border-bottom-width:1.5pt; }
+    .eyebrow { margin:0 0 1mm; font-size:7pt; }
+    h1 { font-size:15pt; margin:0 0 1mm; }
+    .ident-impression { display:block; font-size:9pt; margin:0; }
+    h3 { font-size:11pt; margin:4mm 0 2mm; break-after:avoid; }
+    /* Chaque phase après la première commence sur une nouvelle page */
+    h3 ~ h3 { break-before:page; margin-top:0; }
+    .table-wrap { box-shadow:none; overflow:visible; border-color:#999; }
+    .table-wrap + .table-wrap { margin-top:3mm; }
+    table { font-size:8.5pt; }
+    caption { padding:1.5mm 2mm 1mm; color:#000; }
+    thead { display:table-header-group; }
+    thead th { -webkit-print-color-adjust:exact; print-color-adjust:exact; font-size:7pt; }
+    th, td { padding:1.2mm 2mm; }
+    tr { break-inside:avoid; }
+    td.fill { padding:1.2mm 2mm; min-width:0; }
+    td.fill textarea { display:none; }
+    .pv { display:block; white-space:pre-wrap; overflow-wrap:anywhere; min-height:5mm; }
+    td.conf input { display:none; }
+    td.conf::before { content:"\2610"; font-size:12pt; line-height:1; }
+    td.conf[data-ok="1"]::before { content:"\2611"; }
+    a { color:#000; text-decoration:none; }
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="masthead">
+    <p class="eyebrow">Contexte InGen · Projet 00 · Fiche à remplir</p>
+    <h1>Fiche d’audit — Projet 00</h1>
+    <p class="consigne">Chaque valeur est suivie de la commande qui la prouve, entre crochets ou dans la colonne prévue. Une valeur sans commande n’est pas un relevé.</p>
+    <p class="retour">Énoncé : <a href="../INGEN-Projet00-Preparatoire.html#fiche">Projet 00 : modélisation et audit</a></p>
+    <p class="ident-impression" data-ident-impression></p>
+  </header>
+
+  <div class="barre" data-barre hidden>
+    <button type="button" class="principal" data-pdf>Exporter en PDF</button>
+    <button type="button" data-copie>Enregistrer une copie</button>
+    <span class="etat" data-etat role="status" aria-live="polite"></span>
+    <button type="button" class="danger" data-effacer>Effacer mes saisies</button>
+  </div>
+
+  <noscript>
+    <p class="aide">JavaScript est désactivé : les cases ne peuvent pas être remplies à l’écran.
+    Imprimez la fiche et remplissez-la au stylo.</p>
+  </noscript>
+
+  <div class="aide" data-aide hidden>
+    <b class="titre">Mode d’emploi</b>
+    <ol>
+      <li>Remplissez les cases. Chaque saisie est enregistrée automatiquement, sur ce poste et dans ce navigateur seulement.</li>
+      <li>Pour changer de poste ou garder une sauvegarde : <strong>Enregistrer une copie</strong>. Vous obtenez un fichier
+        <code>.html</code> qui contient vos réponses ; rouvrez-le pour continuer, sur n’importe quel poste.</li>
+      <li>Pour rendre la fiche : <strong>Exporter en PDF</strong>, puis choisissez l’imprimante
+        « Enregistrer au format PDF » (ou « Microsoft Print to PDF »). Le nom du fichier attendu est déjà proposé.</li>
+    </ol>
+  </div>
+
+  <main id="fiche">
+<div class="table-wrap">
+  <table id="fiche-identite" class="fiche-table">
+    <caption>1 — Identité</caption>
+    <thead><tr><th>Nom</th><th>Groupe</th><th>Date</th><th>Fichier de maquette</th></tr></thead>
+    <tbody><tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr></tbody>
+  </table>
+</div>
+
+<h3>Phase 2 — Le relevé</h3>
+
+<div class="table-wrap">
+  <table class="fiche-table">
+    <caption>2 — Inventaire des équipements Cisco</caption>
+    <thead><tr><th>Équipement</th><th>Modèle</th><th>Version du système</th><th>Interfaces physiques (nombre, types)</th><th>Commande</th></tr></thead>
+    <tbody>
+      <tr><th scope="row" class="row-head">GW-NUBLAR</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head">CORE-NUBLAR</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head">SW-N3-01</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="table-wrap">
+  <table class="fiche-table">
+    <caption>3 — Segmentation : un VLAN par ligne, le VLAN 1 compris</caption>
+    <thead><tr><th>Id</th><th>Nom</th><th>Adresse réseau / masque</th><th>Passerelle</th><th>Existe sur SW-N3-01 ?</th><th>Ports d’accès (les deux commutateurs)</th></tr></thead>
+    <tbody>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="table-wrap">
+  <table class="fiche-table">
+    <caption>4 — SW-N3-01 : configuration globale et ports</caption>
+    <thead><tr><th>Nom</th><th>Adresse IP d’administration</th><th>Passerelle par défaut</th><th>Conséquence pour l’administrer</th></tr></thead>
+    <tbody><tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr></tbody>
+  </table>
+</div>
+<div class="table-wrap">
+  <table class="fiche-table">
+    <thead><tr><th>Port</th><th>Mode opérationnel</th><th>VLAN (ou natif si trunk)</th><th>Matériel connecté</th><th>Adresse(s) MAC apprise(s)</th></tr></thead>
+    <tbody>
+      <tr><th scope="row" class="row-head mono">F0/1</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head mono">F0/2</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head mono">F0/3</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head mono">F0/4 → G0/2</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="table-wrap">
+  <table class="fiche-table">
+    <caption>5 — CORE-NUBLAR : interfaces virtuelles (SVI)</caption>
+    <thead><tr><th>Interface</th><th>Adresse / masque</th><th>État</th><th>Relais DHCP (O/N) et adresse</th><th>Liste appliquée et sens</th></tr></thead>
+    <tbody>
+      <tr><th scope="row" class="row-head mono">Vlan1</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head mono">Vlan10</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head mono">Vlan30</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head mono">Vlan70</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head mono">Vlan200</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head mono">Vlan300</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+    </tbody>
+  </table>
+</div>
+<div class="table-wrap">
+  <table class="fiche-table">
+    <caption>CORE-NUBLAR : ports</caption>
+    <thead><tr><th>Port</th><th>Mode opérationnel</th><th>VLAN (ou natif si trunk)</th><th>Matériel connecté</th><th>Adresse(s) MAC apprise(s)</th></tr></thead>
+    <tbody>
+      <tr><th scope="row" class="row-head mono">F0/1</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head mono">F0/2 – F0/3</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head mono">F0/4</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head mono">F0/5</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head mono">F0/6</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head mono">F0/7</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head mono">F0/8 → G0/2</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+    </tbody>
+  </table>
+</div>
+<div class="table-wrap">
+  <table class="fiche-table">
+    <caption>CORE-NUBLAR : routage et filtrage</caption>
+    <thead><tr><th>Question</th><th>Réponse</th><th>Commande</th></tr></thead>
+    <tbody>
+      <tr><th scope="row" class="row-head">Le routage IP est-il activé ?</th><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head">Routes statiques (type S)</th><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head">Passerelle de dernier recours</th><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head">Liste 130 : lignes et rôle de chacune</th><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head">Liste 170 : lignes et rôle de chacune</th><td class="fill"></td><td class="fill"></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="table-wrap">
+  <table class="fiche-table">
+    <caption>6 — GW-NUBLAR</caption>
+    <thead><tr><th>Interface</th><th>Adresse / masque</th><th>État</th><th>Matériel connecté</th></tr></thead>
+    <tbody>
+      <tr><th scope="row" class="row-head mono">G0/0</th><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head mono">G0/1</th><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head mono">S0/0/0 (si module posé)</th><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+    </tbody>
+  </table>
+</div>
+<div class="table-wrap">
+  <table class="fiche-table">
+    <thead><tr><th>Question</th><th>Réponse</th><th>Commande</th></tr></thead>
+    <tbody>
+      <tr><th scope="row" class="row-head">Routes statiques (type S)</th><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head">Réseaux de la maquette <em>sans</em> route de retour</th><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head">Lignes vty : authentification et protocoles admis</th><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head">SSH activé ?</th><td class="fill"></td><td class="fill"></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="table-wrap">
+  <table class="fiche-table">
+    <caption>7 — NUB-DC01 : configuration et services</caption>
+    <thead><tr><th>Adresse / masque</th><th>Passerelle</th><th>DNS</th><th>Adresse MAC</th></tr></thead>
+    <tbody><tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr></tbody>
+  </table>
+</div>
+<div class="table-wrap long">
+  <table class="fiche-table">
+    <thead><tr><th>Service (onglet <em>Services</em>)</th><th>État</th><th>Prévu par le livret ?</th><th>Remarque</th></tr></thead>
+    <tbody>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="table-wrap">
+  <table class="fiche-table">
+    <caption>8 — DHCP et DNS</caption>
+    <thead><tr><th>Étendue</th><th>Passerelle</th><th>DNS</th><th>Première adresse / masque</th><th>Nombre max.</th><th>Servie par quel relais ? Bail obtenu (poste, adresse)</th></tr></thead>
+    <tbody>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+    </tbody>
+  </table>
+</div>
+<div class="table-wrap">
+  <table class="fiche-table">
+    <thead><tr><th>Nom (zone <code>nublar.intra</code>)</th><th>Type</th><th>Adresse</th><th>La machine existe-t-elle sur la maquette ?</th></tr></thead>
+    <tbody>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<h3>Phase 3 — Les essais</h3>
+
+<div class="table-wrap long stack-sm">
+  <table id="fiche-essais" class="fiche-table">
+    <caption>9 — Essais d’audit (premier écho perdu = pas un échec)</caption>
+    <thead><tr><th class="num">N°</th><th>Depuis</th><th>Essai</th><th>Résultat obtenu</th><th>Conforme à l’état documenté</th><th>Politique : respectée ou règle violée (n°)</th></tr></thead>
+    <tbody>
+      <tr><td class="mono" data-label="N°">A1</td><td data-label="Depuis">PC-DSI-01</td><td data-label="Essai"><code>ipconfig /all</code> : adresse, passerelle, DNS, adresse MAC</td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+      <tr><td class="mono" data-label="N°">A2</td><td data-label="Depuis">PC-LAB-N3</td><td data-label="Essai"><code>ipconfig /all</code></td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+      <tr><td class="mono" data-label="N°">A3</td><td data-label="Depuis">AUTOMATE-N3</td><td data-label="Essai"><code>ipconfig /all</code></td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+      <tr><td class="mono" data-label="N°">A4</td><td data-label="Depuis">PC-DSI-01</td><td data-label="Essai"><code>ping 10.10.200.10</code></td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+      <tr><td class="mono" data-label="N°">A5</td><td data-label="Depuis">PC-DSI-01</td><td data-label="Essai">Ping de l’adresse obtenue par PC-LAB-N3 (A2)</td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+      <tr><td class="mono" data-label="N°">A6</td><td data-label="Depuis">PC-DSI-01</td><td data-label="Essai"><code>ping 10.10.70.21</code></td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+      <tr><td class="mono" data-label="N°">A7</td><td data-label="Depuis">PC-LAB-N3</td><td data-label="Essai">Ping de l’adresse obtenue par PC-DSI-01 (A1)</td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+      <tr><td class="mono" data-label="N°">A8</td><td data-label="Depuis">PC-LAB-N3</td><td data-label="Essai"><code>ping 10.10.70.21</code></td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+      <tr><td class="mono" data-label="N°">A9</td><td data-label="Depuis">PC-LAB-N3</td><td data-label="Essai"><code>ping nub-eon.nublar.intra</code></td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+      <tr><td class="mono" data-label="N°">A10</td><td data-label="Depuis">AUTOMATE-N3</td><td data-label="Essai"><code>ping 10.10.200.10</code></td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+      <tr><td class="mono" data-label="N°">A11</td><td data-label="Depuis">AUTOMATE-N3</td><td data-label="Essai">Ping de l’adresse de PC-DSI-01</td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+      <tr><td class="mono" data-label="N°">A12</td><td data-label="Depuis">AUTOMATE-N3</td><td data-label="Essai">Ping de l’adresse de PC-LAB-N3</td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+      <tr><td class="mono" data-label="N°">A13</td><td data-label="Depuis">AUTOMATE-N3</td><td data-label="Essai"><em>Desktop → Web Browser</em> : <code>http://10.10.200.10</code></td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+      <tr><td class="mono" data-label="N°">A14</td><td data-label="Depuis">NUB-DC01</td><td data-label="Essai"><code>ping 10.10.70.21</code>, puis ping de l’adresse de PC-LAB-N3</td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+      <tr><td class="mono" data-label="N°">A15</td><td data-label="Depuis">PC-LAB-N3</td><td data-label="Essai"><code>ping 172.31.0.2</code>, puis <code>ping 10.10.200.1</code></td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+      <tr><td class="mono" data-label="N°">A16</td><td data-label="Depuis">PC-DSI-01</td><td data-label="Essai"><code>telnet 172.31.0.2</code>, puis <code>telnet 10.10.10.1</code></td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+      <tr><td class="mono" data-label="N°">A17</td><td data-label="Depuis">CORE-NUBLAR</td><td data-label="Essai"><code>show access-lists</code> : relier chaque compteur non nul aux essais qui l’ont fait bouger</td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="table-wrap">
+  <table class="fiche-table">
+    <caption>10 — Matrice des flux observée : « aller-retour », « refusé (ACL n°) » ou « sans retour (route) »</caption>
+    <thead><tr><th>Depuis ↓ vers →</th><th>VLAN 200</th><th>VLAN 30</th><th>VLAN 70</th><th>VLAN 10</th><th>Transit (GW-NUBLAR)</th></tr></thead>
+    <tbody>
+      <tr><th scope="row" class="row-head">VLAN 10</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td>—</td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head">VLAN 30</th><td class="fill"></td><td>—</td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head">VLAN 70</th><td class="fill"></td><td class="fill"></td><td>—</td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head">VLAN 200</th><td>—</td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<h3>Phase 4 — Les constats</h3>
+
+<div class="table-wrap long stack-sm">
+  <table id="fiche-constats" class="fiche-table">
+    <caption>11 — Les dix constats vérifiables sur la maquette</caption>
+    <thead><tr><th class="num">N°</th><th>Constat (livret, partie 10)</th><th>Commande ou essai qui le prouve</th><th>Ce que montre votre sortie</th><th>Famille</th><th>Chantier</th></tr></thead>
+    <tbody>
+      <tr><td class="mono" data-label="N°">1</td><td data-label="Constat">Rien ne filtre ce qu’émettent les automates</td><td class="fill" data-label="Preuve"></td><td class="fill" data-label="Sortie"></td><td class="fill" data-label="Famille"></td><td class="fill" data-label="Chantier"></td></tr>
+      <tr><td class="mono" data-label="N°">2</td><td data-label="Constat">Aucun mot de passe, console ouverte</td><td class="fill" data-label="Preuve"></td><td class="fill" data-label="Sortie"></td><td class="fill" data-label="Famille"></td><td class="fill" data-label="Chantier"></td></tr>
+      <tr><td class="mono" data-label="N°">3</td><td data-label="Constat">Administration en clair, aucune clé SSH</td><td class="fill" data-label="Preuve"></td><td class="fill" data-label="Sortie"></td><td class="fill" data-label="Famille"></td><td class="fill" data-label="Chantier"></td></tr>
+      <tr><td class="mono" data-label="N°">4</td><td data-label="Constat">Journaux non horodatés, conservés nulle part ailleurs</td><td class="fill" data-label="Preuve"></td><td class="fill" data-label="Sortie"></td><td class="fill" data-label="Famille"></td><td class="fill" data-label="Chantier"></td></tr>
+      <tr><td class="mono" data-label="N°">5</td><td data-label="Constat">Mots de passe futurs en clair dans la configuration</td><td class="fill" data-label="Preuve"></td><td class="fill" data-label="Sortie"></td><td class="fill" data-label="Famille"></td><td class="fill" data-label="Chantier"></td></tr>
+      <tr><td class="mono" data-label="N°">6</td><td data-label="Constat">VLAN natif des trunks resté à 1</td><td class="fill" data-label="Preuve"></td><td class="fill" data-label="Sortie"></td><td class="fill" data-label="Famille"></td><td class="fill" data-label="Chantier"></td></tr>
+      <tr><td class="mono" data-label="N°">7</td><td data-label="Constat">Ports libres actifs, négociation DTP</td><td class="fill" data-label="Preuve"></td><td class="fill" data-label="Sortie"></td><td class="fill" data-label="Famille"></td><td class="fill" data-label="Chantier"></td></tr>
+      <tr><td class="mono" data-label="N°">8</td><td data-label="Constat">Routage par la source accepté</td><td class="fill" data-label="Preuve"></td><td class="fill" data-label="Sortie"></td><td class="fill" data-label="Famille"></td><td class="fill" data-label="Chantier"></td></tr>
+      <tr><td class="mono" data-label="N°">9</td><td data-label="Constat">L’administration exclue du laboratoire</td><td class="fill" data-label="Preuve"></td><td class="fill" data-label="Sortie"></td><td class="fill" data-label="Famille"></td><td class="fill" data-label="Chantier"></td></tr>
+      <tr><td class="mono" data-label="N°">10</td><td data-label="Constat">Relais DHCP inutile</td><td class="fill" data-label="Preuve"></td><td class="fill" data-label="Sortie"></td><td class="fill" data-label="Famille"></td><td class="fill" data-label="Chantier"></td></tr>
+    </tbody>
+  </table>
+</div>
+  </main>
+
+  <footer>
+    Fiche générée à partir de l’énoncé « Projet 00 : modélisation et audit » — contexte InGen, BTS SIO parcours SISR.
+  </footer>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var CLE = 'ingen-fiche-projet00-audit';
+  var EXPORT = 'Projet00-Fiche';
+  var COL_NOM = 0, COL_GROUPE = 1;
+  var racine = document.documentElement;
+  var fiche = document.getElementById('fiche');
+  var etat = document.querySelector('[data-etat]');
+  var copieOuverte = racine.hasAttribute('data-copie');
+
+  /* Libellé lisible de chaque case, pour les lecteurs d’écran */
+  function libelle(td) {
+    var table = td.closest('table');
+    var titre = table.caption ? table.caption.textContent.split(' : ')[0].trim() + ', ' : '';
+    var entete = table.tHead ? table.tHead.rows[0].cells[td.cellIndex] : null;
+    var premiere = td.parentNode.cells[0];
+    var ligne = (premiere === td || premiere.classList.contains('fill')) ? '' : premiere.textContent.trim() + ', ';
+    return titre + ligne + (entete ? entete.textContent.trim() : 'saisie');
+  }
+
+  /* Les cases à remplir deviennent des zones de texte, les cases « conforme » des cases à cocher */
+  fiche.querySelectorAll('td.fill').forEach(function (td) {
+    if (td.querySelector('textarea')) { return; }
+    var zone = document.createElement('textarea');
+    zone.rows = 1;
+    zone.setAttribute('aria-label', libelle(td));
+    td.appendChild(zone);
+  });
+  fiche.querySelectorAll('td.conf').forEach(function (td) {
+    if (td.querySelector('input')) { return; }
+    var boite = document.createElement('input');
+    boite.type = 'checkbox';
+    boite.setAttribute('aria-label', 'Conforme, ' + td.parentNode.cells[0].textContent.trim());
+    td.appendChild(boite);
+  });
+  /* Une colonne entièrement à remplir reçoit une largeur réservée (classe col-saisie) */
+  fiche.querySelectorAll('table').forEach(function (table) {
+    var lignes = Array.prototype.slice.call(table.tBodies[0] ? table.tBodies[0].rows : []);
+    if (!lignes.length) { return; }
+    for (var col = 0; col < lignes[0].cells.length; col++) {
+      var touteASaisir = lignes.every(function (l) { return l.cells[col] && l.cells[col].classList.contains('fill'); });
+      if (touteASaisir) { lignes.forEach(function (l) { l.cells[col].classList.add('col-saisie'); }); }
+    }
+  });
+  /* Indications dans les cases d’identité (non imprimées) */
+  var identite = document.getElementById('fiche-identite');
+  if (identite && identite.tHead) {
+    var indications = [
+      [/noms/i, 'Nom1, Nom2 (noms de famille)'], [/^nom/i, 'Nom de famille'], [/groupe/i, 'ex. 03'],
+      [/date/i, 'jj/mm/aaaa'], [/fichier/i, 'INGEN-Nublar-G03.pkt']
+    ];
+    Array.prototype.forEach.call(identite.tHead.rows[0].cells, function (th, i) {
+      var zone = identite.tBodies[0].rows[0].cells[i].querySelector('textarea');
+      var trouve = indications.filter(function (p) { return p[0].test(th.textContent.trim()); })[0];
+      if (zone && trouve) { zone.placeholder = trouve[1]; }
+    });
+  }
+  var champs = Array.prototype.slice.call(fiche.querySelectorAll('td.fill textarea'));
+  var cases = Array.prototype.slice.call(fiche.querySelectorAll('td.conf input'));
+
+  function ajuster(zone) {
+    zone.style.height = 'auto';
+    zone.style.height = zone.scrollHeight + 'px';
+  }
+  function heure() {
+    return new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+  }
+  function signaler(texte, alerte) {
+    etat.textContent = texte;
+    etat.classList.toggle('alerte', !!alerte);
+  }
+
+  /* Reprise : une copie rouverte fait foi ; sinon, on reprend ce que ce navigateur a gardé */
+  var stockageOk = true, garde = null, reprisAncienne = false;
+  try { garde = JSON.parse(localStorage.getItem(CLE)); } catch (e) { stockageOk = false; }
+  /* Saisies faites dans l’ancienne version de la fiche, intégrée à l’énoncé : mêmes cases, même ordre */
+  if (stockageOk && !garde && !copieOuverte) {
+    try {
+      var ancienne = JSON.parse(localStorage.getItem('ingen-projet00-audit'));
+      if (ancienne && ancienne.f && ancienne.f.length === fiche.querySelectorAll('td.fill').length) {
+        garde = ancienne;
+        reprisAncienne = true;
+      }
+    } catch (e) {}
+  }
+  if (!copieOuverte && garde) {
+    champs.forEach(function (z, i) { if (garde.f && typeof garde.f[i] === 'string') { z.value = garde.f[i]; } });
+    cases.forEach(function (b, i) { b.checked = !!(garde.c && garde.c[i]); });
+  }
+
+  function sauver() {
+    var donnees = {
+      f: champs.map(function (z) { return z.value; }),
+      c: cases.map(function (b) { return b.checked; }),
+      t: Date.now()
+    };
+    try {
+      localStorage.setItem(CLE, JSON.stringify(donnees));
+      signaler('Enregistré sur ce poste à ' + heure() + '.');
+    } catch (e) {
+      stockageOk = false;
+      signaler('Ce navigateur n’enregistre pas vos saisies : utilisez « Enregistrer une copie » avant de fermer.', true);
+    }
+  }
+  var minuterie = null;
+  function programmer() {
+    clearTimeout(minuterie);
+    minuterie = setTimeout(sauver, 400);
+  }
+  champs.forEach(function (z) {
+    ajuster(z);
+    z.addEventListener('input', function () { ajuster(z); programmer(); });
+  });
+  cases.forEach(function (b) { b.addEventListener('change', programmer); });
+  window.addEventListener('resize', function () { champs.forEach(ajuster); });
+
+  /* Nom de fichier attendu : <EXPORT>-G<xx>-<Noms> */
+  function sansAccents(texte) {
+    return texte.normalize('NFD').replace(/[̀-ͯ]/g, '');
+  }
+  function valeurIdentite(colonne) {
+    var table = document.getElementById('fiche-identite');
+    var cellule = table && table.tBodies[0].rows[0].cells[colonne];
+    var zone = cellule && cellule.querySelector('textarea');
+    return zone ? zone.value.trim() : '';
+  }
+  function nomFichier() {
+    var groupe = valeurIdentite(COL_GROUPE).replace(/^g(roupe)?\s*/i, '').replace(/\s+/g, '');
+    if (/^\d$/.test(groupe)) { groupe = '0' + groupe; }
+    var noms = sansAccents(valeurIdentite(COL_NOM))
+      .split(/\s*(?:,|;|\/|&|\bet\b|\s)\s*/i)
+      .map(function (n) { return n.replace(/[^A-Za-z0-9-]/g, ''); })
+      .filter(function (n) { return n.length > 0; });
+    return EXPORT + '-G' + (sansAccents(groupe).replace(/[^A-Za-z0-9]/g, '') || 'xx') + '-' + (noms.join('-') || 'Nom');
+  }
+
+  /* Avant impression : valeurs recopiées en texte, cases marquées, identité en en-tête */
+  var titreInitial = document.title;
+  function preparerImpression() {
+    champs.forEach(function (z) {
+      var copie = z.nextElementSibling;
+      if (!copie || !copie.classList.contains('pv')) {
+        copie = document.createElement('div');
+        copie.className = 'pv';
+        copie.setAttribute('aria-hidden', 'true');
+        z.parentNode.insertBefore(copie, z.nextSibling);
+      }
+      copie.textContent = z.value;
+    });
+    cases.forEach(function (b) { b.parentNode.setAttribute('data-ok', b.checked ? '1' : '0'); });
+    var groupe = valeurIdentite(COL_GROUPE), noms = valeurIdentite(COL_NOM);
+    document.querySelector('[data-ident-impression]').textContent =
+      'Groupe : ' + (groupe || '—') + ' · ' + (noms || '—') + ' · exportée le ' +
+      new Date().toLocaleDateString('fr-FR');
+  }
+  window.addEventListener('beforeprint', preparerImpression);
+  window.addEventListener('afterprint', function () { document.title = titreInitial; });
+
+  document.querySelector('[data-pdf]').addEventListener('click', function () {
+    if ((!valeurIdentite(COL_NOM) || !valeurIdentite(COL_GROUPE)) &&
+        !window.confirm('Le nom ou le groupe n’est pas rempli dans le tableau d’identité. Exporter quand même ?')) {
+      return;
+    }
+    preparerImpression();
+    document.title = nomFichier();
+    window.print();
+  });
+
+  /* Copie : la page elle-même, réponses comprises, à rouvrir sur n’importe quel poste */
+  document.querySelector('[data-copie]').addEventListener('click', function () {
+    preparerImpression();
+    champs.forEach(function (z) { z.textContent = z.value; });
+    cases.forEach(function (b) { if (b.checked) { b.setAttribute('checked', ''); } else { b.removeAttribute('checked'); } });
+    var avait = racine.getAttribute('data-copie');
+    racine.setAttribute('data-copie', new Date().toISOString());
+    var html = '<!doctype html>\n' + racine.outerHTML;
+    if (avait === null) { racine.removeAttribute('data-copie'); } else { racine.setAttribute('data-copie', avait); }
+    var lien = document.createElement('a');
+    lien.href = URL.createObjectURL(new Blob([html], { type: 'text/html;charset=utf-8' }));
+    lien.download = nomFichier() + '.html';
+    document.body.appendChild(lien);
+    lien.click();
+    setTimeout(function () { URL.revokeObjectURL(lien.href); lien.remove(); }, 1000);
+    signaler('Copie enregistrée dans vos téléchargements : ' + lien.download);
+  });
+
+  document.querySelector('[data-effacer]').addEventListener('click', function () {
+    if (!window.confirm('Effacer toutes vos saisies de cette fiche ? Elles ne pourront pas être récupérées.')) { return; }
+    champs.forEach(function (z) { z.value = ''; z.textContent = ''; ajuster(z); });
+    cases.forEach(function (b) { b.checked = false; b.removeAttribute('checked'); });
+    try { localStorage.removeItem(CLE); } catch (e) {}
+    signaler('Saisies effacées.');
+  });
+
+  document.querySelector('[data-barre]').hidden = false;
+  document.querySelector('[data-aide]').hidden = false;
+  if (copieOuverte) {
+    sauver();
+    signaler('Copie du ' + new Date(racine.getAttribute('data-copie')).toLocaleString('fr-FR') + ' rouverte : vous pouvez continuer.');
+  } else if (!stockageOk) {
+    signaler('Ce navigateur n’enregistre pas vos saisies : utilisez « Enregistrer une copie » avant de fermer.', true);
+  } else if (reprisAncienne) {
+    sauver();
+    signaler('Saisies reprises de l’ancienne fiche, celle de l’énoncé.');
+  } else if (garde) {
+    signaler('Saisies reprises de votre dernière session sur ce poste.');
+  }
+})();
+</script>
+</body>
+</html>

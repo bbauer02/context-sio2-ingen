@@ -31,6 +31,7 @@ FICHES = [
         "export": "Projet00-Fiche",
         "ident_nom": 0,      # colonne « Nom » du tableau d’identité
         "ident_groupe": 1,   # colonne « Groupe »
+        "ancienne_cle": "ingen-projet00-audit",   # saisies de l’ancienne fiche intégrée à l’énoncé
     },
     {
         "source": "projet01-recette.html",
@@ -48,6 +49,7 @@ FICHES = [
         "export": "Projet01-Recette",
         "ident_nom": 1,      # colonne « Noms du binôme »
         "ident_groupe": 0,   # colonne « Groupe »
+        "ancienne_cle": "ingen-projet01-recette",
     },
 ]
 
@@ -68,6 +70,7 @@ def main():
             "{{EXPORT}}": f["export"],
             "{{IDENT_NOM}}": str(f["ident_nom"]),
             "{{IDENT_GROUPE}}": str(f["ident_groupe"]),
+            "{{ANCIENNE_CLE}}": f["ancienne_cle"],
             "{{CORPS}}": corps,
         }.items():
             page = page.replace(cle, val)

@@ -330,29 +330,17 @@
   }
 
   /* ---------- Projet : fiche de recette à remplir ---------- */
-  #recette td.fill { min-width: 7rem; height: 2.2rem; background: var(--zebra); }
-  #recette td.fill:focus { outline: 2px solid var(--accent); outline-offset: -2px; }
-  #fiche-recette td.mono { white-space: nowrap; }
   .table-wrap + .table-wrap { margin-top: 1.5rem; }
   @media print { .config { break-inside: avoid; } }
   /* Cadres en pleine largeur */
   .note, details.note.rappel, .note:has(pre, table, .plate), .config, .table-wrap, .toc-inline { max-width: none; width: auto; }
   .note p, .note ul, .note ol { max-width: none; }
-  .recette-ops[hidden] { display: none; }
-  .recette-ops { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; }
-  .recette-ops button { font: inherit; padding: .35rem .7rem; cursor: pointer; color: var(--ink);
-    background: var(--surface); border: 1px solid var(--ctrl); border-radius: 4px; }
-  .recette-ops span { font-size: .85rem; color: var(--ink-muted); }
-  @media print {
-    .recette-ops, .toc-inline { display: none !important; }
-    /* La fiche est une preuve : les cases cochées restent visibles dans le PDF */
-    #fiche-recette td.conf input[type="checkbox"]:checked { background: #0d4a34 !important; border-color: #0d4a34 !important; }
-    #fiche-recette td.conf input[type="checkbox"]:checked::after { transform: scale(1) !important; background-color: #fff !important; }
-    body.print-fiche .masthead, body.print-fiche .colophon, body.print-fiche main > section:not(#recette) { display: none !important; }
-    body.print-fiche #recette .sec-head { display: none !important; }
-    #recette .table-wrap { break-inside: auto; }
-    #recette .table-wrap.long { overflow: visible; }
-  }
+  @media print { .toc-inline { display: none !important; } }
+  /* ---------- Lien vers la fiche à remplir ---------- */
+  .ouvrir-fiche { display:inline-block; margin:.4rem 0 1.2rem; padding:.6rem 1.1rem; border-radius:4px;
+                  background:var(--accent); color:var(--surface); font-weight:700; text-decoration:none; }
+  .ouvrir-fiche:hover { filter:brightness(1.1); }
+  @media print { .ouvrir-fiche { background:none; color:#000; padding:0; text-decoration:underline; } }
 </style>
 </head>
 <body>
@@ -817,7 +805,7 @@ end</code></pre>
       <li>Rejouez la recette devant l’enseignant, en ouvrant vous-mêmes vos sessions.</li>
       <li>Vérifiez que vous avez bien copié tous vos fichiers.</li>
       <li>Effacez les équipements comme à l’étape 1 : le groupe suivant doit pouvoir repartir de zéro.</li>
-      <li>Sur NUB-DC01, supprimez le compte de sauvegarde, ses fichiers et le compte de test. Sur PC-DSI-01, utilisez « Effacer mes saisies » une fois le PDF exporté.</li>
+      <li>Sur NUB-DC01, supprimez le compte de sauvegarde, ses fichiers et le compte de test. Sur PC-DSI-01, utilisez « Effacer mes saisies » dans la fiche de recette, une fois le PDF exporté et votre copie emportée.</li>
     </ol>
   </section>
 
@@ -844,58 +832,21 @@ end</code></pre>
       <span class="src">7 — La preuve</span>
       <h2 class="sec-title">La fiche de recette</h2>
       <p>
-        Jouez chaque test sur le matériel réel, notez le résultat obtenu, puis cochez s’il est
-        conforme. Ouvrez cette page sur PC-DSI-01 et remplissez-la depuis ce seul poste. Les lignes
-        V24 à V27 sont à vous : trouvez ce que les tests précédents ne prouvent pas encore.
-      </p>
-      <p class="recette-ops" data-ops hidden>
-        <button type="button" data-print>Exporter la fiche en PDF</button>
-        <button type="button" data-clear class="danger">Effacer mes saisies</button>
-        <span data-store-note>Vos saisies restent sur ce poste, dans ce navigateur. Exportez-les en PDF avant de partir.</span>
+        La fiche est un fichier à part, rangé dans le dossier <code>fiches-a-remplir</code>. Ouvrez-la
+        sur PC-DSI-01 et remplissez-la depuis ce seul poste, pendant la recette sur le matériel.
       </p>
     </div>
-    <div class="table-wrap">
-      <table id="fiche-identite">
-        <caption>Fiche de recette — Projet 01</caption>
-        <thead><tr><th>Groupe</th><th>Noms du binôme</th><th>Date de la recette</th></tr></thead>
-        <tbody><tr><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr></tbody>
-      </table>
-    </div>
-    <div class="table-wrap long">
-      <table id="fiche-recette">
-        <caption>Tests à jouer sur le matériel</caption>
-        <thead><tr><th class="num">N°</th><th>Depuis</th><th>Test</th><th>Résultat attendu</th><th>Obtenu</th><th>Conforme</th></tr></thead>
-        <tbody>
-          <tr><td class="mono">V1</td><td>Tous les postes</td><td>Rejouer les tests T1 à T10 de la fiche de montage</td><td>Mêmes résultats qu’avant le projet, T5 compris</td><td class="fill"></td><td class="conf"></td></tr>
-          <tr><td class="mono">V2</td><td>Console, les trois</td><td><code>show running-config</code></td><td><code>service password-encryption</code> présent, <code>enable secret</code> et comptes en <code>secret</code>, aucun compte générique, aucun <code>ip ftp password</code></td><td class="fill"></td><td class="conf"></td></tr>
-          <tr><td class="mono">V3</td><td>Console, les trois</td><td>Ouvrir une session, puis attendre 5 minutes sans rien saisir. Sur GW-NUBLAR, lire aussi <code>line aux 0</code></td><td>Bannière, identifiant et mot de passe demandés, puis déconnexion automatique</td><td class="fill"></td><td class="conf"></td></tr>
-          <tr><td class="mono">V4</td><td>Une session par compte, sur les trois</td><td><code>enable</code></td><td>Les deux comptes fonctionnent, et le secret privilégié est demandé</td><td class="fill"></td><td class="conf"></td></tr>
-          <tr><td class="mono">V5</td><td>PC-DSI-01</td><td>Telnet (PuTTY) vers 10.10.10.1, 10.10.10.4 et 172.31.0.2</td><td>Connexion refusée sur les trois, avec le client qui a fonctionné à l’étape 3</td><td class="fill"></td><td class="conf"></td></tr>
-          <tr><td class="mono">V6</td><td>PC-DSI-01</td><td>SSH vers <code>core.nublar.intra</code></td><td>Session ouverte avec le compte nominatif</td><td class="fill"></td><td class="conf"></td></tr>
-          <tr><td class="mono">V7</td><td>PC-DSI-01</td><td>SSH vers <code>sw-n3-01.nublar.intra</code></td><td>Session ouverte avec le compte nominatif</td><td class="fill"></td><td class="conf"></td></tr>
-          <tr><td class="mono">V8</td><td>PC-DSI-01</td><td>SSH vers <code>gw.nublar.intra</code></td><td>Session ouverte avec le compte nominatif</td><td class="fill"></td><td class="conf"></td></tr>
-          <tr><td class="mono">V9</td><td>Session, les trois</td><td><code>show ip ssh</code> et <code>show crypto key mypubkey rsa</code></td><td>Version 2, clé RSA de 2048 bits</td><td class="fill"></td><td class="conf"></td></tr>
-          <tr><td class="mono">V10</td><td>Session, les trois</td><td><code>show running-config | section line vty</code></td><td>Toutes les lignes portent <code>login local</code>, <code>transport input ssh</code>, <code>access-class 10 in</code> et le délai</td><td class="fill"></td><td class="conf"></td></tr>
-          <tr><td class="mono">V11</td><td>PC-LAB-N3</td><td>SSH vers 10.10.30.1 (CORE-NUBLAR), avec le même client qu’en V6</td><td>Aucune session, et compteur de <code>show access-lists 10</code> en hausse sur la cible</td><td class="fill"></td><td class="conf"></td></tr>
-          <tr><td class="mono">V12</td><td>PC-LAB-N3</td><td>SSH vers 10.10.10.4 (SW-N3-01), même client</td><td>Aucune session, et compteur en hausse sur la cible</td><td class="fill"></td><td class="conf"></td></tr>
-          <tr><td class="mono">V13</td><td>AUTOMATE-N3</td><td>SSH vers 10.10.70.1 (CORE-NUBLAR), même client</td><td>Aucune session, et compteur en hausse sur la cible</td><td class="fill"></td><td class="conf"></td></tr>
-          <tr><td class="mono">V14</td><td>NUB-DC01</td><td>SSH vers 172.31.0.2 (GW-NUBLAR), même client</td><td>Aucune session alors que la route de retour existe, et compteur en hausse sur la cible</td><td class="fill"></td><td class="conf"></td></tr>
-          <tr><td class="mono">V15</td><td>PC-LAB-N3, puis les trois</td><td>Navigateur vers <code>http://10.10.30.1</code> et <code>http://10.10.10.4</code>. Puis <code>show running-config | include ip http</code></td><td>Aucune page d’administration ; <code>no ip http server</code> et <code>no ip http secure-server</code> présents, ou commande sans objet sur cet équipement</td><td class="fill"></td><td class="conf"></td></tr>
-          <tr><td class="mono">V16</td><td>CORE, SW</td><td><code>show interfaces status</code> et <code>show vlan brief</code></td><td>Ports libres <em>disabled</em> dans le VLAN 999, aucun port d’accès dans le VLAN 998</td><td class="fill"></td><td class="conf"></td></tr>
-          <tr><td class="mono">V17</td><td>PC-LAB-N3</td><td>Déplacer le poste sur un port libre de SW-N3-01, puis le remettre en place</td><td>Aucun lien, aucune adresse obtenue</td><td class="fill"></td><td class="conf"></td></tr>
-          <tr><td class="mono">V18</td><td>CORE, SW</td><td><code>show interfaces trunk</code></td><td>Mode <em>on</em>, natif 998, VLAN autorisés 10, 30 et 70</td><td class="fill"></td><td class="conf"></td></tr>
-          <tr><td class="mono">V19</td><td>CORE, SW</td><td><code>show interfaces &lt;port&gt; switchport</code> et <code>show running-config interface &lt;port&gt;</code>, sur CORE F0/1, F0/4, F0/5, F0/7 et SW F0/1, F0/2, F0/3</td><td><em>Negotiation of Trunking: Off</em> et <code>switchport nonegotiate</code> partout. Vers les postes, l’automate et le serveur : <code>portfast</code>, <code>bpduguard</code>, <code>no cdp enable</code></td><td class="fill"></td><td class="conf"></td></tr>
-          <tr><td class="mono">V20</td><td>GW-NUBLAR</td><td><code>show running-config | include source-route</code></td><td><code>no ip source-route</code></td><td class="fill"></td><td class="conf"></td></tr>
-          <tr><td class="mono">V21</td><td>Les trois</td><td>Copier la configuration vers NUB-DC01 par SCP</td><td>Les trois fichiers sont présents et datés du jour</td><td class="fill"></td><td class="conf"></td></tr>
-          <tr><td class="mono">V22</td><td>PC-LAB-N3, puis NUB-DC01</td><td>Avec un compte local ordinaire créé pour ce test : <code>scp</code> vers le dossier du compte dédié. Puis, sur NUB-DC01, <code>icacls</code> sur ce dossier</td><td>Écriture refusée ; droits limités à SYSTEM, aux administrateurs et au compte dédié</td><td class="fill"></td><td class="conf"></td></tr>
-          <tr><td class="mono">V23</td><td>Les trois</td><td><code>reload</code>, puis rejouer V6 à V8 et V18</td><td>Mêmes résultats : la configuration a survécu au redémarrage</td><td class="fill"></td><td class="conf"></td></tr>
-          <tr><td class="mono">V24</td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="conf"></td></tr>
-          <tr><td class="mono">V25</td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="conf"></td></tr>
-          <tr><td class="mono">V26</td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="conf"></td></tr>
-          <tr><td class="mono">V27</td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="conf"></td></tr>
-        </tbody>
-      </table>
-    </div>
+    <p><a class="ouvrir-fiche" href="fiches-a-remplir/Projet01-Fiche-Recette.html">Ouvrir la fiche de recette</a></p>
+    <ul>
+      <li><strong>Ce qu’elle contient.</strong> Les tests V1 à V23, chacun avec son résultat attendu : jouez-les
+        sur le matériel réel, notez le résultat obtenu, puis cochez s’il est conforme. Les lignes V24 à V27 sont
+        à vous : trouvez ce que les tests précédents ne prouvent pas encore.</li>
+      <li><strong>Vos saisies.</strong> Elles s’enregistrent automatiquement sur le poste. Avant de quitter la salle,
+        utilisez <em>Enregistrer une copie</em> : vous emportez un fichier <code>.html</code> qui contient vos
+        réponses, à rouvrir n’importe où.</li>
+      <li><strong>Le rendu.</strong> <em>Exporter en PDF</em> produit la fiche en A4 paysage, au nom attendu
+        <code>Projet01-Recette-G&lt;xx&gt;-Nom1-Nom2.pdf</code>.</li>
+    </ul>
   </section>
 
   <section id="compte-rendu">
@@ -1018,53 +969,15 @@ end</code></pre>
 </div>
 
 <script>
-(function () {
-  var KEY = 'ingen-projet01-recette', table = document.getElementById('fiche-recette');
-  var ops = document.querySelector('[data-ops]');
-  var fills = document.querySelectorAll('#recette td.fill'), confs = table.querySelectorAll('td.conf');
-  var saved = {}, canStore = true;
-  try { saved = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { canStore = false; }
-  function save() {
-    var data = { f: [], c: [] };
-    fills.forEach(function (td) { data.f.push(td.textContent); });
-    confs.forEach(function (td) { data.c.push(td.firstChild.checked); });
-    try { localStorage.setItem(KEY, JSON.stringify(data)); } catch (e) { canStore = false; }
-  }
-  fills.forEach(function (td, i) {
-    td.setAttribute('contenteditable', 'plaintext-only');
-    if (td.contentEditable !== 'plaintext-only') td.setAttribute('contenteditable', 'true');
-    td.setAttribute('role', 'textbox');
-    td.setAttribute('aria-label', td.closest('table').id === 'fiche-identite' ? td.closest('table').tHead.rows[0].cells[td.cellIndex].textContent : 'Saisie, ligne ' + td.parentNode.cells[0].textContent);
-    if (saved.f && saved.f[i]) td.textContent = saved.f[i];
-    td.addEventListener('input', save);
-  });
-  confs.forEach(function (td, i) {
-    var box = document.createElement('input');
-    box.type = 'checkbox';
-    box.setAttribute('aria-label', 'Conforme, ligne ' + td.parentNode.cells[0].textContent);
-    box.checked = !!(saved.c && saved.c[i]);
-    box.addEventListener('change', save);
-    td.appendChild(box);
-  });
-  ops.hidden = false;
-  if (!canStore) ops.querySelector('[data-store-note]').textContent =
-    'Ce navigateur n’enregistre pas les saisies : exportez-les en PDF avant de fermer la page.';
-  ops.querySelector('[data-print]').addEventListener('click', function () { document.body.classList.add('print-fiche'); window.print(); });
-  ops.querySelector('[data-clear]').addEventListener('click', function () {
-    if (!window.confirm('Effacer toutes vos saisies de la fiche de recette ?')) return;
-    fills.forEach(function (td) { td.textContent = ''; });
-    confs.forEach(function (td) { td.firstChild.checked = false; });
-    try { localStorage.removeItem(KEY); } catch (e) {}
-  });
-  /* À l’impression, les rappels repliés s’ouvrent */
-  window.addEventListener('beforeprint', function () {
-    document.querySelectorAll('details').forEach(function (d) { d.dataset.wasOpen = d.open; d.open = true; });
-  });
-  window.addEventListener('afterprint', function () {
-    document.querySelectorAll('details').forEach(function (d) { d.open = d.dataset.wasOpen === 'true'; });
-    document.body.classList.remove('print-fiche');
-  });
-})();
+  /* À l’impression, les rappels repliés s’ouvrent, puis se referment. */
+  (function () {
+    window.addEventListener('beforeprint', function () {
+      document.querySelectorAll('details').forEach(function (d) { d.dataset.wasOpen = d.open; d.open = true; });
+    });
+    window.addEventListener('afterprint', function () {
+      document.querySelectorAll('details').forEach(function (d) { d.open = d.dataset.wasOpen === 'true'; });
+    });
+  })();
 </script>
 </body>
 
