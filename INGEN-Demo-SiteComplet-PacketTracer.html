@@ -1,0 +1,1354 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>InGen — Maquette de démonstration du site complet</title>
+<style>
+  :root {
+    --ground:#F7F4EE; --surface:#FFFFFF; --sunken:#F0EADE;
+    --ink:#1C1913; --ink-muted:#5E5647; --ink-faint:#726958;
+    --rule:#E2DACA; --rule-strong:#C4B89F;
+    --accent:#8A5407; --accent-soft:#F7EBD6;
+    --signal:#A32A1E; --signal-soft:#FAE5E1;
+    --okc:#0E6A4E; --ok-soft:#E3F0E7;
+    --zebra:#FBF8F3; --ctrl:#85785F;
+    --code-bg:#F3EEE4; --code-ink:#241F16;
+    --shadow:0 1px 2px rgba(28,25,19,.05), 0 8px 24px -16px rgba(28,25,19,.3);
+    --f-display:Constantia,"Sitka Text",Cambria,Georgia,serif;
+    --f-body:Corbel,"Segoe UI","Helvetica Neue",system-ui,sans-serif;
+    --f-mono:"Cascadia Mono",Consolas,ui-monospace,monospace;
+    --measure:68ch; --plate:82rem;
+  }
+  @media screen and (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:#131109; --surface:#1C1911; --sunken:#262218;
+      --ink:#EFEADD; --ink-muted:#ADA290; --ink-faint:#9A907F;
+      --rule:#302B20; --rule-strong:#4A4232;
+      --accent:#E4A84F; --accent-soft:#2E2210;
+      --signal:#F0907E; --signal-soft:#331A14;
+      --okc:#6FBE96; --ok-soft:#14261C;
+      --zebra:#211E15; --ctrl:#857A63;
+      --code-bg:#16130C; --code-ink:#E3DCCC;
+      --shadow:0 1px 2px rgba(0,0,0,.45), 0 10px 28px -18px rgba(0,0,0,.85);
+    }
+  }
+  /* Palette sombre sur choix explicite (data-theme), identique à la palette système (livret) */
+  :root[data-theme="dark"] {
+    --ground:#131109; --surface:#1C1911; --sunken:#262218;
+    --ink:#EFEADD; --ink-muted:#ADA290; --ink-faint:#9A907F;
+    --rule:#302B20; --rule-strong:#4A4232;
+    --accent:#E4A84F; --accent-soft:#2E2210;
+    --signal:#F0907E; --signal-soft:#331A14;
+    --okc:#6FBE96; --ok-soft:#14261C;
+    --zebra:#211E15; --ctrl:#857A63;
+    --code-bg:#16130C; --code-ink:#E3DCCC;
+    --shadow:0 1px 2px rgba(0,0,0,.45), 0 10px 28px -18px rgba(0,0,0,.85);
+  }
+  * { box-sizing:border-box; }
+  html, body { overflow-x:clip; }
+  body { margin:0; background:var(--ground); color:var(--ink); font-family:var(--f-body);
+         font-size:17px; line-height:1.62; -webkit-font-smoothing:antialiased; }
+  .shell { max-width:90rem; margin:0 auto; padding:0 1.5rem 5rem; }
+  .masthead { border-bottom:2px solid var(--ink); padding:2.5rem 0 1.4rem; margin-bottom:2.2rem; }
+  .eyebrow { font-size:.75rem; letter-spacing:.14em; text-transform:uppercase; color:var(--accent);
+             font-weight:700; margin:0 0 .8rem; }
+  .masthead h1 { font-family:var(--f-display); font-size:clamp(1.9rem,4.5vw,2.7rem); line-height:1.1;
+                 font-weight:700; margin:0 0 .55rem; }
+  .standfirst { max-width:var(--measure); color:var(--ink-muted); font-size:1.05rem; margin:0 0 1.4rem; }
+  .masthead-meta { display:flex; flex-wrap:wrap; gap:.5rem 2rem; font-size:.82rem; color:var(--ink-faint);
+                   border-top:1px solid var(--rule); padding-top:.9rem; }
+  .masthead-meta b { color:var(--ink-muted); font-weight:600; }
+  section { scroll-margin-top:1.5rem; }
+  section + section { margin-top:3.6rem; }
+  .sec-head { border-top:2px solid var(--ink); padding-top:1rem; margin-bottom:1.4rem; }
+  .sec-head .src { font-family:var(--f-mono); font-size:.74rem; letter-spacing:.04em; color:var(--accent);
+                   text-transform:uppercase; display:block; margin-bottom:.45rem; }
+  h2.sec-title { font-family:var(--f-display); font-size:clamp(1.4rem,2.8vw,1.8rem); font-weight:700; margin:0; }
+  .sec-head p { max-width:var(--measure); color:var(--ink-muted); margin:.6rem 0 0; font-size:.95rem; }
+  h3 { font-family:var(--f-display); font-size:1.2rem; font-weight:700; margin:2.1rem 0 .7rem; }
+  p, ul, ol { max-width:var(--measure); }
+  p { margin:0 0 1rem; }
+  ul, ol { margin:0 0 1.1rem; padding-left:1.15rem; }
+  li { margin-bottom:.35rem; }
+  li::marker { color:var(--accent); }
+  a { color:var(--accent); }
+  .plate { max-width:var(--plate); margin:1.4rem 0 1.8rem; }
+  .table-wrap { overflow-x:auto; border:1px solid var(--rule); border-radius:3px;
+                background:var(--surface); box-shadow:var(--shadow); }
+  table { border-collapse:collapse; width:100%; font-size:.86rem; }
+  caption { caption-side:top; text-align:left; font-size:.76rem; letter-spacing:.09em;
+            text-transform:uppercase; font-weight:700; color:var(--ink-faint); padding:0 0 .55rem; }
+  th, td { padding:.48rem .7rem; text-align:left; vertical-align:top; border-bottom:1px solid var(--rule); }
+  thead th { background:var(--sunken); font-size:.72rem; letter-spacing:.07em; text-transform:uppercase;
+             font-weight:700; color:var(--ink-muted); white-space:nowrap; }
+  tbody tr:last-child td { border-bottom:0; }
+  td.mono, .mono { font-family:var(--f-mono); font-size:.79rem; }
+  .row-head { font-weight:700; white-space:nowrap; }
+  .ok { color:var(--okc); font-weight:700; }
+  .ko { color:var(--signal); font-weight:700; }
+  code { font-family:var(--f-mono); font-size:.88em; }
+  p code, li code, td code { background:var(--sunken); padding:.07em .3em; border-radius:2px; }
+  .config { margin:1.2rem 0 1.8rem; max-width:var(--plate); }
+  .config-head { display:flex; flex-wrap:wrap; align-items:baseline; gap:.5rem 1rem;
+                 border:1px solid var(--rule); border-bottom:0; background:var(--sunken);
+                 padding:.5rem .85rem; border-radius:3px 3px 0 0; }
+  .config-head .name { font-family:var(--f-mono); font-weight:700; font-size:.86rem; }
+  .config-head .kind { font-size:.76rem; color:var(--ink-muted); }
+  pre { margin:0; padding:.95rem 1.05rem; background:var(--code-bg); color:var(--code-ink);
+        border:1px solid var(--rule); border-radius:0 0 3px 3px; overflow-x:auto;
+        font-family:var(--f-mono); font-size:.78rem; line-height:1.56; tab-size:2; }
+  pre .c { color:var(--ink-faint); font-style:italic; }
+  .note { max-width:var(--plate); border-left:3px solid var(--accent); background:var(--accent-soft);
+          padding:.9rem 1.05rem; margin:1.4rem 0; border-radius:0 3px 3px 0; font-size:.93rem; }
+  .note.warn { border-left-color:var(--signal); background:var(--signal-soft); }
+  .note.good { border-left-color:var(--okc); background:var(--ok-soft); }
+  .note > :last-child { margin-bottom:0; }
+  .note p, .note ul, .note ol { max-width:none; }
+  .note .label { display:block; font-size:.71rem; letter-spacing:.11em; text-transform:uppercase;
+                 font-weight:700; color:var(--accent); margin-bottom:.35rem; }
+  .note.warn .label { color:var(--signal); }
+  .note.good .label { color:var(--okc); }
+  figure { margin:1.5rem 0 2rem; max-width:var(--plate); }
+  .fig-frame { border:1px solid var(--rule); background:var(--surface); border-radius:3px;
+               padding:1rem; overflow-x:auto; box-shadow:var(--shadow); }
+  .fig-frame img { width:100%; display:block; background:#fff; border-radius:2px; }
+  figcaption { font-size:.83rem; color:var(--ink-muted); margin-top:.6rem; max-width:var(--measure); }
+  .toc-inline { max-width:var(--plate); background:var(--surface); border:1px solid var(--rule);
+                border-radius:3px; padding:1rem 1.3rem; box-shadow:var(--shadow); margin:0 0 2rem; }
+  .toc-inline b { display:block; font-size:.72rem; letter-spacing:.12em; text-transform:uppercase;
+                  color:var(--ink-faint); margin-bottom:.5rem; }
+  .toc-inline ol { columns:2; column-gap:2.5rem; margin:0; padding-left:1.1rem; font-size:.9rem; }
+  @media (max-width:640px){ .toc-inline ol { columns:1; } }
+  footer.colophon { margin-top:4rem; border-top:2px solid var(--ink); padding-top:1.1rem;
+                    font-size:.82rem; color:var(--ink-faint); max-width:var(--plate); }
+  @media print {
+    :root, :root[data-theme="dark"] {
+      --ground:#fff; --surface:#fff; --sunken:#f2f0ea; --ink:#000; --ink-muted:#333;
+      --ink-faint:#555; --rule:#bbb; --rule-strong:#888; --accent:#6B3F04; --accent-soft:#f7f0e4;
+      --signal:#8B231A; --signal-soft:#faece9; --okc:#0d4a34; --ok-soft:#e9f2ec;
+      --zebra:#f7f7f7; --ctrl:#555;
+      --code-bg:#f6f6f6; --code-ink:#111; --shadow:none;
+    }
+    body { font-size:10pt; }
+    .shell { max-width:none; padding:0; }
+    .sec-head, h3 { break-after:avoid; }
+    .sec-head { break-inside:avoid; }
+    .note, .table-wrap, figure { break-inside:avoid; }
+    tr { break-inside:avoid; }
+    a { color:inherit; text-decoration:none; }
+  }
+
+  /* ---------- Refonte : pictogrammes (tracés inspirés de Lucide, licence ISC) — mêmes jetons que le livret ---------- */
+  :root {
+    --ico-book: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z'/%3E%3Cpath d='M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z'/%3E%3C/svg%3E");
+    --ico-warn: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z'/%3E%3Cpath d='M12 9v4'/%3E%3Cpath d='M12 17h.01'/%3E%3C/svg%3E");
+    --ico-pencil: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z'/%3E%3Cpath d='m15 5 4 4'/%3E%3C/svg%3E");
+    --ico-mark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z'/%3E%3C/svg%3E");
+    --ico-teacher: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 3h6v3H9z'/%3E%3Cpath d='M15 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2'/%3E%3Cpath d='M9 12h6M9 16h4'/%3E%3C/svg%3E");
+    --ico-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 11.1V12a10 10 0 1 1-5.9-9.1'/%3E%3Cpath d='M22 4 12 14l-3-3'/%3E%3C/svg%3E");
+    --ico-tick: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7'/%3E%3C/svg%3E");
+    --ico-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 6 6 6-6 6'/%3E%3C/svg%3E");
+  }
+
+  /* ---------- Refonte : typographie (C2) ---------- */
+  p { text-wrap: pretty; }
+  @media (max-width: 560px) { p, li, dd { hyphens: auto; } }
+  /* Encadrés : la boîte peut rester large, le texte reste à la mesure */
+  .note { max-width: calc(var(--measure) + 2.5rem); }
+  .note p, .note ul, .note ol { max-width: var(--measure); }
+  .note:has(pre, table, .plate) { max-width: var(--plate); }
+  /* Chiffres alignés et de même hauteur */
+  table { font-variant-numeric: lining-nums tabular-nums; }
+  /* Chiffres alignés dans le texte courant : « VLAN 10 », « E5 », adresses IP */
+  body { font-variant-numeric: lining-nums; }
+
+  /* ---------- Refonte : encadrés typés (C3) — le pictogramme double le libellé, il ne le remplace pas ---------- */
+  .ico, .note.warn > .label::before, .note.task > .label::before, .note.key > .label::before,
+  .note.teacher > .label::before, details.note.rappel > summary::before {
+    content: "";
+    display: inline-block;
+    flex: none;
+    width: 1.15em; height: 1.15em;
+    background-color: currentColor;
+    -webkit-mask: var(--ico) center / contain no-repeat;
+            mask: var(--ico) center / contain no-repeat;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .note > .label { display: flex; align-items: center; gap: .45rem; }
+  .note.warn    > .label { --ico: var(--ico-warn); }
+  .note.task    > .label { --ico: var(--ico-pencil); color: var(--okc); }
+  .note.key     > .label { --ico: var(--ico-mark); }
+  .note.teacher > .label { --ico: var(--ico-teacher); color: var(--ink); }
+
+  .note.task    { border-left-color: var(--okc); background: var(--ok-soft); }
+  .note.key     { background: var(--surface); border: 1px solid var(--accent); border-left-width: 4px; }
+  .note.teacher { border-left-color: var(--ink); background: var(--sunken); }
+
+  /* Rappels : contenu facultatif, donc visuellement en retrait ; pictogramme de type à gauche, chevron d'état à droite */
+  details.note.rappel { background: var(--sunken); border-left-color: var(--rule-strong); }
+  details.note.rappel > summary {
+    display: flex; align-items: center; gap: .5rem;
+    min-height: 1.75rem;
+    color: var(--accent); --ico: var(--ico-book);
+  }
+  details.note.rappel > summary .label::before, details.note.rappel[open] > summary .label::before { content: none; }   /* retire ▸ / ▾ (aussi à l'état ouvert) */
+  details.note.rappel > summary::after {
+    content: ""; margin-left: auto; flex: none; width: 1rem; height: 1rem; background-color: currentColor;
+    -webkit-mask: var(--ico-chevron) center / contain no-repeat; mask: var(--ico-chevron) center / contain no-repeat;
+    transition: transform .15s ease;
+  }
+  details.note.rappel[open] > summary::after { transform: rotate(90deg); }
+  @media print { details.note.rappel > summary::after { display: none; } }
+
+  /* ---------- Refonte : cases à cocher (même dessin que .crit input du livret, C8) ---------- */
+  .step-done input[type="checkbox"], .cp-ok input[type="checkbox"], td.conf input[type="checkbox"] {
+    -webkit-appearance: none; appearance: none; margin: 0; flex: none;
+    width: 1.3rem; height: 1.3rem; display: inline-grid; place-content: center;
+    background: var(--surface); border: 2px solid var(--ctrl); border-radius: 3px; cursor: pointer;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .step-done input[type="checkbox"]::after, .cp-ok input[type="checkbox"]::after, td.conf input[type="checkbox"]::after {
+    content: ""; width: .9rem; height: .9rem; background-color: var(--surface); transform: scale(0);
+    -webkit-mask: var(--ico-tick) center/contain no-repeat; mask: var(--ico-tick) center/contain no-repeat;
+  }
+  .step-done input[type="checkbox"]:checked, .cp-ok input[type="checkbox"]:checked, td.conf input[type="checkbox"]:checked { background: var(--okc); border-color: var(--okc); }
+  .step-done input[type="checkbox"]:checked::after, .cp-ok input[type="checkbox"]:checked::after, td.conf input[type="checkbox"]:checked::after { transform: scale(1); }
+  td.conf { text-align: center; vertical-align: middle; }
+
+  /* ---------- Refonte : tableaux (C7) ---------- */
+  tbody tr:last-child > th { border-bottom: 0; }
+  .table-wrap.long tbody tr:nth-child(even) > :is(td, th) { background: var(--zebra); }
+  tbody th.row-head { font-weight: 700; text-align: left; vertical-align: top; }
+  /* En-têtes collants : uniquement sur grand écran, où le tableau tient sans défilement horizontal */
+  @media screen and (min-width: 1080px) {
+    .table-wrap.long { overflow: visible; }
+    .table-wrap.long thead th { position: sticky; top: var(--bar-h, 0px); z-index: 2; box-shadow: inset 0 -1px 0 var(--rule-strong); }
+  }
+  /* Empilement : sous 640 px, chaque ligne devient une fiche, chaque cellule est précédée de son en-tête */
+  @media screen and (max-width: 640px) {
+    .stack-sm table, .stack-sm tbody, .stack-sm tr, .stack-sm td, .stack-sm tbody th { display: block; width: 100%; }
+    .stack-sm thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+    .stack-sm tr { padding: .65rem .85rem; border-bottom: 1px solid var(--rule-strong); }
+    .stack-sm tbody tr:last-child { border-bottom: 0; }
+    .stack-sm td, .stack-sm tbody th { border: 0; padding: .12rem 0; white-space: normal; }
+    .stack-sm [data-label]::before {
+      content: attr(data-label); display: block; margin-top: .35rem;
+      font-family: var(--f-body); font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; font-weight: 700; color: var(--ink-faint);
+    }
+    .stack-sm caption { display: block; padding: .6rem .85rem .2rem; }
+    .stack-sm tr > :first-child::before { margin-top: 0; }
+    .stack-sm td.conf { text-align: left; }
+    .table-wrap.long.stack-sm tbody tr:nth-child(even) > * { background: none; }
+    .table-wrap.long.stack-sm tbody tr:nth-child(even) { background: var(--zebra); }
+  }
+
+  /* ---------- Refonte : accessibilité (C6, C12) ---------- */
+  .sr-only { position:absolute !important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
+  .skip { position:absolute; left:1rem; top:-5rem; z-index:100; padding:.5rem .8rem; background:var(--ink); color:var(--ground); border-radius:3px; font-weight:700; }
+  .skip:focus { top:.75rem; }
+  main:focus { outline: none; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+  html { scroll-padding-top: calc(var(--bar-h, 0px) + .75rem); }
+  section { scroll-margin-top: calc(var(--bar-h, 0px) + 1rem); }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  }
+  @media print {
+    .skip { display: none !important; }
+    /* Cases imprimées vides, à cocher au stylo */
+    .step-done input[type="checkbox"], .cp-ok input[type="checkbox"], td.conf input[type="checkbox"] {
+      width: .9rem; height: .9rem; background: #fff !important; border: 1.5px solid #555 !important;
+    }
+    .step-done input[type="checkbox"]::after, .cp-ok input[type="checkbox"]::after, td.conf input[type="checkbox"]::after { transform: scale(0) !important; }
+    .table-wrap.long thead th { position: static; }
+  }
+
+  /* ---------- Refonte : fiche enseignant (C11) ---------- */
+  .demo-ops { display:flex; flex-wrap:wrap; gap:.3rem 1rem; align-items:center; max-width:var(--plate);
+              margin:-1rem 0 1.6rem; font-size:.84rem; color:var(--ink-muted); font-variant-numeric: lining-nums tabular-nums; }
+  .demo-ops[hidden] { display: none; }
+  .demo-ops b { color: var(--ink); }
+  .demo-ops button, .proj-toggle {
+    min-height: 1.75rem; padding: .1rem .6rem; font: inherit; font-size: .8rem; background: var(--surface);
+    color: var(--ink); border: 1px solid var(--ctrl); border-radius: 3px; cursor: pointer;
+  }
+  .demo-ops button:hover, .proj-toggle:hover { border-color: var(--ink-muted); }
+  .demo-ops button.danger { color: var(--signal); border-color: var(--signal); }
+  .proj-toggle[hidden] { display: none; }
+  .proj-toggle[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); font-weight: 700; }
+  /* Mode projection (option P3) : tout grossit d'un quart pour le vidéoprojecteur */
+  html.projection { font-size: 125%; }
+  html.projection body { font-size: 1.3rem; }
+  @media print {
+    .demo-ops, .proj-toggle { display: none !important; }
+    html.projection, html.projection body { font-size: inherit; }
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#contenu">Aller au contenu</a>
+<p id="ux-status" class="sr-only" role="status" aria-live="polite"></p>
+<div class="shell">
+
+  <header class="masthead">
+    <p class="eyebrow">Contexte InGen · Fiche enseignant</p>
+    <h1>La maquette de démonstration&nbsp;: le site complet d&rsquo;Isla&nbsp;Nublar</h1>
+    <p class="standfirst">
+      Le réseau du schéma&nbsp;03 monté de bout en bout dans Packet&nbsp;Tracer&nbsp;: treize
+      équipements d&rsquo;interconnexion, dix serveurs, la DMZ et les coffrets d&rsquo;enclos. Ce n&rsquo;est pas un
+      TP&nbsp;: c&rsquo;est votre démonstrateur — la maquette que vous ouvrez devant la classe
+      pour montrer le système entier <em>en vie</em>, avant de leur faire construire le
+      réseau d&rsquo;apprentissage.
+    </p>
+    <div class="masthead-meta">
+      <span><b>Public</b> enseignant — préparation ~2&nbsp;h</span>
+      <span><b>Version</b> Packet&nbsp;Tracer 9.1 (valable 9.0)</span>
+      <span><b>Référence</b> livret, partie 3 · schéma <span class="mono">draw.io/03</span></span>
+      <span><b>Livrable</b> <span class="mono">INGEN-Nublar-SiteComplet.pkt</span></span>
+      <button type="button" class="proj-toggle" data-demo="proj" aria-pressed="false" hidden>Mode projection</button>
+    </div>
+  </header>
+
+  <main id="contenu" tabindex="-1">
+
+  <div class="toc-inline">
+    <b>Déroulé</b>
+    <ol>
+      <li><a href="#pourquoi">Pourquoi une maquette de démonstration</a></li>
+      <li><a href="#inventaire">Inventaire et plan de câblage</a></li>
+      <li><a href="#coeur">CORE-NUBLAR — la configuration pivot</a></li>
+      <li><a href="#acces">Les six commutateurs d&rsquo;accès</a></li>
+      <li><a href="#enclos">La chaîne des enclos</a></li>
+      <li><a href="#gw-dmz">GW-NUBLAR et la DMZ</a></li>
+      <li><a href="#serveurs">Les serveurs et leurs services</a></li>
+      <li><a href="#extremites">Les postes témoins</a></li>
+      <li><a href="#demos">Les huit démonstrations à dérouler en classe</a></li>
+      <li><a href="#limites">Limites assumées de la simulation</a></li>
+    </ol>
+  </div>
+
+  <!-- ============ 1 POURQUOI ============ -->
+  <section id="pourquoi">
+    <div class="sec-head">
+      <span class="src">Section 1 — Intention pédagogique</span>
+      <h2 class="sec-title">Pourquoi une maquette de démonstration</h2>
+      <p>Montrer d&rsquo;abord le territoire, faire construire ensuite le plan.</p>
+    </div>
+
+    <figure>
+      <div class="fig-frame">
+        <img src="draw.io/png/03-topologie-isla-nublar.png"
+             alt="Topologie complète d&rsquo;Isla Nublar&nbsp;: modem VSAT, routeur GW-NUBLAR, DMZ, commutateur de cœur CORE-NUBLAR, dix serveurs, six commutateurs d&rsquo;accès et quatre coffrets d&rsquo;enclos." loading="lazy">
+      </div>
+      <figcaption>La cible&nbsp;: le site complet. Source éditable&nbsp;:
+        <code>draw.io/03-topologie-isla-nublar.drawio</code>.</figcaption>
+    </figure>
+
+    <p>
+      La séquence recommandée tient en trois temps. <strong>Temps 1</strong>&nbsp;: vous ouvrez
+      cette maquette au vidéoprojecteur et déroulez les <a href="#demos">démonstrations</a> —
+      la classe voit un site qui fonctionne, avec ses flux, ses refus et ses failles.
+      <strong>Temps 2</strong>&nbsp;: les étudiants construisent le réseau d&rsquo;apprentissage
+      en suivant <a href="INGEN-Maquette-PacketTracer.html">la fiche de montage</a> — et
+      reconnaissent dans leur maquette un morceau de ce qu&rsquo;ils ont vu vivre.
+      <strong>Temps 3</strong>&nbsp;: l&rsquo;audit du livret (partie&nbsp;10), dont ils ont
+      déjà observé les symptômes en démonstration sans le savoir.
+    </p>
+
+    <div class="note warn">
+      <span class="label">Même règle du jeu que le TP&nbsp;: l&rsquo;état initial, failles comprises</span>
+      <p>
+        Cette maquette reproduit le site <strong>tel que livré</strong>&nbsp;: pas de mots de
+        passe, VLAN natif par défaut, ACL posées dans un seul sens, journaux qui ne partent
+        nulle part. C&rsquo;est ce qui rend les démonstrations D3, D4, D6 et D8 possibles — elles
+        <em>montrent</em> les constats d&rsquo;audit avant que les étudiants ne les lisent.
+        Deux différences documentées avec la maquette étudiante&nbsp;: ici le domaine est
+        <code>nublar.ingen.corp</code> (le site appartient à la forêt <code>ingen.corp</code>),
+        et les commutateurs d&rsquo;accès portent leurs adresses d&rsquo;administration
+        <code>10.10.10.2 → .7</code> — deux écarts qui sont eux-mêmes des points de cours
+        (livret, parties 3, 5 et 7). Autre écart, de brassage seulement&nbsp;: les niveaux arrivent
+        sur <code>F0/11 → F0/16</code> du cœur et <code>GW-NUBLAR</code> sur <code>F0/24</code>
+        (contre <code>F0/5</code> et <code>F0/7</code> en salle), et <code>PC-DSI-01</code> est au
+        niveau&nbsp;4 — pour le TP, la référence reste la partie&nbsp;7 du livret.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ 2 INVENTAIRE ============ -->
+  <section id="inventaire">
+    <div class="sec-head">
+      <span class="src">Section 2 — Le matériel</span>
+      <h2 class="sec-title">Inventaire et plan de câblage</h2>
+      <p>Treize équipements réseau et vingt-trois extrémités. Posez tout, câblez tout, puis
+        configurez dans l&rsquo;ordre des sections suivantes.</p>
+    </div>
+
+    <div class="plate">
+      <div class="table-wrap long">
+        <table>
+          <caption>Équipements à poser</caption>
+          <thead><tr><th>Nom</th><th>Modèle PT</th><th>Rôle</th><th>Adresse d&rsquo;administration</th></tr></thead>
+          <tbody>
+            <tr><th scope="row" class="row-head">GW-NUBLAR</th><td class="mono">2901</td><td>Routeur de sortie + DMZ</td><td class="mono">172.31.0.2 · 172.20.0.1</td></tr>
+            <tr><th scope="row" class="row-head">CORE-NUBLAR</th><td class="mono">3560-24PS</td><td>Cœur — routage inter-VLAN, ACL, relais</td><td class="mono">.1 de chaque VLAN</td></tr>
+            <tr><th scope="row" class="row-head">SW-N5-01 → SW-N0-01</th><td class="mono">6 × 2960-24TT</td><td>Accès des niveaux 5 à 0</td><td class="mono">N5&#8239;=&#8239;.2 · N4&#8239;=&#8239;.3 · N3&#8239;=&#8239;.4 · N2&#8239;=&#8239;.5 · N1&#8239;=&#8239;.6 · N0&#8239;=&#8239;.7 (10.10.10.x)</td></tr>
+            <tr><th scope="row" class="row-head">SW-ENCLOS-01 → 04</th><td class="mono">4 × 2960-24TT</td><td>Coffrets d&rsquo;enclos (variante OT&nbsp;: IE-3400)</td><td class="mono">01&#8239;=&#8239;.11 · 02&#8239;=&#8239;.12 · 03&#8239;=&#8239;.13 · 04&#8239;=&#8239;.14 (10.10.10.x)</td></tr>
+            <tr><th scope="row" class="row-head">SW-DMZ-01</th><td class="mono">2960-24TT</td><td>Segment DMZ</td><td class="mono">172.20.0.2 (dans le sous-réseau DMZ)</td></tr>
+            <tr><th scope="row" class="row-head">10 serveurs VLAN 200</th><td class="mono">10 × Server-PT</td><td>Voir <a href="#serveurs">section 7</a></td><td class="mono">10.10.200.10 → .80</td></tr>
+            <tr><th scope="row" class="row-head">WWW · RELAIS-SMTP · VPN</th><td class="mono">3 × Server-PT</td><td>DMZ</td><td class="mono">172.20.0.10 · .20 · .30</td></tr>
+            <tr><th scope="row" class="row-head">PC-DIR-N5 · PC-DSI-01 · PC-LAB-N3 · PC-VET-N2 · PC-COM-N1 · PC-CAISSE-N0</th><td class="mono">6 × PC-PT</td><td>Postes témoins — <span class="mono">F0/2</span> de chaque commutateur de niveau</td><td class="ok">DHCP — 10.10.&lt;vlan&gt;.50</td></tr>
+            <tr><th scope="row" class="row-head">NVR-CCTV</th><td class="mono">PC-PT</td><td>Vidéosurveillance — <span class="mono">SW-N0-01 F0/3</span></td><td class="mono">10.10.60.10 /24 · gw .1 (statique)</td></tr>
+            <tr><th scope="row" class="row-head">SCADA-HMI</th><td class="mono">PC-PT</td><td>Supervision des enclos — <span class="mono">SW-N0-01 F0/4</span></td><td class="mono">10.10.70.10 /24 · gw .1 (statique)</td></tr>
+            <tr><th scope="row" class="row-head">AUTOMATE-E1 · E7</th><td class="mono">2 × PC-PT</td><td>Enclos 1 et 7 — <span class="mono">SW-ENCLOS-01 F0/2 · SW-ENCLOS-02 F0/2</span></td><td class="mono">10.10.70.21 · .27 /24 · gw .1 (statiques)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="plate">
+      <div class="table-wrap">
+        <table>
+          <caption>Plan de câblage — liens d&rsquo;infrastructure (croisé entre équipements de même nature, droit sinon)</caption>
+          <thead><tr><th>De</th><th>Interface</th><th>Vers</th><th>Interface</th><th>Câble</th><th>Nature du lien</th></tr></thead>
+          <tbody>
+            <tr><th scope="row" class="row-head">GW-NUBLAR</th><td class="mono">G0/0</td><td>CORE-NUBLAR</td><td class="mono">F0/24</td><td>droit</td><td class="mono">VLAN 300 — transit /30</td></tr>
+            <tr><th scope="row" class="row-head">GW-NUBLAR</th><td class="mono">G0/1</td><td>SW-DMZ-01</td><td class="mono">F0/1</td><td>droit</td><td class="mono">DMZ 172.20.0.0/24</td></tr>
+            <tr><th scope="row" class="row-head">CORE-NUBLAR</th><td class="mono">F0/11</td><td>SW-N5-01</td><td class="mono">F0/1</td><td class="ko">croisé</td><td class="mono">trunk 802.1Q</td></tr>
+            <tr><th scope="row" class="row-head">CORE-NUBLAR</th><td class="mono">F0/12</td><td>SW-N4-01</td><td class="mono">F0/1</td><td class="ko">croisé</td><td class="mono">trunk</td></tr>
+            <tr><th scope="row" class="row-head">CORE-NUBLAR</th><td class="mono">F0/13</td><td>SW-N3-01</td><td class="mono">F0/1</td><td class="ko">croisé</td><td class="mono">trunk</td></tr>
+            <tr><th scope="row" class="row-head">CORE-NUBLAR</th><td class="mono">F0/14</td><td>SW-N2-01</td><td class="mono">F0/1</td><td class="ko">croisé</td><td class="mono">trunk</td></tr>
+            <tr><th scope="row" class="row-head">CORE-NUBLAR</th><td class="mono">F0/15</td><td>SW-N1-01</td><td class="mono">F0/1</td><td class="ko">croisé</td><td class="mono">trunk</td></tr>
+            <tr><th scope="row" class="row-head">CORE-NUBLAR</th><td class="mono">F0/16</td><td>SW-N0-01</td><td class="mono">F0/1</td><td class="ko">croisé</td><td class="mono">trunk</td></tr>
+            <tr><th scope="row" class="row-head">SW-N0-01</th><td class="mono">G0/1</td><td>SW-ENCLOS-01</td><td class="mono">G0/1</td><td class="ko">croisé</td><td class="mono">fibre extérieure — trunk VLAN 10·70</td></tr>
+            <tr><th scope="row" class="row-head">SW-ENCLOS-01</th><td class="mono">F0/24</td><td>SW-ENCLOS-02</td><td class="mono">F0/1</td><td class="ko">croisé</td><td class="mono">chaîne — trunk</td></tr>
+            <tr><th scope="row" class="row-head">SW-ENCLOS-02</th><td class="mono">F0/24</td><td>SW-ENCLOS-03</td><td class="mono">F0/1</td><td class="ko">croisé</td><td class="mono">chaîne — trunk</td></tr>
+            <tr><th scope="row" class="row-head">SW-ENCLOS-03</th><td class="mono">F0/24</td><td>SW-ENCLOS-04</td><td class="mono">F0/1</td><td class="ko">croisé</td><td class="mono">chaîne — trunk</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <p>
+      Les serveurs du VLAN 200 se branchent en câble droit sur
+      <code>CORE-NUBLAR F0/1 → F0/10</code>, dans l&rsquo;ordre des adresses (F0/1 =
+      <code>NUB-DC01</code>, … F0/10 = <code>SIEM</code>). Les trois serveurs DMZ en droit sur
+      <code>SW-DMZ-01 F0/2 → F0/4</code>. Les postes témoins&nbsp;: voir
+      <a href="#extremites">section 8</a>.
+    </p>
+
+    <div class="note">
+      <span class="label">Pourquoi les serveurs se branchent directement sur le cœur</span>
+      <p>
+        C&rsquo;est une architecture en <strong>cœur effondré</strong> (<em>collapsed
+        core</em>)&nbsp;: le commutateur de cœur est dans la baie centrale, à cinquante
+        centimètres des serveurs — un commutateur intermédiaire n&rsquo;apporterait ici ni
+        distance, ni débit, seulement une panne possible de plus. Avec dix serveurs, six trunks
+        et un lien routeur, les 24 ports suffisent. Trois limites à énoncer devant la
+        classe&nbsp;: la maquette câble les dix serveurs physiques du site mais aucune de
+        leurs machines virtuelles, une vraie salle aurait ses commutateurs de baie
+        (<em>top-of-rack</em>) et le cœur ne verrait que des trunks&nbsp;; les ports du 3560
+        sont à <strong>100&nbsp;Mb/s</strong>, contrainte du modèle Packet&nbsp;Tracer&nbsp;;
+        et le cœur cumule routage, filtrage et accès serveurs — un point unique de défaillance
+        de plus, cohérent avec les thèmes du contexte. Le jour où le chantier n°&nbsp;10
+        scindera le VLAN&nbsp;200, l&rsquo;introduction de commutateurs de baie dédiés en sera
+        la suite naturelle.
+      </p>
+    </div>
+
+
+    <h3 id="plan-ip">Le plan d&rsquo;interfaces&nbsp;: qui porte quelle adresse</h3>
+    <div class="note">
+      <span class="label">La règle qui évite 90&nbsp;% des confusions</span>
+      <p>
+        <strong>Un port de commutateur ne porte jamais d&rsquo;adresse IP.</strong> Les adresses
+        vivent à trois endroits seulement&nbsp;: sur les <strong>interfaces d&rsquo;un
+        routeur</strong> (une par réseau raccordé), sur les <strong>SVI</strong> des
+        commutateurs (<code>interface Vlan&lt;n&gt;</code> — passerelle si le commutateur route,
+        simple adresse d&rsquo;administration sinon), et sur les <strong>hôtes</strong> (serveurs
+        et postes). Tout le tableau ci-dessous découle de cette règle.
+      </p>
+    </div>
+
+    <div class="plate">
+      <div class="table-wrap long">
+        <table>
+          <caption>Toutes les adresses IP de la maquette — rien d&rsquo;autre n&rsquo;en porte</caption>
+          <thead><tr><th>Équipement</th><th>Interface</th><th>Adresse / masque</th><th>Rôle de l&rsquo;adresse</th><th>Le trafic du VLAN arrive par</th></tr></thead>
+          <tbody>
+            <tr><td class="row-head" rowspan="2">GW-NUBLAR</td><td class="mono">GigabitEthernet0/0</td><td class="mono">172.31.0.2 /30</td><td>Côté routeur du transit</td><td class="mono">CORE-NUBLAR F0/24</td></tr>
+            <tr><td class="mono">GigabitEthernet0/1</td><td class="mono">172.20.0.1 /24</td><td>Passerelle de la DMZ</td><td class="mono">SW-DMZ-01 F0/1</td></tr>
+            <tr><td class="row-head" rowspan="9">CORE-NUBLAR<br><span class="mono" style="font-weight:400">(ports physiques&nbsp;: aucune IP — une SVI dessert tout son VLAN, pas un port)</span></td>
+                <td class="mono">interface Vlan10</td><td class="mono">10.10.10.1 /24</td><td>Passerelle VLAN 10</td><td>les six trunks <span class="mono">F0/11 → F0/16</span> — le VLAN 10 vit sur tous les commutateurs</td></tr>
+            <tr><td class="mono">interface Vlan20</td><td class="mono">10.10.20.1 /24</td><td>Passerelle VLAN 20</td><td>trunks <span class="mono">F0/11 · F0/12 · F0/15</span> (niveaux 5, 4 et 1)</td></tr>
+            <tr><td class="mono">interface Vlan30</td><td class="mono">10.10.30.1 /24</td><td>Passerelle VLAN 30</td><td>trunk <span class="mono">F0/13</span> (niveau 3)</td></tr>
+            <tr><td class="mono">interface Vlan40</td><td class="mono">10.10.40.1 /24</td><td>Passerelle VLAN 40</td><td>trunk <span class="mono">F0/14</span> (niveau 2)</td></tr>
+            <tr><td class="mono">interface Vlan50</td><td class="mono">10.10.50.1 /24</td><td>Passerelle VLAN 50</td><td>trunk <span class="mono">F0/16</span> (RdC)</td></tr>
+            <tr><td class="mono">interface Vlan60</td><td class="mono">10.10.60.1 /24</td><td>Passerelle VLAN 60</td><td>trunk <span class="mono">F0/16</span> (RdC)</td></tr>
+            <tr><td class="mono">interface Vlan70</td><td class="mono">10.10.70.1 /24</td><td>Passerelle VLAN 70</td><td>trunk <span class="mono">F0/16</span> (RdC, puis <span class="mono">G0/1</span> vers la chaîne des coffrets)</td></tr>
+            <tr><td class="mono">interface Vlan200</td><td class="mono">10.10.200.1 /24</td><td>Passerelle VLAN 200</td><td>ports d&rsquo;accès <span class="mono">F0/1 → F0/10</span> (les dix serveurs)</td></tr>
+            <tr><td class="mono">interface Vlan300</td><td class="mono">172.31.0.1 /30</td><td>Côté commutateur du transit</td><td>port d&rsquo;accès <span class="mono">F0/24</span> (GW-NUBLAR)</td></tr>
+            <tr><th scope="row" class="row-head">SW-N5-01</th><td class="mono">interface Vlan10</td><td class="mono">10.10.10.2 /24</td><td>Administration — niveau 5 (+ <span class="mono">ip default-gateway 10.10.10.1</span>, comme les neuf suivants)</td><td>—</td></tr>
+            <tr><th scope="row" class="row-head">SW-N4-01</th><td class="mono">interface Vlan10</td><td class="mono">10.10.10.3 /24</td><td>Administration — niveau 4</td><td>—</td></tr>
+            <tr><th scope="row" class="row-head">SW-N3-01</th><td class="mono">interface Vlan10</td><td class="mono">10.10.10.4 /24</td><td>Administration — niveau 3</td><td>—</td></tr>
+            <tr><th scope="row" class="row-head">SW-N2-01</th><td class="mono">interface Vlan10</td><td class="mono">10.10.10.5 /24</td><td>Administration — niveau 2</td><td>—</td></tr>
+            <tr><th scope="row" class="row-head">SW-N1-01</th><td class="mono">interface Vlan10</td><td class="mono">10.10.10.6 /24</td><td>Administration — niveau 1</td><td>—</td></tr>
+            <tr><th scope="row" class="row-head">SW-N0-01</th><td class="mono">interface Vlan10</td><td class="mono">10.10.10.7 /24</td><td>Administration — rez-de-chaussée</td><td>—</td></tr>
+            <tr><th scope="row" class="row-head">SW-ENCLOS-01</th><td class="mono">interface Vlan10</td><td class="mono">10.10.10.11 /24</td><td>Administration — coffret des enclos 1 à 6</td><td>—</td></tr>
+            <tr><th scope="row" class="row-head">SW-ENCLOS-02</th><td class="mono">interface Vlan10</td><td class="mono">10.10.10.12 /24</td><td>Administration — coffret des enclos 7 à 12</td><td>—</td></tr>
+            <tr><th scope="row" class="row-head">SW-ENCLOS-03</th><td class="mono">interface Vlan10</td><td class="mono">10.10.10.13 /24</td><td>Administration — coffret des enclos 13 à 18</td><td>—</td></tr>
+            <tr><th scope="row" class="row-head">SW-ENCLOS-04</th><td class="mono">interface Vlan10</td><td class="mono">10.10.10.14 /24</td><td>Administration — coffret des enclos 19 à 24</td><td>—</td></tr>
+            <tr><th scope="row" class="row-head">SW-DMZ-01</th><td class="mono">interface Vlan250</td><td class="mono">172.20.0.2 /24</td><td>Administration — dans le sous-réseau DMZ, passerelle 172.20.0.1</td><td>—</td></tr>
+            <tr><th scope="row" class="row-head">NUB-DC01 → SIEM</th><td class="mono">FastEthernet0</td><td class="mono">10.10.200.10 · .11 · .20 · .25 · .30 · .40 · .50 · .60 · .70 · .80 /24</td><td>Hôtes — passerelle 10.10.200.1, DNS 10.10.200.10</td><td class="mono">CORE F0/1 → F0/10, dans cet ordre</td></tr>
+            <tr><th scope="row" class="row-head">WWW · RELAIS-SMTP · VPN</th><td class="mono">FastEthernet0</td><td class="mono">172.20.0.10 · .20 · .30 /24</td><td>Hôtes DMZ — passerelle 172.20.0.1</td><td class="mono">SW-DMZ-01 F0/2 → F0/4</td></tr>
+            <tr><th scope="row" class="row-head">NVR-CCTV</th><td class="mono">FastEthernet0</td><td class="mono">10.10.60.10 /24</td><td>Hôte statique — passerelle 10.10.60.1</td><td class="mono">SW-N0-01 F0/3</td></tr>
+            <tr><th scope="row" class="row-head">SCADA-HMI</th><td class="mono">FastEthernet0</td><td class="mono">10.10.70.10 /24</td><td>Hôte statique — passerelle 10.10.70.1</td><td class="mono">SW-N0-01 F0/4</td></tr>
+            <tr><th scope="row" class="row-head">AUTOMATE-E1 · E7</th><td class="mono">FastEthernet0</td><td class="mono">10.10.70.21 · 10.10.70.27 /24</td><td>Hôtes statiques — passerelle 10.10.70.1</td><td class="mono">SW-ENCLOS-01 F0/2 · SW-ENCLOS-02 F0/2</td></tr>
+            <tr><th scope="row" class="row-head">6 postes témoins</th><td class="mono">FastEthernet0</td><td class="ok">DHCP — 10.10.&lt;vlan&gt;.50 et suivants</td><td>Adresse, masque, passerelle et DNS reçus du serveur</td><td>voir section 8</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="note good">
+      <span class="label">Comment lire une adresse en cas de doute</span>
+      <p>
+        La convention du livret fait tout le travail&nbsp;: <code>10.10.&lt;VLAN&gt;.&lt;hôte&gt;</code>,
+        passerelle toujours en <code>.1</code>, serveurs en <code>.10-.49</code>, DHCP à partir
+        de <code>.50</code>. Devant une interface inconnue, demandez-vous seulement&nbsp;:
+        <em>de quel VLAN suis-je la passerelle, l&rsquo;hôte, ou l&rsquo;adresse
+        d&rsquo;administration&nbsp;?</em> Les deux seules exceptions sont les
+        <code>/30</code> de transit (<code>172.31.0.1</code> côté cœur, <code>.2</code> côté
+        routeur) et la DMZ en <code>172.20</code>.
+      </p>
+    </div>
+
+
+    <h3 id="ports-vlan">Association port → VLAN, commutateur par commutateur</h3>
+    <p>
+      La synthèse complète. Un port <strong>access</strong> appartient à un VLAN, un
+      <strong>trunk</strong> à aucun (il les transporte tous, étiquetés), et tout port absent de
+      ces tableaux reste dans le VLAN&nbsp;1 par défaut — actif et non configuré, comme le veut
+      l&rsquo;état initial.
+    </p>
+    <div class="plate">
+      <div class="table-wrap">
+        <table>
+          <caption>CORE-NUBLAR</caption>
+          <thead><tr><th>Port</th><th>Mode</th><th>VLAN</th><th>Y est branché</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">F0/1 → F0/10</td><td>access</td><td class="mono">200</td><td>les dix serveurs, dans l&rsquo;ordre des adresses (F0/1&#8239;=&#8239;NUB-DC01 … F0/10&#8239;=&#8239;SIEM)</td></tr>
+            <tr><td class="mono">F0/11</td><td class="ok">trunk</td><td>—</td><td>SW-N5-01 F0/1</td></tr>
+            <tr><td class="mono">F0/12</td><td class="ok">trunk</td><td>—</td><td>SW-N4-01 F0/1</td></tr>
+            <tr><td class="mono">F0/13</td><td class="ok">trunk</td><td>—</td><td>SW-N3-01 F0/1</td></tr>
+            <tr><td class="mono">F0/14</td><td class="ok">trunk</td><td>—</td><td>SW-N2-01 F0/1</td></tr>
+            <tr><td class="mono">F0/15</td><td class="ok">trunk</td><td>—</td><td>SW-N1-01 F0/1</td></tr>
+            <tr><td class="mono">F0/16</td><td class="ok">trunk</td><td>—</td><td>SW-N0-01 F0/1</td></tr>
+            <tr><td class="mono">F0/24</td><td>access</td><td class="mono">300</td><td>GW-NUBLAR G0/0</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="plate">
+      <div class="table-wrap">
+        <table>
+          <caption>Commutateurs de niveau — F0/1 toujours trunk vers le cœur</caption>
+          <thead><tr><th>Commutateur</th><th>Port</th><th>Mode</th><th>VLAN</th><th>Y est branché</th></tr></thead>
+          <tbody>
+            <tr><th scope="row" class="row-head">SW-N5-01</th><td class="mono">F0/2</td><td>access</td><td class="mono">20</td><td>PC-DIR-N5</td></tr>
+            <tr><th scope="row" class="row-head">SW-N4-01</th><td class="mono">F0/2</td><td>access</td><td class="mono">10</td><td>PC-DSI-01</td></tr>
+            <tr><th scope="row" class="row-head">SW-N3-01</th><td class="mono">F0/2</td><td>access</td><td class="mono">30</td><td>PC-LAB-N3</td></tr>
+            <tr><th scope="row" class="row-head">SW-N2-01</th><td class="mono">F0/2</td><td>access</td><td class="mono">40</td><td>PC-VET-N2</td></tr>
+            <tr><th scope="row" class="row-head">SW-N1-01</th><td class="mono">F0/2</td><td>access</td><td class="mono">20</td><td>PC-COM-N1</td></tr>
+            <tr><td class="row-head" rowspan="4">SW-N0-01</td><td class="mono">F0/2</td><td>access</td><td class="mono">50</td><td>PC-CAISSE-N0</td></tr>
+            <tr><td class="mono">F0/3</td><td>access</td><td class="mono">60</td><td>NVR-CCTV</td></tr>
+            <tr><td class="mono">F0/4</td><td>access</td><td class="mono">70</td><td>SCADA-HMI</td></tr>
+            <tr><td class="mono">G0/1</td><td class="ok">trunk</td><td>—</td><td>fibre extérieure → SW-ENCLOS-01 G0/1</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="plate">
+      <div class="table-wrap">
+        <table>
+          <caption>Coffrets d&rsquo;enclos et DMZ</caption>
+          <thead><tr><th>Commutateur</th><th>Port</th><th>Mode</th><th>VLAN</th><th>Y est branché</th></tr></thead>
+          <tbody>
+            <tr><td class="row-head" rowspan="3">SW-ENCLOS-01</td><td class="mono">G0/1</td><td class="ok">trunk</td><td>—</td><td>SW-N0-01 G0/1 (fibre extérieure)</td></tr>
+            <tr><td class="mono">F0/2</td><td>access</td><td class="mono">70</td><td>AUTOMATE-E1</td></tr>
+            <tr><td class="mono">F0/24</td><td class="ok">trunk</td><td>—</td><td>SW-ENCLOS-02 F0/1</td></tr>
+            <tr><td class="row-head" rowspan="3">SW-ENCLOS-02</td><td class="mono">F0/1</td><td class="ok">trunk</td><td>—</td><td>SW-ENCLOS-01 F0/24</td></tr>
+            <tr><td class="mono">F0/2</td><td>access</td><td class="mono">70</td><td>AUTOMATE-E7</td></tr>
+            <tr><td class="mono">F0/24</td><td class="ok">trunk</td><td>—</td><td>SW-ENCLOS-03 F0/1</td></tr>
+            <tr><td class="row-head" rowspan="3">SW-ENCLOS-03</td><td class="mono">F0/1</td><td class="ok">trunk</td><td>—</td><td>SW-ENCLOS-02 F0/24</td></tr>
+            <tr><td class="mono">F0/2</td><td>access</td><td class="mono">70</td><td>libre (automates 13-18)</td></tr>
+            <tr><td class="mono">F0/24</td><td class="ok">trunk</td><td>—</td><td>SW-ENCLOS-04 F0/1</td></tr>
+            <tr><td class="row-head" rowspan="2">SW-ENCLOS-04</td><td class="mono">F0/1</td><td class="ok">trunk</td><td>—</td><td>SW-ENCLOS-03 F0/24 — dernier de la chaîne</td></tr>
+            <tr><td class="mono">F0/2</td><td>access</td><td class="mono">70</td><td>libre (automates 19-24)</td></tr>
+            <tr><td class="row-head" rowspan="2">SW-DMZ-01</td><td class="mono">F0/1</td><td>access</td><td class="mono">250</td><td>GW-NUBLAR G0/1</td></tr>
+            <tr><td class="mono">F0/2 → F0/4</td><td>access</td><td class="mono">250</td><td>WWW · RELAIS-SMTP · VPN</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="note">
+      <span class="label">La chaîne des enclos est volontairement fragile</span>
+      <p>
+        Un seul lien la raccroche au bâtiment (<code>SW-N0-01 G0/1</code>), et les coffrets sont
+        en cascade&nbsp;: coupez le premier lien — clic droit, <em>Delete</em> — et les
+        vingt-quatre enclos disparaissent de la supervision. C&rsquo;est le risque R8 de la
+        matrice, et c&rsquo;est votre démonstration D8. Ne «&nbsp;corrigez&nbsp;» pas cette
+        topologie&nbsp;: sa fragilité est un support de cours.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ 3 CŒUR ============ -->
+  <section id="coeur">
+    <div class="sec-head">
+      <span class="src">Section 3 — Le pivot</span>
+      <h2 class="sec-title">CORE-NUBLAR — la configuration pivot</h2>
+      <p>Neuf VLAN, neuf SVI actives (plus Vlan1 éteinte), six relais DHCP, deux ACL. Quatre blocs à coller.</p>
+    </div>
+
+    <div class="config">
+      <div class="config-head"><span class="name">CORE-NUBLAR</span><span class="kind">bloc 1/4 — VLAN</span></div>
+<pre><code>enable
+configure terminal
+hostname CORE-NUBLAR
+!
+vlan 10
+ name SYS-RESEAUX
+vlan 20
+ name DIRECTION-ADMIN
+vlan 30
+ name HCL-LABO
+vlan 40
+ name VETERINAIRE
+vlan 50
+ name EXPLOITATION-NL
+vlan 60
+ name SECURITE-PHYSIQUE
+vlan 70
+ name SCADA-ENCLOS
+vlan 200
+ name SERVEURS
+vlan 300
+ name TRANSIT
+exit</code></pre>
+    </div>
+
+    <div class="config">
+      <div class="config-head"><span class="name">CORE-NUBLAR</span><span class="kind">bloc 2/4 — ports</span></div>
+<pre><code>interface range FastEthernet0/1 - 10
+ switchport mode access
+ switchport access vlan 200
+!
+interface range FastEthernet0/11 - 16
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface FastEthernet0/24
+ switchport mode access
+ switchport access vlan 300
+ description Vers GW-NUBLAR G0/0
+exit</code></pre>
+    </div>
+
+    <div class="config">
+      <div class="config-head"><span class="name">CORE-NUBLAR</span><span class="kind">bloc 3/4 — SVI et routage</span></div>
+<pre><code>ip routing
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+interface Vlan10
+ ip address 10.10.10.1 255.255.255.0
+ ip helper-address 10.10.200.10
+!
+interface Vlan20
+ ip address 10.10.20.1 255.255.255.0
+ ip helper-address 10.10.200.10
+!
+interface Vlan30
+ ip address 10.10.30.1 255.255.255.0
+ ip helper-address 10.10.200.10
+!
+interface Vlan40
+ ip address 10.10.40.1 255.255.255.0
+ ip helper-address 10.10.200.10
+!
+interface Vlan50
+ ip address 10.10.50.1 255.255.255.0
+ ip helper-address 10.10.200.10
+!
+interface Vlan60
+ ip address 10.10.60.1 255.255.255.0
+ ip helper-address 10.10.200.10
+!
+interface Vlan70
+ ip address 10.10.70.1 255.255.255.0
+!
+interface Vlan200
+ ip address 10.10.200.1 255.255.255.0
+!
+interface Vlan300
+ ip address 172.31.0.1 255.255.255.252
+!
+exit
+ip route 0.0.0.0 0.0.0.0 172.31.0.2</code></pre>
+    </div>
+
+    <div class="config">
+      <div class="config-head"><span class="name">CORE-NUBLAR</span><span class="kind">bloc 4/4 — ACL</span></div>
+<pre><code>access-list 130 remark Entree dans le VLAN 30 : serveurs + retours
+access-list 130 permit ip 10.10.200.0 0.0.0.255 10.10.30.0 0.0.0.255
+access-list 130 permit tcp any 10.10.30.0 0.0.0.255 established
+access-list 130 permit icmp any 10.10.30.0 0.0.0.255 echo-reply
+access-list 170 remark Entree dans le VLAN 70 : administration + retours
+access-list 170 permit ip 10.10.10.0 0.0.0.255 10.10.70.0 0.0.0.255
+access-list 170 permit tcp any 10.10.70.0 0.0.0.255 established
+access-list 170 permit icmp any 10.10.70.0 0.0.0.255 echo-reply
+!
+interface Vlan30
+ ip access-group 130 out
+!
+interface Vlan70
+ ip access-group 170 out
+!
+end
+copy running-config startup-config</code></pre>
+    </div>
+
+    <div class="note">
+      <span class="label">Écarts raisonnés avec la configuration du livret</span>
+      <p>
+        Le livret (partie&nbsp;8) ne donne les fichiers de configuration que pour la maquette
+        étudiante — trois équipements. Cette maquette-ci les <strong>étend</strong>&nbsp;: mêmes ACL, mêmes conventions, relais DHCP sur tous les VLAN
+        d&rsquo;utilisateurs (10 à 60), aucun sur le 70 (statique) — seule différence voulue, le relais inutile du
+        Vlan200 a disparu&nbsp;: il n&rsquo;a de raison d&rsquo;être que comme constat
+        d&rsquo;audit n°&nbsp;10, dans la maquette étudiante.
+      </p>
+    </div>
+
+    <div class="note">
+      <span class="label">Ce que font les listes 130 et 170 — à savoir expliquer devant la classe</span>
+      <p>
+        Deux listes <strong>étendues</strong>, posées en <code>out</code>&nbsp;: chacune examine ce
+        que le cœur fait <em>entrer</em> dans son VLAN. La liste&nbsp;170 n&rsquo;admet dans le
+        VLAN&nbsp;70 que les ouvertures d&rsquo;échange venues du VLAN&nbsp;10 et les réponses&nbsp;;
+        la liste&nbsp;130 n&rsquo;admet dans le VLAN&nbsp;30 que le VLAN&nbsp;200 et les réponses —
+        le VLAN&nbsp;10 en est exclu, c&rsquo;est l&rsquo;anomalie voulue du constat n°&nbsp;9. Ce
+        que les automates <em>émettent</em> ne croise aucune liste&nbsp;: c&rsquo;est le constat
+        n°&nbsp;1, que D4 montre. Le mécanisme complet, à reprendre devant la classe, est dans le
+        <a href="INGEN-Livret-Contexte.html#acl-170">livret, partie&nbsp;7</a>. Les VLAN&nbsp;30 et&nbsp;70 doivent avoir été créés au bloc&nbsp;1&nbsp;:
+        aucun port d&rsquo;accès du cœur ne les porte, et sans cette création explicite
+        <code>Vlan30</code> et <code>Vlan70</code> resteraient inactives.
+      </p>
+    </div>
+
+    <div class="note teacher" id="pour-enseignant">
+      <span class="label">Pour l&rsquo;enseignant — mettre à jour le .pkt et vérifier les listes</span>
+      <p>
+        Le fichier <code>isla-nublar.pkt</code> est la maquette fonctionnelle qui illustre la
+        configuration existante (réseau d&rsquo;apprentissage, partie&nbsp;8 du livret)&nbsp;; il
+        ne doit donc jamais s&rsquo;écarter des configurations de référence. Il a été monté avec
+        les anciennes listes standard&nbsp;:
+        il est à mettre à jour avec la configuration du bloc&nbsp;4 (listes&nbsp;130 et&nbsp;170).
+        Retirez les anciennes listes et leurs <code>ip access-group</code>, collez le bloc&nbsp;4,
+        puis vérifiez en mode Simulation, avant la séance, T5 et T7 de la fiche de montage, et
+        D2 et D4 de cette fiche. Packet&nbsp;Tracer accepte <code>established</code> et les types
+        ICMP (<code>echo-reply</code>) dans les listes étendues numérotées&nbsp;: c&rsquo;est
+        à confirmer en mode Simulation lors du recâblage du <code>.pkt</code>. Contrôlez au
+        passage que T2 obtient toujours son bail&nbsp;: l&rsquo;offre DHCP est émise par le relais
+        lui-même, et une liste posée en <code>out</code> ne filtre pas le trafic que
+        l&rsquo;équipement génère.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ 4 ACCÈS ============ -->
+  <section id="acces">
+    <div class="sec-head">
+      <span class="src">Section 4 — Les niveaux</span>
+      <h2 class="sec-title">Les six commutateurs d&rsquo;accès</h2>
+      <p>Une configuration modèle, six variations. Collez le modèle, adaptez trois valeurs.</p>
+    </div>
+
+    <div class="config">
+      <div class="config-head"><span class="name">Modèle — exemple SW-N5-01</span><span class="kind">à adapter pour chaque niveau (tableau ci-dessous)</span></div>
+<pre><code>enable
+configure terminal
+hostname SW-N5-01
+!
+vlan 10
+ name SYS-RESEAUX
+vlan 20
+ name DIRECTION-ADMIN
+!
+interface FastEthernet0/1
+ switchport mode trunk
+ description Uplink vers CORE-NUBLAR
+!
+interface FastEthernet0/2
+ switchport mode access
+ switchport access vlan 20
+ description Poste temoin du niveau
+!
+interface Vlan10
+ ip address 10.10.10.2 255.255.255.0
+ no shutdown
+!
+ip default-gateway 10.10.10.1
+!
+end
+copy running-config startup-config</code></pre>
+    </div>
+
+    <div class="plate">
+      <div class="table-wrap">
+        <table>
+          <caption>Les six variations — VLAN à créer, VLAN du port F0/2, adresse de la SVI Vlan10</caption>
+          <thead><tr><th>Commutateur</th><th>VLAN à créer</th><th>F0/2 — accès</th><th>Autres ports d&rsquo;accès</th><th>SVI Vlan10</th></tr></thead>
+          <tbody>
+            <tr><th scope="row" class="row-head">SW-N5-01</th><td class="mono">10 · 20</td><td class="mono">vlan 20</td><td>—</td><td class="mono">10.10.10.2</td></tr>
+            <tr><th scope="row" class="row-head">SW-N4-01</th><td class="mono">10 · 20</td><td class="mono">vlan 10 (PC-DSI-01)</td><td>—</td><td class="mono">10.10.10.3</td></tr>
+            <tr><th scope="row" class="row-head">SW-N3-01</th><td class="mono">10 · 30</td><td class="mono">vlan 30 (PC-LAB-N3)</td><td>—</td><td class="mono">10.10.10.4</td></tr>
+            <tr><th scope="row" class="row-head">SW-N2-01</th><td class="mono">10 · 40</td><td class="mono">vlan 40 (PC-VET-N2)</td><td>—</td><td class="mono">10.10.10.5</td></tr>
+            <tr><th scope="row" class="row-head">SW-N1-01</th><td class="mono">10 · 20</td><td class="mono">vlan 20 (PC-COM-N1)</td><td>—</td><td class="mono">10.10.10.6</td></tr>
+            <tr><th scope="row" class="row-head">SW-N0-01</th><td class="mono">10 · 50 · 60 · 70</td><td class="mono">vlan 50 (PC-CAISSE-N0)</td><td class="mono">F0/3 vlan 60 (NVR-CCTV) · F0/4 vlan 70 (SCADA-HMI) · G0/1 trunk (enclos)</td><td class="mono">10.10.10.7</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="note">
+      <span class="label">Deux commandes qui n&rsquo;étaient pas dans la maquette étudiante</span>
+      <p>
+        <code>interface Vlan10</code> + <code>ip default-gateway</code>&nbsp;: chaque commutateur
+        d&rsquo;accès reçoit ici son adresse d&rsquo;administration — c&rsquo;est ce qui permet
+        le <code>ping 10.10.10.4</code> depuis <code>PC-DSI-01</code>, et la démonstration
+        «&nbsp;voilà pourquoi un commutateur sans adresse est inadministrable à distance&nbsp;»
+        par contraste avec la maquette étudiante. Sur <code>SW-N0-01</code>, n&rsquo;oubliez pas
+        <code>switchport mode trunk</code> sur <code>G0/1</code>&nbsp;: c&rsquo;est la fibre
+        extérieure vers les enclos.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ 5 ENCLOS ============ -->
+  <section id="enclos">
+    <div class="sec-head">
+      <span class="src">Section 5 — Le réseau industriel</span>
+      <h2 class="sec-title">La chaîne des enclos</h2>
+      <p>Quatre coffrets en cascade sur une seule fibre. Même modèle, quatre adresses.</p>
+    </div>
+
+    <div class="config">
+      <div class="config-head"><span class="name">Modèle — exemple SW-ENCLOS-01</span><span class="kind">adresses&nbsp;: .11 / .12 / .13 / .14</span></div>
+<pre><code>enable
+configure terminal
+hostname SW-ENCLOS-01
+!
+vlan 10
+ name SYS-RESEAUX
+vlan 70
+ name SCADA-ENCLOS
+!
+interface GigabitEthernet0/1
+ switchport mode trunk
+ description Fibre exterieure - ou coffret precedent
+!
+interface FastEthernet0/24
+ switchport mode trunk
+ description Vers coffret suivant
+!
+interface FastEthernet0/2
+ switchport mode access
+ switchport access vlan 70
+ description Automate d'enclos
+!
+interface Vlan10
+ ip address 10.10.10.11 255.255.255.0
+ no shutdown
+!
+ip default-gateway 10.10.10.1
+end
+copy running-config startup-config</code></pre>
+    </div>
+    <p>
+      Particularités&nbsp;: <code>SW-ENCLOS-02</code> à <code>04</code> reçoivent leur uplink
+      sur <code>F0/1</code> (pas <code>G0/1</code> — la cascade est en cuivre) et
+      <code>SW-ENCLOS-04</code>, dernier de la chaîne, n&rsquo;a pas de <code>F0/24</code>
+      configuré. Deux automates témoins suffisent pour toutes les démonstrations&nbsp;:
+      <code>AUTOMATE-E1</code> sur <code>SW-ENCLOS-01 F0/2</code> (<code>10.10.70.21</code>) et
+      <code>AUTOMATE-E7</code> sur <code>SW-ENCLOS-02 F0/2</code> (<code>10.10.70.27</code>) —
+      la convention <code>.20&nbsp;+&nbsp;n°&nbsp;d&rsquo;enclos</code> en action.
+    </p>
+    <div class="note">
+      <span class="label">Variante OT — si vous montez la maquette en 9.x uniquement</span>
+      <p>
+        Remplacez les 2960 des coffrets par des <code>IE-3400</code> (catégorie
+        <em>Industrial</em>) et les automates par de vrais <code>PLC</code> avec une logique à
+        contacts minimale (une entrée «&nbsp;commande&nbsp;», une sortie
+        «&nbsp;clôture&nbsp;»)&nbsp;: la démonstration D5 gagne énormément — on <em>voit</em> la
+        clôture s&rsquo;ouvrir. Contrepartie&nbsp;: le fichier ne s&rsquo;ouvrira qu&rsquo;en
+        9.x, et la configuration des PLC sort du référentiel SISR — dosez selon votre classe.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ 6 GW + DMZ ============ -->
+  <section id="gw-dmz">
+    <div class="sec-head">
+      <span class="src">Section 6 — La bordure</span>
+      <h2 class="sec-title">GW-NUBLAR et la DMZ</h2>
+      <p>Deux interfaces actives, deux routes de retour — et un segment DMZ à plat. Répondez <code>no</code> au dialogue de configuration initiale avant de coller.</p>
+    </div>
+
+    <div class="config">
+      <div class="config-head"><span class="name">GW-NUBLAR</span><span class="kind">configuration complète</span></div>
+<pre><code>enable
+configure terminal
+hostname GW-NUBLAR
+!
+interface GigabitEthernet0/0
+ ip address 172.31.0.2 255.255.255.252
+ description Transit vers CORE-NUBLAR
+ no shutdown
+!
+interface GigabitEthernet0/1
+ ip address 172.20.0.1 255.255.255.0
+ description DMZ
+ no shutdown
+!
+ip route 10.10.200.0 255.255.255.0 172.31.0.1
+ip route 10.10.10.0 255.255.255.0 172.31.0.1
+!
+line vty 0 4
+ login
+ transport input all
+!
+end
+copy running-config startup-config</code></pre>
+    </div>
+
+    <div class="config">
+      <div class="config-head"><span class="name">SW-DMZ-01</span><span class="kind">configuration complète</span></div>
+<pre><code>enable
+configure terminal
+hostname SW-DMZ-01
+!
+vlan 250
+ name DMZ
+!
+interface range FastEthernet0/1 - 4
+ switchport mode access
+ switchport access vlan 250
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+interface Vlan250
+ ip address 172.20.0.2 255.255.255.0
+ no shutdown
+!
+ip default-gateway 172.20.0.1
+!
+end
+copy running-config startup-config</code></pre>
+    </div>
+
+    <div class="note">
+      <span class="label">Pourquoi 172.20.0.2 et pas une adresse en 10.10.10.x</span>
+      <p>
+        Le réflexe «&nbsp;série des équipements réseau&nbsp;» donnerait <code>10.10.10.15</code> —
+        mais une adresse du VLAN 10 suppose d&rsquo;être <em>dans</em> le VLAN 10, et celui-ci ne
+        traverse pas <code>GW-NUBLAR</code>&nbsp;: elle serait injoignable. L&rsquo;adresse
+        d&rsquo;administration d&rsquo;un équipement vit forcément dans un sous-réseau qui
+        l&rsquo;atteint&nbsp;: ici, la DMZ elle-même. Depuis <code>PC-DSI-01</code>,
+        <code>ping 172.20.0.2</code> répond — le routeur fait le chemin dans les deux sens.
+        Reste la vraie question de sécurité, à poser à la classe&nbsp;: administrer un
+        équipement de DMZ <em>depuis le segment exposé</em> est-il une bonne idée&nbsp;? En
+        production, la réponse est un réseau d&rsquo;administration dédié, hors bande — un
+        prolongement naturel du chantier de cloisonnement.
+      </p>
+    </div>
+
+    <div class="note warn">
+      <span class="label">Les deux routes de retour, encore et toujours</span>
+      <p>
+        Comme dans la maquette étudiante, <code>GW-NUBLAR</code> ne connaît le chemin de retour
+        que vers les VLAN <strong>200</strong> et <strong>10</strong>. Conséquence démontrable
+        en classe&nbsp;: le navigateur de <code>PC-DSI-01</code> (VLAN&nbsp;10) affiche le site
+        de la DMZ, celui de <code>PC-DIR-N5</code> (VLAN&nbsp;20) n&rsquo;y arrive jamais — les
+        paquets partent, les réponses meurent sur la table de routage. Dans le site réel, ces
+        VLAN passent par <code>PROXY</code>&nbsp;; Packet&nbsp;Tracer ne simulant pas de
+        mandataire, cette impasse <em>est</em> la démonstration (voir D7 et les
+        <a href="#limites">limites</a>).
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ 7 SERVEURS ============ -->
+  <section id="serveurs">
+    <div class="sec-head">
+      <span class="src">Section 7 — Les services</span>
+      <h2 class="sec-title">Les serveurs et leurs services</h2>
+      <p>Treize Server-PT. Chacun reçoit son adresse (passerelle <code>10.10.200.1</code>, DNS
+        <code>10.10.200.10</code> — sauf DMZ&nbsp;: passerelle <code>172.20.0.1</code>) et
+        <strong>un seul service activé</strong>, qui matérialise son rôle.</p>
+    </div>
+
+    <div class="plate">
+      <div class="table-wrap">
+        <table>
+          <caption>Affectation des services Packet&nbsp;Tracer — tout le reste sur Off</caption>
+          <thead><tr><th>Serveur</th><th>Adresse</th><th>Service PT à activer</th><th>Contenu à mettre en scène</th></tr></thead>
+          <tbody>
+            <tr><th scope="row" class="row-head">NUB-DC01</th><td class="mono">10.10.200.10</td><td class="mono">DHCP + DNS</td><td>6 pools (table ci-dessous) · zone <span class="mono">nublar.ingen.corp</span></td></tr>
+            <tr><th scope="row" class="row-head">NUB-DC02</th><td class="mono">10.10.200.11</td><td>aucun</td><td>Figurant — la réplication AD n&rsquo;existe pas dans PT, dites-le</td></tr>
+            <tr><th scope="row" class="row-head">GENOME</th><td class="mono">10.10.200.20</td><td class="mono">HTTP</td><td>Page d&rsquo;accueil éditée&nbsp;: «&nbsp;GENOME — accès restreint · données classifiées rouge&nbsp;»</td></tr>
+            <tr><th scope="row" class="row-head">EMBRYO</th><td class="mono">10.10.200.25</td><td class="mono">HTTP</td><td>«&nbsp;Registre embryonnaire — chaîne du froid&nbsp;»</td></tr>
+            <tr><th scope="row" class="row-head">VETCARE</th><td class="mono">10.10.200.30</td><td class="mono">HTTP</td><td>«&nbsp;Dossiers vétérinaires&nbsp;»</td></tr>
+            <tr><th scope="row" class="row-head">PARKOPS</th><td class="mono">10.10.200.40</td><td class="mono">HTTP</td><td>«&nbsp;Billetterie — Nublar Leisure S.A.&nbsp;» (l&rsquo;autre entité juridique&nbsp;!)</td></tr>
+            <tr><th scope="row" class="row-head">FILES</th><td class="mono">10.10.200.50</td><td class="mono">FTP</td><td>Compte de démonstration, un fichier déposé</td></tr>
+            <tr><th scope="row" class="row-head">BACKUP</th><td class="mono">10.10.200.60</td><td class="mono">FTP</td><td>«&nbsp;dépôt de sauvegarde&nbsp;»</td></tr>
+            <tr><th scope="row" class="row-head">PROXY</th><td class="mono">10.10.200.70</td><td>aucun</td><td>Figurant — PT ne simule pas de mandataire (limite assumée)</td></tr>
+            <tr><th scope="row" class="row-head">SIEM</th><td class="mono">10.10.200.80</td><td class="mono">SYSLOG</td><td>Le tableau reste vide à l&rsquo;état initial — c&rsquo;est la démonstration D6</td></tr>
+            <tr><th scope="row" class="row-head">WWW</th><td class="mono">172.20.0.10</td><td class="mono">HTTP</td><td>Site public du parc</td></tr>
+            <tr><th scope="row" class="row-head">RELAIS-SMTP</th><td class="mono">172.20.0.20</td><td class="mono">EMAIL</td><td>Domaine de démonstration, deux boîtes</td></tr>
+            <tr><th scope="row" class="row-head">VPN</th><td class="mono">172.20.0.30</td><td>aucun</td><td>Figurant — la terminaison VPN se traite au projet dédié</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="plate">
+      <div class="table-wrap">
+        <table>
+          <caption>NUB-DC01 — les six pools DHCP (Services → DHCP, un Add par ligne)</caption>
+          <thead><tr><th>Pool Name</th><th>Default Gateway</th><th>DNS Server</th><th>Starting IP</th><th>Mask</th><th>Max Users</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">VLAN10-SYSRES</td><td class="mono">10.10.10.1</td><td class="mono">10.10.200.10</td><td class="mono">10.10.10.50</td><td class="mono">255.255.255.0</td><td class="mono">150</td></tr>
+            <tr><td class="mono">VLAN20-DIRECTION</td><td class="mono">10.10.20.1</td><td class="mono">10.10.200.10</td><td class="mono">10.10.20.50</td><td class="mono">255.255.255.0</td><td class="mono">150</td></tr>
+            <tr><td class="mono">VLAN30-LABO</td><td class="mono">10.10.30.1</td><td class="mono">10.10.200.10</td><td class="mono">10.10.30.50</td><td class="mono">255.255.255.0</td><td class="mono">150</td></tr>
+            <tr><td class="mono">VLAN40-VETO</td><td class="mono">10.10.40.1</td><td class="mono">10.10.200.10</td><td class="mono">10.10.40.50</td><td class="mono">255.255.255.0</td><td class="mono">150</td></tr>
+            <tr><td class="mono">VLAN50-EXPLOITATION</td><td class="mono">10.10.50.1</td><td class="mono">10.10.200.10</td><td class="mono">10.10.50.50</td><td class="mono">255.255.255.0</td><td class="mono">150</td></tr>
+            <tr><td class="mono">VLAN60-SECURITE</td><td class="mono">10.10.60.1</td><td class="mono">10.10.200.10</td><td class="mono">10.10.60.50</td><td class="mono">255.255.255.0</td><td class="mono">150</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="plate">
+      <div class="table-wrap">
+        <table>
+          <caption>NUB-DC01 — zone DNS nublar.ingen.corp (A Records)</caption>
+          <thead><tr><th>Name</th><th>Address</th><th>Name</th><th>Address</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">nub-dc01.nublar.ingen.corp</td><td class="mono">10.10.200.10</td><td class="mono">files.nublar.ingen.corp</td><td class="mono">10.10.200.50</td></tr>
+            <tr><td class="mono">nub-dc02.nublar.ingen.corp</td><td class="mono">10.10.200.11</td><td class="mono">backup.nublar.ingen.corp</td><td class="mono">10.10.200.60</td></tr>
+            <tr><td class="mono">genome.nublar.ingen.corp</td><td class="mono">10.10.200.20</td><td class="mono">proxy.nublar.ingen.corp</td><td class="mono">10.10.200.70</td></tr>
+            <tr><td class="mono">embryo.nublar.ingen.corp</td><td class="mono">10.10.200.25</td><td class="mono">siem.nublar.ingen.corp</td><td class="mono">10.10.200.80</td></tr>
+            <tr><td class="mono">vetcare.nublar.ingen.corp</td><td class="mono">10.10.200.30</td><td class="mono">core.nublar.ingen.corp</td><td class="mono">10.10.10.1</td></tr>
+            <tr><td class="mono">parkops.nublar.ingen.corp</td><td class="mono">10.10.200.40</td><td class="mono">gw.nublar.ingen.corp</td><td class="mono">172.31.0.2</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="note good">
+      <span class="label">Le détail qui fait la démonstration</span>
+      <p>
+        Prenez cinq minutes pour <strong>éditer les pages HTTP</strong> (Services → HTTP →
+        <em>index.html</em>, bouton <em>edit</em>)&nbsp;: quand la classe voit s&rsquo;afficher
+        «&nbsp;GENOME — données classifiées rouge&nbsp;» dans le navigateur d&rsquo;une caisse
+        de la billetterie, l&rsquo;absence de frontière entre les deux entités cesse d&rsquo;être abstraite. C&rsquo;est
+        la mise en scène qui fait passer D3.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ 8 POSTES ============ -->
+  <section id="extremites">
+    <div class="sec-head">
+      <span class="src">Section 8 — Les témoins</span>
+      <h2 class="sec-title">Les postes témoins</h2>
+      <p>Un représentant par VLAN d&rsquo;utilisateurs — le minimum qui permette de tout
+        démontrer.</p>
+    </div>
+    <div class="plate">
+      <div class="table-wrap">
+        <table>
+          <caption>Extrémités — raccordement et adressage</caption>
+          <thead><tr><th>Poste</th><th>Sur</th><th>Port</th><th>VLAN</th><th>Adressage</th></tr></thead>
+          <tbody>
+            <tr><th scope="row" class="row-head">PC-DIR-N5</th><td class="mono">SW-N5-01</td><td class="mono">F0/2</td><td class="mono">20</td><td class="ok">DHCP</td></tr>
+            <tr><th scope="row" class="row-head">PC-DSI-01</th><td class="mono">SW-N4-01</td><td class="mono">F0/2</td><td class="mono">10</td><td class="ok">DHCP</td></tr>
+            <tr><th scope="row" class="row-head">PC-LAB-N3</th><td class="mono">SW-N3-01</td><td class="mono">F0/2</td><td class="mono">30</td><td class="ok">DHCP</td></tr>
+            <tr><th scope="row" class="row-head">PC-VET-N2</th><td class="mono">SW-N2-01</td><td class="mono">F0/2</td><td class="mono">40</td><td class="ok">DHCP</td></tr>
+            <tr><th scope="row" class="row-head">PC-COM-N1</th><td class="mono">SW-N1-01</td><td class="mono">F0/2</td><td class="mono">20</td><td class="ok">DHCP — même pool que PC-DIR-N5&nbsp;: .50 ou .51 selon l&rsquo;ordre des demandes</td></tr>
+            <tr><th scope="row" class="row-head">PC-CAISSE-N0</th><td class="mono">SW-N0-01</td><td class="mono">F0/2</td><td class="mono">50</td><td class="ok">DHCP — poste de Nublar Leisure S.A.</td></tr>
+            <tr><th scope="row" class="row-head">NVR-CCTV</th><td class="mono">SW-N0-01</td><td class="mono">F0/3</td><td class="mono">60</td><td class="ko">statique 10.10.60.10 /24 · gw .1</td></tr>
+            <tr><th scope="row" class="row-head">SCADA-HMI</th><td class="mono">SW-N0-01</td><td class="mono">F0/4</td><td class="mono">70</td><td class="ko">statique 10.10.70.10 /24 · gw .1</td></tr>
+            <tr><th scope="row" class="row-head">AUTOMATE-E1</th><td class="mono">SW-ENCLOS-01</td><td class="mono">F0/2</td><td class="mono">70</td><td class="ko">statique 10.10.70.21 /24 · gw .1</td></tr>
+            <tr><th scope="row" class="row-head">AUTOMATE-E7</th><td class="mono">SW-ENCLOS-02</td><td class="mono">F0/2</td><td class="mono">70</td><td class="ko">statique 10.10.70.27 /24 · gw .1</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 9 DÉMOS ============ -->
+  <section id="demos">
+    <div class="sec-head">
+      <span class="src">Section 9 — Le cours en actes</span>
+      <h2 class="sec-title">Les huit démonstrations à dérouler en classe</h2>
+      <p>Chacune dure trois à cinq minutes, se rejoue à volonté, et renvoie à une partie
+        précise du livret. L&rsquo;ordre est pensé&nbsp;: du fonctionnement normal vers les
+        failles.</p>
+    </div>
+
+    <div class="plate">
+      <div class="table-wrap long stack-sm">
+        <table>
+          <caption>Programme des démonstrations</caption>
+          <thead><tr><th class="num">N°</th><th>Ce que vous montrez</th><th>Manipulation</th><th>Renvoi livret</th><th>Montrée</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="mono">D1</td>
+              <th scope="row" class="row-head">Le voyage d&rsquo;une requête DHCP</th>
+              <td>Mode <strong>Simulation</strong>, filtre DHCP. Sur <code>PC-VET-N2</code>&nbsp;:
+                <code>ipconfig /renew</code>. La classe suit la diffusion jusqu&rsquo;à la SVI,
+                la conversion par le relais, l&rsquo;aller-retour vers <code>NUB-DC01</code> —
+                et le choix du pool par la passerelle.</td>
+              <td>partie 7 — relais DHCP</td>
+              <td class="conf"><input type="checkbox" data-test="D1" aria-label="D1&nbsp;: démonstration montrée"></td>
+            </tr>
+            <tr>
+              <td class="mono">D2</td>
+              <th scope="row" class="row-head">Le cloisonnement qui fonctionne</th>
+              <td><code>PC-LAB-N3</code>&nbsp;: <code>ping 10.10.70.10</code> → échec.
+                <code>PC-DSI-01</code>&nbsp;: même ping → succès. Puis sur CORE&nbsp;:
+                <code>show access-lists</code> — le compteur de la ligne
+                <code>permit ip 10.10.10.0 …</code> de la liste&nbsp;170 a bougé pour le ping
+                réussi&nbsp;; le refus, lui, ne se compte pas (refus implicite, sans compteur —
+                pour le voir, il faudrait écrire <code>deny ip any any log</code> en fin de liste).
+                L&rsquo;ACL <em>se voit</em>.</td>
+              <td>partie 7 — politique de flux</td>
+              <td class="conf"><input type="checkbox" data-test="D2" aria-label="D2&nbsp;: démonstration montrée"></td>
+            </tr>
+            <tr>
+              <td class="mono">D3</td>
+              <th scope="row" class="row-head">La caisse qui voit le génome</th>
+              <td>Navigateur de <code>PC-CAISSE-N0</code> (poste de la <em>filiale</em>)&nbsp;:
+                <code>http://genome.nublar.ingen.corp</code> → la page «&nbsp;accès
+                restreint&nbsp;» s&rsquo;affiche. Silence dans la salle. C&rsquo;est le risque
+                R6 dans sa première étape&nbsp;: la caisse <em>traverse le cœur</em> (VLAN&nbsp;50 → 200)
+                sans rencontrer aucun filtre. Le constat n°&nbsp;11 est l&rsquo;étape suivante&nbsp;:
+                une fois <code>PARKOPS</code> compromis, l&rsquo;attaquant est sur le même segment
+                que <code>GENOME</code>, en couche&nbsp;2 (même VLAN).</td>
+              <td>parties 4 et 10 — absence de filtrage entre entités, VLAN partagé</td>
+              <td class="conf"><input type="checkbox" data-test="D3" aria-label="D3&nbsp;: démonstration montrée"></td>
+            </tr>
+            <tr>
+              <td class="mono">D4</td>
+              <th scope="row" class="row-head">L&rsquo;automate qui sort librement</th>
+              <td><code>AUTOMATE-E1</code>&nbsp;: <code>ping 10.10.200.20</code> → succès&nbsp;:
+                rien n&rsquo;a filtré l&rsquo;aller, et la liste&nbsp;170 laisse revenir la
+                réponse (ligne <code>echo-reply</code>, dont le compteur bouge). Vers
+                <code>PC-DSI-01</code> (<code>ping 10.10.10.50</code>)&nbsp;: succès aussi, mais la
+                réponse entre cette fois par la ligne <code>permit ip 10.10.10.0 …</code>, la
+                première qui correspond. La politique (règle&nbsp;3) dit que les automates
+                «&nbsp;n&rsquo;initient eux-mêmes aucun flux&nbsp;»&nbsp;; la configuration ne
+                filtre que ce qui <em>entre</em> dans le VLAN. Constat n°&nbsp;1, risque R3.</td>
+              <td>partie 10 — constat 1 · schéma 08</td>
+              <td class="conf"><input type="checkbox" data-test="D4" aria-label="D4&nbsp;: démonstration montrée"></td>
+            </tr>
+            <tr>
+              <td class="mono">D5</td>
+              <th scope="row" class="row-head">La supervision des enclos</th>
+              <td><code>SCADA-HMI</code> ping les deux automates → succès. Variante OT&nbsp;: on
+                actionne la sortie du PLC et la «&nbsp;clôture&nbsp;» change d&rsquo;état à
+                l&rsquo;écran.</td>
+              <td>partie 3 — systèmes industriels</td>
+              <td class="conf"><input type="checkbox" data-test="D5" aria-label="D5&nbsp;: démonstration montrée"></td>
+            </tr>
+            <tr>
+              <td class="mono">D6</td>
+              <th scope="row" class="row-head">Le SIEM qui n&rsquo;entend rien</th>
+              <td>Ouvrez <code>SIEM</code> → Services → SYSLOG&nbsp;: <strong>table vide</strong>,
+                alors que le réseau vit depuis vingt minutes. Teaser du chantier 3&nbsp;: tapez
+                <code>logging 10.10.200.80</code> sur CORE, faites un
+                <code>shutdown / no shutdown</code> sur un port — la ligne apparaît en direct.
+                Puis <code>no logging 10.10.200.80</code> pour revenir à l&rsquo;état initial.</td>
+              <td>partie 10 — constat 4 · Nedry</td>
+              <td class="conf"><input type="checkbox" data-test="D6" aria-label="D6&nbsp;: démonstration montrée"></td>
+            </tr>
+            <tr>
+              <td class="mono">D7</td>
+              <th scope="row" class="row-head">La route de retour absente</th>
+              <td>Navigateur de <code>PC-DSI-01</code> → <code>http://172.20.0.10</code>&nbsp;:
+                le site public s&rsquo;affiche. Même URL depuis <code>PC-DIR-N5</code>&nbsp;:
+                rien, jamais. <code>show ip route</code> sur GW-NUBLAR explique tout — deux
+                routes de retour, pas une de plus.</td>
+              <td>partie 7 — les trois pièges de la matrice</td>
+              <td class="conf"><input type="checkbox" data-test="D7" aria-label="D7&nbsp;: démonstration montrée"></td>
+            </tr>
+            <tr>
+              <td class="mono">D8</td>
+              <th scope="row" class="row-head">La pelleteuse</th>
+              <td>Supprimez le lien <code>SW-N0-01 G0/1 ↔ SW-ENCLOS-01</code>. Depuis
+                <code>SCADA-HMI</code>&nbsp;: plus aucun automate ne répond — les vingt-quatre
+                enclos sont aveugles. Rebranchez, et chronométrez le retour&nbsp;: une trentaine de secondes de
+                spanning-tree, faute de tout chemin de secours.
+                Risque R8 — celui qu&rsquo;aucun chantier ne couvre&nbsp;: à vos étudiants de
+                l&rsquo;écrire.</td>
+              <td>partie 3 — matrice, exercice R8</td>
+              <td class="conf"><input type="checkbox" data-test="D8" aria-label="D8&nbsp;: démonstration montrée"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <p class="demo-ops" data-demo="ops" hidden>
+      <span>Démonstrations montrées <b data-demo="count">0/8</b></span>
+      <span data-demo="store">Cochées sur ce poste, d&rsquo;une séance à l&rsquo;autre.</span>
+      <button type="button" data-demo="reset" class="danger">Effacer</button>
+    </p>
+
+    <div class="note good">
+      <span class="label">Le fil conducteur à verbaliser</span>
+      <p>
+        D1, D2, D5 et D7 montrent un réseau <strong>qui fait ce qu&rsquo;on lui a dit</strong>.
+        D3, D4, D6 et D8 montrent l&rsquo;écart entre <strong>ce qu&rsquo;on lui a dit et ce
+        qu&rsquo;on croyait lui avoir dit</strong>. Toute la partie 10 du livret tient dans
+        cette différence — et vos étudiants l&rsquo;auront vue avant de la lire.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ 10 LIMITES ============ -->
+  <section id="limites">
+    <div class="sec-head">
+      <span class="src">Section 10 — Honnêteté de simulation</span>
+      <h2 class="sec-title">Limites assumées</h2>
+      <p>Ce que cette maquette ne simule pas — à dire aux étudiants plutôt qu&rsquo;à
+        laisser deviner.</p>
+    </div>
+    <ul>
+      <li><strong>Active Directory, Hyper-V, la réplication</strong> — <code>NUB-DC02</code>,
+        <code>PROXY</code> et <code>VPN</code> sont des figurants&nbsp;: Packet Tracer ne
+        simule ni annuaire, ni virtualisation, ni mandataire, ni tunnel d&rsquo;accès distant
+        digne de ce nom. Ces rôles se travaillent sur les VM du réseau réel.</li>
+      <li><strong>L&rsquo;administration de SW-DMZ-01 est in-band</strong> — son adresse
+        (<code>172.20.0.2</code>) vit dans le segment même qu&rsquo;il commute, faute de réseau
+        d&rsquo;administration dédié dans la maquette. C&rsquo;est fonctionnel et c&rsquo;est
+        critiquable&nbsp;: la question «&nbsp;comment administre-t-on proprement un équipement
+        de DMZ&nbsp;?&nbsp;» (réponse cible&nbsp;: hors bande) est posée en section&nbsp;6.</li>
+      <li><strong>Le VLAN 100 et la liaison satellite</strong> — absents, comme de la maquette
+        étudiante&nbsp;: ce sont les projets Wi-Fi et sortie Internet.</li>
+      <li><strong>Les volumes</strong> — deux automates au lieu de vingt-quatre, un
+        poste par VLAN au lieu de trois cent cinquante&nbsp;: la maquette démontre les
+        mécanismes, pas la charge.</li>
+    </ul>
+    <p>
+      Sauvegardez sous <code>INGEN-Nublar-SiteComplet.pkt</code> — et gardez une copie
+      intacte&nbsp;: après une séance de démonstrations, la maquette a toujours bougé.
+    </p>
+  </section>
+  </main>
+
+  <footer class="colophon">
+    <p>
+      <strong>InGen — Maquette de démonstration du site complet.</strong> Fiche enseignant du
+      contexte InGen, BTS SIO parcours SISR. Valeurs conformes au
+      <a href="INGEN-Livret-Contexte.html">livret de contexte</a> (parties 3 et 5)&nbsp;; le TP
+      étudiant correspondant est
+      <a href="INGEN-Maquette-PacketTracer.html">la fiche de montage du réseau
+      d&rsquo;apprentissage</a>. Schéma&nbsp;:
+      <code>draw.io/03-topologie-isla-nublar.drawio</code>.
+    </p>
+  </footer>
+
+</div>
+<script>
+/* Fiche enseignant : démonstrations montrées (mémorisées) et mode projection. Sans JS : page complète, cases non mémorisées. */
+(function () {
+  'use strict';
+  var d = document, html = d.documentElement, NS = 'ingen.demo.v1.';
+  html.classList.add('js');
+  function $$(s, c) { return Array.prototype.slice.call((c || d).querySelectorAll(s)); }
+  var ok = false; try { localStorage.setItem(NS + 't', '1'); localStorage.removeItem(NS + 't'); ok = true; } catch (e) {}
+  var mem = null;
+  function defaut() { return { tests: {}, proj: false }; }
+  function load() {
+    var raw = mem;
+    if (ok) { try { raw = localStorage.getItem(NS + 'state'); } catch (e) {} }
+    try { var v = raw ? JSON.parse(raw) : null; return (v && v.tests) ? v : defaut(); } catch (e) { return defaut(); }
+  }
+  function save() { mem = JSON.stringify(state); if (ok) { try { localStorage.setItem(NS + 'state', mem); } catch (e) {} } }
+  var state = load();
+
+  var statusEl = d.getElementById('ux-status');
+  function announce(msg) { if (!statusEl) return; statusEl.textContent = ''; window.setTimeout(function () { statusEl.textContent = msg; }, 60); }
+
+  /* Tableaux empilables : libellés de colonne et rôles ARIA explicites (comme le livret). */
+  $$('.table-wrap.stack-sm table').forEach(function (t) {
+    var heads = $$('thead th', t).map(function (th) { return th.textContent.replace(/\s+/g, ' ').trim(); });
+    t.setAttribute('role', 'table');
+    $$('thead, tbody', t).forEach(function (g) { g.setAttribute('role', 'rowgroup'); });
+    $$('tr', t).forEach(function (tr) { tr.setAttribute('role', 'row'); });
+    $$('thead th', t).forEach(function (th) { th.setAttribute('role', 'columnheader'); });
+    $$('tbody tr', t).forEach(function (tr) {
+      Array.prototype.forEach.call(tr.children, function (cell, i) {
+        if (heads[i]) cell.setAttribute('data-label', heads[i]);
+        cell.setAttribute('role', cell.tagName === 'TH' ? 'rowheader' : 'cell');
+      });
+    });
+  });
+
+  /* Démonstrations montrées : même mécanique que le jeu d'essais de la fiche TP, réduite au type « test ». */
+  var boxes = $$('input[data-test]');
+  function paint() {
+    boxes.forEach(function (b) { b.checked = !!state.tests[b.getAttribute('data-test')]; });
+    var n = boxes.filter(function (b) { return b.checked; }).length, el = d.querySelector('[data-demo="count"]');
+    if (el) el.textContent = n + '/' + boxes.length;
+  }
+  d.addEventListener('change', function (e) {
+    var key = e.target && e.target.getAttribute && e.target.getAttribute('data-test');
+    if (key) { state.tests[key] = e.target.checked; save(); paint(); }
+  });
+  var ops = d.querySelector('[data-demo="ops"]');
+  if (ops) {
+    ops.hidden = false;
+    var storeMsg = d.querySelector('[data-demo="store"]');
+    if (!ok && storeMsg) storeMsg.textContent = 'Ce navigateur n’enregistre pas les données locales : les cases seront perdues à la fermeture.';
+  }
+  var rst = d.querySelector('[data-demo="reset"]');
+  if (rst) rst.addEventListener('click', function () {
+    if (!window.confirm('Décocher toutes les démonstrations enregistrées sur ce poste ?')) return;
+    state.tests = {}; save(); paint();
+    announce('Démonstrations décochées.');
+  });
+  paint();
+
+  /* Mode projection (option P3). */
+  var proj = d.querySelector('[data-demo="proj"]');
+  function paintProj() {
+    html.classList.toggle('projection', !!state.proj);
+    if (proj) proj.setAttribute('aria-pressed', state.proj ? 'true' : 'false');
+  }
+  if (proj) {
+    proj.hidden = false;
+    proj.addEventListener('click', function () { state.proj = !state.proj; save(); paintProj(); });
+  }
+  paintProj();
+})();
+</script>
+</body>
+</html>

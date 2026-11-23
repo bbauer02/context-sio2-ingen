@@ -1,0 +1,1166 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>InGen — Projet 00 : modélisation et audit</title>
+<style>
+  :root {
+    --ground:#F7F4EE; --surface:#FFFFFF; --sunken:#F0EADE;
+    --ink:#1C1913; --ink-muted:#5E5647; --ink-faint:#726958;
+    --rule:#E2DACA; --rule-strong:#C4B89F;
+    --accent:#8A5407; --accent-soft:#F7EBD6;
+    --signal:#A32A1E; --signal-soft:#FAE5E1;
+    --okc:#0E6A4E; --ok-soft:#E3F0E7;
+    --zebra:#FBF8F3; --ctrl:#85785F;
+    --code-bg:#F3EEE4; --code-ink:#241F16;
+    --shadow:0 1px 2px rgba(28,25,19,.05), 0 8px 24px -16px rgba(28,25,19,.3);
+    --f-display:Constantia,"Sitka Text",Cambria,Georgia,serif;
+    --f-body:Corbel,"Segoe UI","Helvetica Neue",system-ui,sans-serif;
+    --f-mono:"Cascadia Mono",Consolas,ui-monospace,monospace;
+    --measure:68ch; --plate:80rem;
+  }
+  @media screen and (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:#131109; --surface:#1C1911; --sunken:#262218;
+      --ink:#EFEADD; --ink-muted:#ADA290; --ink-faint:#9A907F;
+      --rule:#302B20; --rule-strong:#4A4232;
+      --accent:#E4A84F; --accent-soft:#2E2210;
+      --signal:#F0907E; --signal-soft:#331A14;
+      --okc:#6FBE96; --ok-soft:#14261C;
+      --zebra:#211E15; --ctrl:#857A63;
+      --code-bg:#16130C; --code-ink:#E3DCCC;
+      --shadow:0 1px 2px rgba(0,0,0,.45), 0 10px 28px -18px rgba(0,0,0,.85);
+    }
+  }
+  /* Palette sombre sur choix explicite (data-theme), identique à la palette système (livret) */
+  :root[data-theme="dark"] {
+    --ground:#131109; --surface:#1C1911; --sunken:#262218;
+    --ink:#EFEADD; --ink-muted:#ADA290; --ink-faint:#9A907F;
+    --rule:#302B20; --rule-strong:#4A4232;
+    --accent:#E4A84F; --accent-soft:#2E2210;
+    --signal:#F0907E; --signal-soft:#331A14;
+    --okc:#6FBE96; --ok-soft:#14261C;
+    --zebra:#211E15; --ctrl:#857A63;
+    --code-bg:#16130C; --code-ink:#E3DCCC;
+    --shadow:0 1px 2px rgba(0,0,0,.45), 0 10px 28px -18px rgba(0,0,0,.85);
+  }
+  * { box-sizing:border-box; }
+  html, body { overflow-x:clip; }
+  body { margin:0; background:var(--ground); color:var(--ink); font-family:var(--f-body);
+         font-size:17px; line-height:1.62; -webkit-font-smoothing:antialiased; }
+  .shell { max-width:88rem; margin:0 auto; padding:0 1.5rem 5rem; }
+  .masthead { border-bottom:2px solid var(--ink); padding:2.5rem 0 1.4rem; margin-bottom:2.2rem; }
+  .eyebrow { font-size:.75rem; letter-spacing:.14em; text-transform:uppercase; color:var(--accent);
+             font-weight:700; margin:0 0 .8rem; }
+  .masthead h1 { font-family:var(--f-display); font-size:clamp(1.9rem,4.5vw,2.7rem); line-height:1.1;
+                 font-weight:700; margin:0 0 .55rem; }
+  .standfirst { max-width:var(--measure); color:var(--ink-muted); font-size:1.05rem; margin:0 0 1.4rem; }
+  .masthead-meta { display:flex; flex-wrap:wrap; gap:.5rem 2rem; font-size:.82rem; color:var(--ink-faint);
+                   border-top:1px solid var(--rule); padding-top:.9rem; }
+  .masthead-meta b { color:var(--ink-muted); font-weight:600; }
+  section { scroll-margin-top:1.5rem; }
+  section + section { margin-top:3.6rem; }
+  .sec-head { border-top:2px solid var(--ink); padding-top:1rem; margin-bottom:1.4rem; }
+  .sec-head .src { font-family:var(--f-mono); font-size:.74rem; letter-spacing:.04em; color:var(--accent);
+                   text-transform:uppercase; display:block; margin-bottom:.45rem; }
+  h2.sec-title { font-family:var(--f-display); font-size:clamp(1.4rem,2.8vw,1.8rem); font-weight:700; margin:0; }
+  .sec-head p { max-width:var(--measure); color:var(--ink-muted); margin:.6rem 0 0; font-size:.95rem; }
+  h3 { font-family:var(--f-display); font-size:1.2rem; font-weight:700; margin:2.1rem 0 .7rem; }
+  p, ul, ol { max-width:var(--measure); }
+  p { margin:0 0 1rem; }
+  ul, ol { margin:0 0 1.1rem; padding-left:1.15rem; }
+  li { margin-bottom:.35rem; }
+  li::marker { color:var(--accent); }
+  a { color:var(--accent); }
+  .plate { max-width:var(--plate); margin:1.4rem 0 1.8rem; }
+  .table-wrap { overflow-x:auto; border:1px solid var(--rule); border-radius:3px;
+                background:var(--surface); box-shadow:var(--shadow); }
+  table { border-collapse:collapse; width:100%; font-size:.87rem; }
+  caption { caption-side:top; text-align:left; font-size:.76rem; letter-spacing:.09em;
+            text-transform:uppercase; font-weight:700; color:var(--ink-faint); padding:0 0 .55rem; }
+  th, td { padding:.5rem .75rem; text-align:left; vertical-align:top; border-bottom:1px solid var(--rule); }
+  thead th { background:var(--sunken); font-size:.72rem; letter-spacing:.07em; text-transform:uppercase;
+             font-weight:700; color:var(--ink-muted); white-space:nowrap; }
+  tbody tr:last-child td { border-bottom:0; }
+  td.mono, .mono { font-family:var(--f-mono); font-size:.8rem; }
+  .row-head { font-weight:700; white-space:nowrap; }
+  .ok { color:var(--okc); font-weight:700; }
+  .ko { color:var(--signal); font-weight:700; }
+  code { font-family:var(--f-mono); font-size:.88em; }
+  p code, li code, td code { background:var(--sunken); padding:.07em .3em; border-radius:2px; }
+  .config { margin:1.2rem 0 1.8rem; max-width:var(--plate); }
+  .config-head { display:flex; flex-wrap:wrap; align-items:baseline; gap:.5rem 1rem;
+                 border:1px solid var(--rule); border-bottom:0; background:var(--sunken);
+                 padding:.5rem .85rem; border-radius:3px 3px 0 0; }
+  .config-head .name { font-family:var(--f-mono); font-weight:700; font-size:.86rem; }
+  .config-head .kind { font-size:.76rem; color:var(--ink-muted); }
+  pre { margin:0; padding:.95rem 1.05rem; background:var(--code-bg); color:var(--code-ink);
+        border:1px solid var(--rule); border-radius:0 0 3px 3px; overflow-x:auto;
+        font-family:var(--f-mono); font-size:.79rem; line-height:1.58; tab-size:2; }
+  pre .c { color:var(--ink-faint); font-style:italic; }
+  .note { max-width:var(--plate); border-left:3px solid var(--accent); background:var(--accent-soft);
+          padding:.9rem 1.05rem; margin:1.4rem 0; border-radius:0 3px 3px 0; font-size:.93rem; }
+  .note.warn { border-left-color:var(--signal); background:var(--signal-soft); }
+  .note.good { border-left-color:var(--okc); background:var(--ok-soft); }
+  .note > :last-child { margin-bottom:0; }
+  .note p, .note ul, .note ol { max-width:none; }
+  .note .label { display:block; font-size:.71rem; letter-spacing:.11em; text-transform:uppercase;
+                 font-weight:700; color:var(--accent); margin-bottom:.35rem; }
+  .note.warn .label { color:var(--signal); }
+  .note.good .label { color:var(--okc); }
+  .steps { list-style:none; padding:0; counter-reset:step; max-width:var(--plate); }
+  .steps li { counter-increment:step; padding-left:2.1rem; position:relative; margin-bottom:.55rem; }
+  .steps li::before { content:counter(step); position:absolute; left:0; top:.05em; width:1.5rem;
+                      height:1.5rem; display:grid; place-items:center; border-radius:50%;
+                      background:var(--accent); color:var(--ground); font-family:var(--f-mono);
+                      font-size:.72rem; font-weight:700; }
+  figure { margin:1.5rem 0 2rem; max-width:var(--plate); }
+  .fig-frame { border:1px solid var(--rule); background:var(--surface); border-radius:3px;
+               padding:1rem; overflow-x:auto; box-shadow:var(--shadow); }
+  .fig-frame img { width:100%; display:block; background:#fff; border-radius:2px; }
+  figcaption { font-size:.83rem; color:var(--ink-muted); margin-top:.6rem; max-width:var(--measure); }
+  .toc-inline { max-width:var(--plate); background:var(--surface); border:1px solid var(--rule);
+                border-radius:3px; padding:1rem 1.3rem; box-shadow:var(--shadow); margin:0 0 2rem; }
+  .toc-inline b { display:block; font-size:.72rem; letter-spacing:.12em; text-transform:uppercase;
+                  color:var(--ink-faint); margin-bottom:.5rem; }
+  .toc-inline ol { columns:2; column-gap:2.5rem; margin:0; padding-left:1.1rem; font-size:.9rem; }
+  @media (max-width:640px){ .toc-inline ol { columns:1; } }
+  footer.colophon { margin-top:4rem; border-top:2px solid var(--ink); padding-top:1.1rem;
+                    font-size:.82rem; color:var(--ink-faint); max-width:var(--plate); }
+  @media print {
+    :root, :root[data-theme="dark"] {
+      --ground:#fff; --surface:#fff; --sunken:#f2f0ea; --ink:#000; --ink-muted:#333;
+      --ink-faint:#555; --rule:#bbb; --rule-strong:#888; --accent:#6B3F04; --accent-soft:#f7f0e4;
+      --signal:#8B231A; --signal-soft:#faece9; --okc:#0d4a34; --ok-soft:#e9f2ec;
+      --zebra:#f7f7f7; --ctrl:#555;
+      --code-bg:#f6f6f6; --code-ink:#111; --shadow:none;
+    }
+    body { font-size:10.5pt; }
+    .shell { max-width:none; padding:0; }
+    .sec-head, h3 { break-after:avoid; }
+    .sec-head { break-inside:avoid; }
+    .note, .table-wrap, figure { break-inside:avoid; }
+    tr { break-inside:avoid; }
+    a { color:inherit; text-decoration:none; }
+  }
+
+  /* ---------- Rappels de cours repliables ---------- */
+  details.note.rappel { padding-top: .6rem; padding-bottom: .6rem; }
+  details.note.rappel > summary {
+    cursor: pointer;
+    list-style: none;
+  }
+  details.note.rappel > summary::-webkit-details-marker { display: none; }
+  details.note.rappel > summary .label { display: inline; margin: 0; }
+  details.note.rappel > summary .label::before { content: "▸\00a0"; }
+  details.note.rappel[open] > summary .label::before { content: "▾\00a0"; }
+  details.note.rappel[open] > summary { margin-bottom: .5rem; }
+  details.note.rappel > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  /* ---------- Refonte : pictogrammes (tracés inspirés de Lucide, licence ISC) — mêmes jetons que le livret ---------- */
+  :root {
+    --ico-book: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z'/%3E%3Cpath d='M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z'/%3E%3C/svg%3E");
+    --ico-warn: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z'/%3E%3Cpath d='M12 9v4'/%3E%3Cpath d='M12 17h.01'/%3E%3C/svg%3E");
+    --ico-pencil: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z'/%3E%3Cpath d='m15 5 4 4'/%3E%3C/svg%3E");
+    --ico-mark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z'/%3E%3C/svg%3E");
+    --ico-teacher: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 3h6v3H9z'/%3E%3Cpath d='M15 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2'/%3E%3Cpath d='M9 12h6M9 16h4'/%3E%3C/svg%3E");
+    --ico-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 11.1V12a10 10 0 1 1-5.9-9.1'/%3E%3Cpath d='M22 4 12 14l-3-3'/%3E%3C/svg%3E");
+    --ico-tick: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7'/%3E%3C/svg%3E");
+    --ico-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 6 6 6-6 6'/%3E%3C/svg%3E");
+  }
+
+  /* ---------- Refonte : typographie (C2) ---------- */
+  p { text-wrap: pretty; }
+  @media (max-width: 560px) { p, li, dd { hyphens: auto; } }
+  /* Encadrés : la boîte peut rester large, le texte reste à la mesure */
+  .note { max-width: calc(var(--measure) + 2.5rem); }
+  .note p, .note ul, .note ol { max-width: var(--measure); }
+  .note:has(pre, table, .plate) { max-width: var(--plate); }
+  /* Chiffres alignés et de même hauteur */
+  table { font-variant-numeric: lining-nums tabular-nums; }
+  /* Chiffres alignés dans le texte courant : « VLAN 10 », « E5 », adresses IP */
+  body { font-variant-numeric: lining-nums; }
+
+  /* ---------- Refonte : encadrés typés (C3) — le pictogramme double le libellé, il ne le remplace pas ---------- */
+  .ico, .note.warn > .label::before, .note.task > .label::before, .note.key > .label::before,
+  details.note.rappel > summary::before {
+    content: "";
+    display: inline-block;
+    flex: none;
+    width: 1.15em; height: 1.15em;
+    background-color: currentColor;
+    -webkit-mask: var(--ico) center / contain no-repeat;
+            mask: var(--ico) center / contain no-repeat;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .note > .label { display: flex; align-items: center; gap: .45rem; }
+  .note.warn    > .label { --ico: var(--ico-warn); }
+  .note.task    > .label { --ico: var(--ico-pencil); color: var(--okc); }
+  .note.key     > .label { --ico: var(--ico-mark); }
+
+  .note.task    { border-left-color: var(--okc); background: var(--ok-soft); }
+  .note.key     { background: var(--surface); border: 1px solid var(--accent); border-left-width: 4px; }
+
+  /* Rappels : contenu facultatif, donc visuellement en retrait ; pictogramme de type à gauche, chevron d'état à droite */
+  details.note.rappel { background: var(--sunken); border-left-color: var(--rule-strong); }
+  details.note.rappel > summary {
+    display: flex; align-items: center; gap: .5rem;
+    min-height: 1.75rem;
+    color: var(--accent); --ico: var(--ico-book);
+  }
+  details.note.rappel > summary .label::before, details.note.rappel[open] > summary .label::before { content: none; }   /* retire ▸ / ▾ (aussi à l'état ouvert) */
+  details.note.rappel > summary::after {
+    content: ""; margin-left: auto; flex: none; width: 1rem; height: 1rem; background-color: currentColor;
+    -webkit-mask: var(--ico-chevron) center / contain no-repeat; mask: var(--ico-chevron) center / contain no-repeat;
+    transition: transform .15s ease;
+  }
+  details.note.rappel[open] > summary::after { transform: rotate(90deg); }
+  @media print { details.note.rappel > summary::after { display: none; } }
+
+  /* ---------- Refonte : cases à cocher (même dessin que .crit input du livret, C8) ---------- */
+  .step-done input[type="checkbox"], .cp-ok input[type="checkbox"], td.conf input[type="checkbox"] {
+    -webkit-appearance: none; appearance: none; margin: 0; flex: none;
+    width: 1.3rem; height: 1.3rem; display: inline-grid; place-content: center;
+    background: var(--surface); border: 2px solid var(--ctrl); border-radius: 3px; cursor: pointer;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .step-done input[type="checkbox"]::after, .cp-ok input[type="checkbox"]::after, td.conf input[type="checkbox"]::after {
+    content: ""; width: .9rem; height: .9rem; background-color: var(--surface); transform: scale(0);
+    -webkit-mask: var(--ico-tick) center/contain no-repeat; mask: var(--ico-tick) center/contain no-repeat;
+  }
+  .step-done input[type="checkbox"]:checked, .cp-ok input[type="checkbox"]:checked, td.conf input[type="checkbox"]:checked { background: var(--okc); border-color: var(--okc); }
+  .step-done input[type="checkbox"]:checked::after, .cp-ok input[type="checkbox"]:checked::after, td.conf input[type="checkbox"]:checked::after { transform: scale(1); }
+  td.conf { text-align: center; vertical-align: middle; }
+
+  /* ---------- Refonte : tableaux (C7) ---------- */
+  tbody tr:last-child > th { border-bottom: 0; }
+  .table-wrap.long tbody tr:nth-child(even) > :is(td, th) { background: var(--zebra); }
+  tbody th.row-head { font-weight: 700; text-align: left; vertical-align: top; }
+  /* En-têtes collants : uniquement sur grand écran, où le tableau tient sans défilement horizontal */
+  @media screen and (min-width: 1080px) {
+    .table-wrap.long { overflow: visible; }
+    .table-wrap.long thead th { position: sticky; top: var(--bar-h, 0px); z-index: 2; box-shadow: inset 0 -1px 0 var(--rule-strong); }
+  }
+  /* Empilement : sous 640 px, chaque ligne devient une fiche, chaque cellule est précédée de son en-tête */
+  @media screen and (max-width: 640px) {
+    .stack-sm table, .stack-sm tbody, .stack-sm tr, .stack-sm td, .stack-sm tbody th { display: block; width: 100%; }
+    .stack-sm thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+    .stack-sm tr { padding: .65rem .85rem; border-bottom: 1px solid var(--rule-strong); }
+    .stack-sm tbody tr:last-child { border-bottom: 0; }
+    .stack-sm td, .stack-sm tbody th { border: 0; padding: .12rem 0; white-space: normal; }
+    .stack-sm [data-label]::before {
+      content: attr(data-label); display: block; margin-top: .35rem;
+      font-family: var(--f-body); font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; font-weight: 700; color: var(--ink-faint);
+    }
+    .stack-sm caption { display: block; padding: .6rem .85rem .2rem; }
+    .stack-sm tr > :first-child::before { margin-top: 0; }
+    .stack-sm td.conf { text-align: left; }
+    .table-wrap.long.stack-sm tbody tr:nth-child(even) > * { background: none; }
+    .table-wrap.long.stack-sm tbody tr:nth-child(even) { background: var(--zebra); }
+  }
+
+  /* ---------- Refonte : accessibilité (C6, C12) ---------- */
+  .sr-only { position:absolute !important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
+  .skip { position:absolute; left:1rem; top:-5rem; z-index:100; padding:.5rem .8rem; background:var(--ink); color:var(--ground); border-radius:3px; font-weight:700; }
+  .skip:focus { top:.75rem; }
+  main:focus { outline: none; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+  html { scroll-padding-top: calc(var(--bar-h, 0px) + .75rem); }
+  section { scroll-margin-top: calc(var(--bar-h, 0px) + 1rem); }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  }
+  @media print {
+    .skip { display: none !important; }
+    /* Cases imprimées vides, à cocher au stylo */
+    .step-done input[type="checkbox"], .cp-ok input[type="checkbox"], td.conf input[type="checkbox"] {
+      width: .9rem; height: .9rem; background: #fff !important; border: 1.5px solid #555 !important;
+    }
+    .step-done input[type="checkbox"]::after, .cp-ok input[type="checkbox"]::after, td.conf input[type="checkbox"]::after { transform: scale(0) !important; }
+    .table-wrap.long thead th { position: static; }
+  }
+
+  /* ---------- Refonte : fiche TP (C10) ---------- */
+  /* Points de contrôle : dans la fiche TP, .note.good est le type « contrôle » (pictogramme coche) */
+  .note.good > .label { --ico: var(--ico-check); }
+  .note.good > .label::before {
+    content: ""; display: inline-block; flex: none; width: 1.15em; height: 1.15em; background-color: currentColor;
+    -webkit-mask: var(--ico) center / contain no-repeat; mask: var(--ico) center / contain no-repeat;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .step-meta { display:flex; flex-wrap:wrap; gap:.4rem 1.2rem; align-items:center; margin:.7rem 0 0; font-size:.84rem; }
+  .sec-head p.step-meta { color: var(--ink); font-size: .84rem; }
+  .budget { font-family:var(--f-mono); font-size:.76rem; padding:.05rem .45rem; border:1px solid var(--rule-strong); border-radius:2px; color:var(--ink-muted); }
+  .step-done, .cp-ok { display:inline-flex; gap:.5rem; align-items:center; min-height:1.75rem; cursor:pointer; font-weight:700; }
+  .cp-ok { margin-top:.6rem; color:var(--okc); }
+  .note.good.checkpoint > .label { display:flex; align-items:center; gap:.45rem; }
+  .note.checkpoint > p { margin-bottom:.45rem; }
+  /* Liste d'étapes : le texte reste à la mesure (C2) */
+  .steps { max-width: calc(var(--measure) + 2.1rem); }
+  .toc-inline li.is-done > a::after { content:" ✓"; color:var(--okc); }
+  .tp-ops { display:flex; flex-wrap:wrap; gap:.3rem 1rem; align-items:center; margin:.85rem 0 0; padding-top:.65rem;
+            border-top:1px solid var(--rule); font-size:.8rem; color:var(--ink-muted); max-width:none; }
+  .tp-ops[hidden] { display: none; }
+  .tp-ops button, .tp-chrono button {
+    min-height: 1.75rem; padding: .1rem .6rem; font: inherit; font-size: .8rem; background: var(--surface);
+    color: var(--ink); border: 1px solid var(--ctrl); border-radius: 3px; cursor: pointer;
+  }
+  .tp-ops button:hover, .tp-chrono button:hover { border-color: var(--ink-muted); }
+  .tp-ops button.danger { color: var(--signal); border-color: var(--signal); }
+  .tp-bar {
+    position: sticky; top: 0; z-index: 30; display: flex; flex-wrap: wrap; gap: .3rem 1.2rem; align-items: center;
+    margin: 0 -1.5rem 1.5rem; padding: .45rem 1.5rem; background: var(--ground); border-bottom: 1px solid var(--rule);
+    font-size: .84rem; color: var(--ink-muted); font-variant-numeric: tabular-nums lining-nums;
+  }
+  .tp-bar[hidden] { display: none; }
+  .tp-here { font-weight: 700; color: var(--ink); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1 1 14rem; }
+  .tp-count { white-space: nowrap; }
+  .tp-count b { color: var(--ink); }
+  .tp-chrono { display: inline-flex; flex-wrap: wrap; gap: .45rem; align-items: center; }
+  .tp-chrono [role="timer"] { font-family: var(--f-mono); color: var(--ink); min-width: 4.5ch; }
+  /* Petit écran : la barre ne colle plus (elle mangerait l'écran), elle reste en tête de fiche */
+  @media screen and (max-width: 640px) {
+    .tp-bar { position: static; gap: .3rem .9rem; }
+    .tp-here { flex-basis: 100%; }
+  }
+  @media print {
+    .tp-bar, .tp-ops { display: none !important; }
+    .toc-inline li.is-done > a::after { content: none; }
+  }
+
+  /* ---------- Projet : fiche d’audit à remplir ---------- */
+  #fiche td.fill { min-width: 7rem; height: 2.2rem; background: var(--zebra); }
+  #fiche td.fill:focus { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .fiche-table td.mono { white-space: nowrap; }
+  .table-wrap + .table-wrap { margin-top: 1.5rem; }
+  @media print { .config { break-inside: avoid; } }
+  /* Cadres en pleine largeur */
+  .note, details.note.rappel, .note:has(pre, table, .plate), .config, .table-wrap, .toc-inline { max-width: none; width: auto; }
+  .note p, .note ul, .note ol { max-width: none; }
+  .recette-ops[hidden] { display: none; }
+  .recette-ops { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; }
+  .recette-ops button { font: inherit; padding: .35rem .7rem; cursor: pointer; color: var(--ink);
+    background: var(--surface); border: 1px solid var(--ctrl); border-radius: 4px; }
+  .recette-ops span { font-size: .85rem; color: var(--ink-muted); }
+  @media print {
+    .recette-ops, .toc-inline { display: none !important; }
+    /* La fiche est une preuve : les cases cochées restent visibles dans le PDF */
+    .fiche-table td.conf input[type="checkbox"]:checked { background: #0d4a34 !important; border-color: #0d4a34 !important; }
+    .fiche-table td.conf input[type="checkbox"]:checked::after { transform: scale(1) !important; background-color: #fff !important; }
+    body.print-fiche .masthead, body.print-fiche .colophon, body.print-fiche main > section:not(#fiche), body.print-fiche .toc-inline { display: none !important; }
+    body.print-fiche #fiche .sec-head { display: none !important; }
+    #fiche .table-wrap { break-inside: auto; }
+    #fiche .table-wrap.long { overflow: visible; }
+  }
+
+  /* ---------- Projet 00 : cases de la fiche ---------- */
+  #fiche td.fill { min-width: 6rem; }
+  #fiche h3 { margin-top: 2.4rem; }
+</style>
+</head>
+<body>
+<a class="skip" href="#contenu">Aller au contenu</a>
+<div class="shell">
+
+  <header class="masthead">
+    <p class="eyebrow">Contexte InGen · Projet 00 · Travail préparatoire</p>
+    <h1>Modéliser le réseau d’apprentissage et auditer la configuration livrée</h1>
+    <p class="standfirst">
+      Personne ne vous remet de fichier Packet Tracer. Vous allez donc construire vous-même
+      la maquette du réseau sur lequel porteront tous les projets de l’année, puis faire
+      l’état des lieux de sa configuration : relever ce qu’elle contient, mesurer ce
+      qu’elle laisse passer et prouver ses faiblesses, commande en main.
+    </p>
+    <div class="masthead-meta">
+      <span><b>Prépare</b> les projets des chantiers 1, 2 et 3</span>
+      <span><b>Constats relevés</b> 1 à 10 (livret, partie 10)</span>
+      <span><b>Épreuves</b> E6 · administration des systèmes et réseaux — E7 · cybersécurité</span>
+      <span><b>Organisation</b> seul</span>
+      <span><b>Durée indicative</b> 6 h : modélisation 1 h 30, relevé 2 h, essais et constats 1 h 30, compte rendu 1 h</span>
+      <span><b>Version Packet Tracer</b> 9.1, comme la fiche de montage</span>
+    </div>
+  </header>
+
+  <main id="contenu" tabindex="-1">
+
+  <div class="toc-inline">
+    <b>Sommaire</b>
+    <ol>
+      <li><a href="#demande">La demande</a></li>
+      <li><a href="#perimetre">Ce que vous modélisez</a></li>
+      <li><a href="#phase1">Phase 1 : modéliser</a></li>
+      <li><a href="#phase2">Phase 2 : relever l’existant</a></li>
+      <li><a href="#phase3">Phase 3 : mesurer les flux</a></li>
+      <li><a href="#phase4">Phase 4 : prouver les constats</a></li>
+      <li><a href="#pieges">Les pièges à éviter</a></li>
+      <li><a href="#fiche">La fiche d’audit</a></li>
+      <li><a href="#compte-rendu">Le compte rendu</a></li>
+      <li><a href="#livrables">Les livrables</a></li>
+      <li><a href="#evaluation">Ce qui sera évalué</a></li>
+      <li><a href="#suite">Vers les projets</a></li>
+    </ol>
+  </div>
+
+  <section id="demande">
+    <div class="sec-head">
+      <span class="src">1 — Le besoin</span>
+      <h2 class="sec-title">La demande de votre responsable</h2>
+    </div>
+    <div class="note key">
+      <span class="label">Demande du responsable Systèmes &amp; Réseaux d’Isla Nublar</span>
+      <p>
+        Vous arrivez sur un réseau que vous n’avez pas construit. Le prestataire nous a laissé
+        un dossier, celui des parties 7 et 8 du livret, mais aucun environnement de test. Je ne
+        laisserai personne toucher à un équipement de production sans avoir d’abord répété son
+        intervention ailleurs.
+      </p>
+      <p>
+        Construisez d’abord une maquette fidèle de la partie du réseau sur laquelle nous
+        allons travailler cette année. Faites ensuite l’état des lieux de sa configuration.
+        Je ne veux pas un résumé du dossier : je veux ce que les équipements disent
+        eux-mêmes, chaque valeur prouvée par une commande. Depuis le précédent Nedry, la
+        direction ne fait plus confiance à une documentation que personne n’a vérifiée.
+      </p>
+      <p>
+        Pour finir, dites-moi ce que ce réseau laisse réellement passer, comparé à ce que
+        notre politique de sécurité annonce, et prouvez chacune de ses faiblesses. Ne corrigez
+        rien : chaque correction fera l’objet d’un projet.
+      </p>
+    </div>
+  </section>
+
+  <section id="perimetre">
+    <div class="sec-head">
+      <span class="src">2 — Le périmètre</span>
+      <h2 class="sec-title">Ce que vous modélisez, et ce que vous ne modélisez pas</h2>
+      <p>
+        Vous ne reproduisez pas tout le système d’information d’Isla Nublar. Vous construisez
+        le <strong>réseau d’apprentissage</strong> : sept équipements, cinq VLAN. C’est un
+        extrait fidèle du site, avec les mêmes noms, les mêmes adresses et les mêmes VLAN. Il
+        servira de cadre à tous les projets de l’année.
+      </p>
+      <p><strong>Documents utiles :</strong> <a href="INGEN-Maquette-PacketTracer.html">fiche de montage</a> ; livret, parties <a href="INGEN-Livret-Contexte.html#reseau">7</a>, <a href="INGEN-Livret-Contexte.html#configurations">8</a> et <a href="INGEN-Livret-Contexte.html#audit">10</a>.</p>
+    </div>
+
+    <figure>
+      <div class="fig-frame"><img src="draw.io/png/07-topologie-reseau-apprentissage.png" alt="Topologie du réseau d’apprentissage : GW-NUBLAR relié à CORE-NUBLAR par le VLAN 300 de transit ; NUB-DC01 dans le VLAN 200 et PC-DSI-01 dans le VLAN 10, sur CORE-NUBLAR ; un trunk vers SW-N3-01, qui dessert PC-LAB-N3 dans le VLAN 30 et AUTOMATE-N3 dans le VLAN 70."></div>
+      <figcaption>Ce que vous modélisez : le réseau d’apprentissage (schéma 07). La carte du site complet est le schéma 03 du livret, partie 7.</figcaption>
+    </figure>
+
+    <div class="table-wrap">
+      <table>
+        <caption>Dans la maquette, hors de la maquette</caption>
+        <thead><tr><th>Modélisé ici</th><th>Pas modélisé ici</th><th>Où il apparaîtra</th></tr></thead>
+        <tbody>
+          <tr><td>GW-NUBLAR, CORE-NUBLAR et un seul commutateur d’accès, SW-N3-01</td><td>Les cinq autres commutateurs d’accès</td><td>Jamais : SW-N3-01 suffit à les représenter</td></tr>
+          <tr><td>VLAN 10, 30, 70, 200 et 300</td><td>VLAN 20, 40, 50, 60 et 100</td><td>VLAN 100 : projet Wi-Fi visiteurs (chantier 6)</td></tr>
+          <tr><td>NUB-DC01, réduit à DHCP et DNS, plus la page de recette du prestataire</td><td>L’annuaire, Hyper-V, les neuf autres serveurs</td><td>Projet annuaire (chantier 4), sur machines virtuelles</td></tr>
+          <tr><td>Un automate, simulé par un PC en adressage statique</td><td>Les quatre coffrets d’enclos, SCADA-HMI</td><td>Variante OT de la fiche de montage, annexe B</td></tr>
+          <tr><td>La liaison de transit vers GW-NUBLAR</td><td>La sortie Internet, la DMZ, le VPN</td><td>Projets sortie Internet et DMZ (chantiers 9 et 15)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <details class="note rappel">
+      <summary><span class="label">Rappel de cours — Modéliser, ce n’est pas tout reproduire</span></summary>
+      <p>
+        Un modèle se juge à sa capacité à faire apparaître les mécanismes qu’on veut étudier,
+        pas au nombre d’équipements. Le réseau d’apprentissage contient <strong>au moins un
+        exemplaire de chaque mécanisme</strong> dont les projets ont besoin :
+      </p>
+      <ul>
+        <li>un trunk 802.1Q entre deux commutateurs ;</li>
+        <li>un routage inter-VLAN par SVI sur un commutateur de niveau 3 ;</li>
+        <li>un agent relais DHCP, avec un serveur placé dans un autre VLAN que ses clients ;</li>
+        <li>deux listes de contrôle d’accès étendues, posées en sortie ;</li>
+        <li>un cloisonnement obtenu par l’<em>absence</em> de route de retour ;</li>
+        <li>un VLAN industriel qui ne doit rien émettre.</li>
+      </ul>
+      <p>
+        Ajouter les cinq autres commutateurs d’accès ne ferait apparaître aucun mécanisme
+        nouveau : ce serait du temps de saisie, pas de l’apprentissage. À l’inverse, un modèle
+        a des limites, et il faut les connaître : Packet Tracer ne sait pas faire d’annuaire, un
+        PC ne se comporte pas comme un automate, et un serveur simulé ne connaît que les
+        services de son onglet <em>Services</em>. Un test réussi sur la maquette ne prouve
+        quelque chose sur le réseau réel que si le mécanisme testé y est fidèlement reproduit.
+        Le compte rendu vous le fera dire.
+      </p>
+    </details>
+  </section>
+
+  <section id="phase1">
+    <div class="sec-head">
+      <span class="src">3 — Seul, dans Packet Tracer · ≈ 1 h 30</span>
+      <h2 class="sec-title">Phase 1 : modéliser</h2>
+      <p>
+        Suivez la <a href="INGEN-Maquette-PacketTracer.html">fiche de montage</a> de bout en
+        bout, étapes 1 à 10, jusqu’au jeu d’essais T1 à T10 compris. Enregistrez votre fichier
+        sous <code>INGEN-Nublar-G&lt;xx&gt;.pkt</code>.
+      </p>
+    </div>
+    <div class="note warn">
+      <span class="label">Règle du jeu : vous construisez l’état livré, défauts compris</span>
+      <p>
+        La configuration à saisir est volontairement fautive : aucun mot de passe, Telnet non
+        interdit, VLAN natif laissé à 1, filtrage posé dans un seul sens. <strong>Ne corrigez
+        rien</strong>, même si un défaut vous saute aux yeux : notez-le. C’est lui que vous
+        devrez prouver en phase 4. Une maquette « améliorée » fausserait l’audit et tous les
+        projets qui en partiront.
+      </p>
+    </div>
+    <div class="note good">
+      <span class="label">Point de contrôle : la maquette est prête</span>
+      <p>
+        Les dix essais T1 à T10 de la fiche de montage sont conformes, y compris les trois
+        échecs attendus (T7, T8, T10). Les trois équipements Cisco ont été enregistrés par
+        <code>copy running-config startup-config</code>. Faites tout de suite une copie de
+        sauvegarde de votre <code>.pkt</code> : ce fichier sera le point de départ de chaque
+        projet, et il doit rester dans l’état livré.
+      </p>
+    </div>
+
+    <figure>
+      <div class="fig-frame"><img src="img/projet00/01-topologie-pt.png" alt="La maquette dans la vue logique de Packet Tracer : GW-NUBLAR au-dessus de CORE-NUBLAR ; PC-DSI-01 et NUB-DC01 reliés au cœur ; un lien en pointillés (câble croisé) vers SW-N3-01, qui dessert PC-LAB-N3 et AUTOMATE-N3. Toutes les pastilles sont vertes." loading="lazy"></div>
+      <figcaption>Capture 1 — La maquette terminée, vue logique. Toutes les pastilles sont vertes, y compris le lien GW-NUBLAR ↔ CORE-NUBLAR après le <code>no shutdown</code>. Le seul lien en pointillés est le câble croisé du trunk.</figcaption>
+    </figure>
+
+    <figure>
+      <div class="fig-frame"><img src="img/projet00/02-t1-ipconfig.png" alt="Sortie de ipconfig /all sur PC-DSI-01 : adresse IPv4 10.10.10.50, masque 255.255.255.0, passerelle 10.10.10.1, serveur DHCP 10.10.200.10, serveur DNS 10.10.200.10." loading="lazy"></div>
+      <figcaption>Capture 2 — Essai T1 sur PC-DSI-01. Le bail arrive du serveur 10.10.200.10, qui se trouve dans un autre VLAN : c’est le relais de la SVI Vlan10 qui a fait le travail.</figcaption>
+    </figure>
+
+    <figure>
+      <div class="fig-frame"><img src="img/projet00/03-t3-t8-ping.png" alt="Deux pings depuis PC-DSI-01 : vers 10.10.200.10, quatre réponses ; vers 10.10.30.50, quatre messages Destination host unreachable renvoyés par 10.10.10.1." loading="lazy"></div>
+      <figcaption>Capture 3 — Essais T3 et T8 sur PC-DSI-01. Le serveur répond. Le poste du laboratoire, lui, est refusé : c’est la passerelle 10.10.10.1 qui renvoie « Destination host unreachable », signe que la liste 130 a jeté l’écho. Un échec attendu est un essai conforme.</figcaption>
+    </figure>
+  </section>
+
+  <section id="phase2">
+    <div class="sec-head">
+      <span class="src">4 — Ce que disent les équipements · ≈ 2 h</span>
+      <h2 class="sec-title">Phase 2 : relever l’existant</h2>
+      <p>
+        Vous remplissez les tableaux 2 à 8 de la <a href="#fiche">fiche d’audit</a>.
+        <strong>Chaque valeur provient d’une commande passée sur votre maquette</strong>,
+        jamais de la fiche de montage ni du livret, et cette commande est notée en face de la
+        valeur. Plusieurs valeurs demandées n’existent dans aucun document : les adresses MAC,
+        les baux obtenus, les compteurs des listes. Elles ne peuvent venir que de votre fichier.
+      </p>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <caption>Les commandes du relevé</caption>
+        <thead><tr><th>Pour relever…</th><th>Commande</th><th>Sur</th></tr></thead>
+        <tbody>
+          <tr><td>Le modèle et la version du système</td><td><code>show version</code></td><td>Les trois équipements Cisco</td></tr>
+          <tr><td>Les VLAN et leurs ports d’accès</td><td><code>show vlan brief</code></td><td>CORE-NUBLAR, SW-N3-01</td></tr>
+          <tr><td>Les trunks, leur VLAN natif, les VLAN qu’ils transportent</td><td><code>show interfaces trunk</code></td><td>CORE-NUBLAR, SW-N3-01</td></tr>
+          <tr><td>Le mode réel d’un port (<em>access</em>, <em>trunk</em>, négociation)</td><td><code>show interfaces &lt;port&gt; switchport</code></td><td>CORE-NUBLAR, SW-N3-01</td></tr>
+          <tr><td>Qui est branché où</td><td><code>show mac address-table</code>, <code>show cdp neighbors</code></td><td>CORE-NUBLAR, SW-N3-01</td></tr>
+          <tr><td>Les adresses et l’état des interfaces</td><td><code>show ip interface brief</code></td><td>Les trois</td></tr>
+          <tr><td>Le relais DHCP et les listes appliquées</td><td><code>show ip interface Vlan10</code> (puis Vlan30, Vlan70, Vlan200) : ligne <em>Helper address</em>. Pour les listes, <code>show running-config | section interface Vlan</code> : ligne <code>ip access-group</code>. Dans Packet&nbsp;Tracer, la ligne <em>Outgoing access list</em> de <code>show ip interface</code> indique <em>not set</em> même quand une liste est posée&nbsp;: ne vous y fiez pas</td><td>CORE-NUBLAR</td></tr>
+          <tr><td>Les routes et la passerelle par défaut</td><td><code>show ip route</code></td><td>CORE-NUBLAR, GW-NUBLAR</td></tr>
+          <tr><td>Les listes de contrôle d’accès et leurs compteurs</td><td><code>show access-lists</code></td><td>CORE-NUBLAR</td></tr>
+          <tr><td>Les lignes d’administration</td><td><code>show running-config</code> (fin du fichier : <code>line con 0</code>, <code>line vty</code>), <code>show ip ssh</code></td><td>Les trois</td></tr>
+          <tr><td>La configuration IP d’un hôte</td><td><code>ipconfig /all</code> (<em>Desktop → Command Prompt</em>)</td><td>Les quatre hôtes</td></tr>
+          <tr><td>Les services d’un serveur</td><td>Onglet <em>Services</em>, chaque service ouvert un par un</td><td>NUB-DC01</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <figure>
+      <div class="fig-frame"><img src="img/projet00/04-core-vlan-brief.png" alt="Sortie de show vlan brief sur CORE-NUBLAR : VLAN 1 avec Fa0/6, Fa0/8 à Fa0/24, Gig0/1 et Gig0/2 ; VLAN 10 SYS-RESEAUX avec Fa0/4 ; VLAN 30 HCL-LABO et VLAN 70 SCADA-ENCLOS sans port ; VLAN 200 SERVEURS avec Fa0/1 à Fa0/3 ; VLAN 300 TRANSIT avec Fa0/7." loading="lazy"></div>
+      <figcaption>Capture 4 — <code>show vlan brief</code> sur CORE-NUBLAR. Les VLAN 30 et 70 existent sans aucun port d’accès : ils n’arrivent que par le trunk F0/5, absent de la liste. Regardez aussi où se trouve F0/6, déclaré en trunk mais sans câble.</figcaption>
+    </figure>
+
+    <figure>
+      <div class="fig-frame"><img src="img/projet00/05-core-svi.png" alt="Sortie de show ip interface brief filtrée sur Vlan, sur CORE-NUBLAR : Vlan1 administratively down ; Vlan10 10.10.10.1, Vlan30 10.10.30.1, Vlan70 10.10.70.1, Vlan200 10.10.200.1 et Vlan300 172.31.0.1, toutes up/up." loading="lazy"></div>
+      <figcaption>Capture 5 — <code>show ip interface brief | include Vlan</code> sur CORE-NUBLAR. Une ligne par SVI : l’adresse de chaque passerelle et son état. Le filtre <code>| include</code> fonctionne dans Packet Tracer, tout comme <code>| section</code>.</figcaption>
+    </figure>
+
+    <figure>
+      <div class="fig-frame"><img src="img/projet00/06-gw-ip-route.png" alt="Sortie de show ip route sur GW-NUBLAR : pas de passerelle de dernier recours ; deux routes statiques S vers 10.10.10.0/24 et 10.10.200.0/24 via 172.31.0.1 ; le réseau connecté C 172.31.0.0/30 et la route locale L 172.31.0.2/32 sur GigabitEthernet0/0." loading="lazy"></div>
+      <figcaption>Capture 6 — <code>show ip route</code> sur GW-NUBLAR. Quatre entrées et pas une de plus. Les réseaux absents de cette table comptent autant que les présents : un paquet destiné à l’un d’eux n’a nulle part où aller.</figcaption>
+    </figure>
+
+    <figure>
+      <div class="fig-frame"><img src="img/projet00/07-dc01-dhcp.png" alt="Onglet Services, DHCP, de NUB-DC01 : service sur On ; trois étendues listées : VLAN30-LABO (passerelle 10.10.30.1, DNS 10.10.200.10, début 10.10.30.50, 150 adresses), VLAN10-ADMIN (passerelle 10.10.10.1, début 10.10.10.50, 150 adresses) et serverPool (passerelle 0.0.0.0, début 10.10.200.0, 512 adresses)." loading="lazy"></div>
+      <figcaption>Capture 7 — Les étendues DHCP de NUB-DC01. Deux ont été saisies d’après la fiche de montage. La troisième, <em>serverPool</em>, était là avant vous : relevez-la, puis jugez-la au compte rendu (question 5).</figcaption>
+    </figure>
+
+    <details class="note rappel">
+      <summary><span class="label">Rappel de cours — Ce que la table d’adresses MAC prouve</span></summary>
+      <p>
+        Un commutateur apprend en lisant l’adresse MAC <em>source</em> de chaque trame
+        reçue : il note « cette adresse est joignable par ce port, dans ce VLAN ».
+        <code>show mac address-table</code> restitue cet apprentissage. C’est donc une preuve
+        du câblage réel, et non du câblage prévu : si PC-LAB-N3 apparaît sur F0/3 de
+        SW-N3-01, le poste et l’automate ont été intervertis, quoi qu’en dise le schéma.
+      </p>
+      <p>
+        Deux précautions. La table ne connaît que les équipements qui ont <strong>émis</strong>
+        une trame récemment : lancez vos pings avant de la lire. Elle oublie une entrée après
+        300 secondes de silence : une table vide signifie « rien entendu », pas « rien
+        branché ». Sur un trunk, enfin, on voit défiler les adresses de tout ce qui se trouve
+        derrière : sur CORE-NUBLAR, le port F0/5 porte les MAC de PC-LAB-N3 et d’AUTOMATE-N3,
+        dans deux VLAN différents.
+      </p>
+    </details>
+
+    <details class="note rappel">
+      <summary><span class="label">Rappel de cours — Une valeur par défaut ne s’affiche pas</span></summary>
+      <p>
+        <code>show running-config</code> n’affiche que ce qui diffère des valeurs par défaut.
+        Un port de 2960 jamais configuré ne montre aucune ligne <code>switchport mode</code>,
+        alors qu’il est bien dans un mode : <em>dynamic auto</em>, qui négocie un trunk avec
+        quiconque le demande. Pour lire l’état réel, il faut une commande d’état et non de
+        configuration : <code>show interfaces &lt;port&gt; switchport</code>, <code>show ip ssh</code>,
+        <code>show ip interface</code>.
+      </p>
+      <p>
+        C’est un réflexe d’auditeur : <strong>l’absence d’une ligne n’est pas l’absence d’une
+        fonction</strong>. Plusieurs constats de la partie 10 reposent sur un comportement par
+        défaut qu’aucune ligne ne trahit.
+      </p>
+    </details>
+
+    <div class="note task">
+      <span class="label">Ne vous arrêtez pas à ce que la fiche vous a fait saisir</span>
+      <p>
+        Pour NUB-DC01, relevez <strong>tous</strong> les services de l’onglet <em>Services</em>,
+        un par un, avec leur état, et pas seulement DHCP, DNS et HTTP. Dans la liste des étendues DHCP,
+        relevez toutes les étendues, y compris celle que vous n’avez pas créée. Ce que Packet
+        Tracer active par défaut fait partie de l’existant : un auditeur ne relève pas
+        seulement ce qu’il s’attend à trouver.
+      </p>
+    </div>
+  </section>
+
+  <section id="phase3">
+    <div class="sec-head">
+      <span class="src">5 — Ce que le réseau laisse passer · ≈ 45 min</span>
+      <h2 class="sec-title">Phase 3 : mesurer les flux</h2>
+      <p>
+        Les essais A1 à A17 complètent le jeu d’essais T1 à T10 : ils testent les deux sens de
+        chaque échange et ouvrent une vraie session TCP. Pour chacun, notez le résultat
+        obtenu, puis jugez-le par rapport à <strong>deux référentiels distincts</strong>.
+      </p>
+    </div>
+
+    <details class="note rappel" open>
+      <summary><span class="label">Rappel de cours — Un audit compare à quelque chose</span></summary>
+      <p>
+        « Conforme » ne veut rien dire tant qu’on n’a pas dit <em>à quoi</em>. Ici, deux
+        référentiels coexistent, et ils ne disent pas la même chose :
+      </p>
+      <ul>
+        <li><strong>L’état documenté</strong> : la matrice des flux de la
+          <a href="INGEN-Livret-Contexte.html#flux">partie 7</a> décrit ce que la configuration
+          livrée produit, faiblesses comprises. Un écart signale une erreur de montage :
+          votre maquette n’est pas fidèle.</li>
+        <li><strong>La politique annoncée</strong> : les quatre règles de la <a href="INGEN-Livret-Contexte.html#si">partie 3</a> (« Politique de flux annoncée ») disent ce
+          qu’InGen <em>veut</em>. Un écart signale une faiblesse de la configuration : c’est un
+          constat d’audit.</li>
+      </ul>
+      <p>
+        Un essai peut donc être conforme à l’état documenté et contraire à la politique.
+        Exemple : un automate qui joint un serveur. Ces essais-là sont précisément ceux qui
+        intéressent votre responsable.
+      </p>
+    </details>
+
+    <div class="note warn">
+      <span class="label">Avant de conclure à un échec</span>
+      <p>
+        Dans Packet Tracer, le premier écho d’un ping est souvent perdu pendant la résolution
+        ARP. Un « 3 réponses sur 4 » est un succès. Un essai n’est un échec que s’il échoue
+        deux fois de suite. Pour savoir <em>où</em> meurt un paquet, rejouez l’essai en mode
+        Simulation, filtré sur ICMP.
+      </p>
+    </div>
+
+    <p>
+      Une fois les essais terminés, remplissez la matrice des flux <em>observée</em> (tableau 10
+      de la fiche), puis lisez <code>show access-lists</code> sur CORE-NUBLAR (essai A17) :
+      chaque compteur doit pouvoir être relié aux essais qui l’ont fait bouger.
+    </p>
+
+    <figure>
+      <div class="fig-frame"><img src="img/projet00/08-a17-access-lists.png" alt="Sortie de show access-lists sur CORE-NUBLAR après les essais : liste 130, ligne 10 avec 10 correspondances, ligne 20 established sans compteur, ligne 30 echo-reply avec 4 ; liste 170, ligne 10 avec 8 correspondances, ligne 20 established avec 4, ligne 30 echo-reply avec 7." loading="lazy"></div>
+      <figcaption>Capture 8 — Essai A17 : <code>show access-lists</code> après un passage unique des essais (chaque ping joué une fois&nbsp;: A4, A6 et A10 ne sont que T3, T6 et T5, et ne s&rsquo;ajoutent pas), compteurs remis à zéro au préalable (<code>clear access-list counters</code>, qui ne modifie pas la configuration). Vos chiffres dépendront de vos essais et de leurs répétitions. Ce qui compte, c’est de savoir dire quel essai a fait bouger chaque ligne. Les refus, eux, ne laissent aucune trace.</figcaption>
+    </figure>
+  </section>
+
+  <section id="phase4">
+    <div class="sec-head">
+      <span class="src">6 — La preuve · ≈ 45 min</span>
+      <h2 class="sec-title">Phase 4 : prouver les constats</h2>
+      <p>
+        La partie 10 du livret recense seize constats. Les dix premiers se vérifient sur votre
+        maquette. Pour chacun, la fiche (tableau 11) vous demande la commande ou l’essai qui le
+        prouve, l’extrait de sortie qui le montre, sa famille (faille, qualité, conformité) et
+        le chantier qui le traitera.
+      </p>
+    </div>
+    <div class="note key">
+      <span class="label">Recopier le livret ne vaut rien</span>
+      <p>
+        Le livret décrit chaque constat. Ce qu’il ne peut pas faire à votre place, c’est le
+        montrer sur <em>votre</em> réseau. Une ligne de la fiche ne vaut des points que si
+        l’extrait vient de votre maquette et si la commande citée affiche réellement ce que vous
+        affirmez. À l’oral, on vous demandera de la rejouer.
+      </p>
+    </div>
+    <ul>
+      <li>Pour le constat 1, un ping ne suffit pas à convaincre. Montrez une session TCP complète, ouverte par l’automate (essai A13), puis expliquez pourquoi la liste 170 ne l’a pas empêchée.</li>
+      <li>Pour les constats 7 et 8, souvenez-vous du rappel sur les valeurs par défaut. Si une ligne n’apparaît pas dans la configuration, dites quelle commande d’état prouve le comportement. Si aucune commande de Packet Tracer ne le prouve, dites-le aussi, et expliquez comment vous le prouveriez sur le matériel réel.</li>
+      <li>Pour le constat 2, l’essai A16 montre ce qui se passe aujourd’hui. Expliquez pourquoi ce refus n’est pas une protection.</li>
+    </ul>
+
+    <figure>
+      <div class="fig-frame"><img src="img/projet00/09-a13-web.png" alt="Navigateur web d’AUTOMATE-N3 ouvert sur http://10.10.200.10 : la page « InGen · Isla Nublar · Intranet » s’affiche, avec le bandeau rouge « PAGE DE RECETTE — à supprimer avant la mise en service du parc », un tableau des services de NUB-DC01 et l’adresse d’un dépôt FTP." loading="lazy"></div>
+      <figcaption>Capture 9 — Essai A13 : depuis AUTOMATE-N3, <code>http://10.10.200.10</code> affiche la page de recette laissée par le prestataire. Une page affichée, c’est une session TCP établie, ouverte par l’automate : c’est le point de départ de votre preuve du constat 1. Lisez aussi la page elle-même, et comparez ce qu’elle annonce à l’état initial que décrit le livret.</figcaption>
+    </figure>
+
+    <figure>
+      <div class="fig-frame"><img src="img/projet00/10-a16-telnet.png" alt="Depuis PC-DSI-01 : telnet 172.31.0.2 puis telnet 10.10.10.1 ; dans les deux cas, Trying … Open, puis Connection closed by foreign host." loading="lazy"></div>
+      <figcaption>Capture 10 — Essai A16 depuis PC-DSI-01. Les deux équipements <strong>acceptent</strong> la connexion Telnet (<em>Open</em>), puis la ferment aussitôt. Sur un IOS réel, la fermeture est précédée du message « Password required, but none set » (livret, partie 8). Packet&nbsp;Tracer ne l’affiche pas : c’est une limite du modèle, à citer dans votre preuve.</figcaption>
+    </figure>
+  </section>
+
+  <section id="pieges">
+    <div class="sec-head">
+      <span class="src">7 — Avant de rendre</span>
+      <h2 class="sec-title">Les pièges à éviter</h2>
+    </div>
+    <div class="note warn">
+      <span class="label">Les erreurs qui coûtent le plus</span>
+      <ul>
+        <li><strong>Corriger en passant.</strong> Un <code>no shutdown</code> ou un mot de passe posé « pour tester » rend la maquette fausse pour tous les projets. En cas de doute, repartez de votre copie de sauvegarde.</li>
+        <li><strong>Relever le papier au lieu de l’équipement.</strong> Une valeur sans commande en face n’est pas un relevé. Une valeur qui contredit votre sortie <code>show</code> est une faute.</li>
+        <li><strong>Confondre les deux cloisonnements.</strong> Un échec peut venir d’une liste de contrôle d’accès ou d’une route de retour absente. <code>show ip route</code> sur GW-NUBLAR et les compteurs de <code>show access-lists</code> permettent de trancher. Le refus implicite d’une liste, lui, ne compte rien.</li>
+        <li><strong>Lire une table MAC vide.</strong> Faites d’abord parler les postes.</li>
+        <li><strong>Taire un écart.</strong> Si votre maquette montre quelque chose que le livret ne dit pas, ce n’est pas forcément une erreur de votre part. Signalez-le dans le compte rendu, sans le corriger.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="fiche">
+    <div class="sec-head">
+      <span class="src">8 — À remplir</span>
+      <h2 class="sec-title">La fiche d’audit</h2>
+      <p>
+        Remplissez les cases directement dans cette page, puis exportez-la en PDF. Chaque
+        valeur est suivie de la commande qui la prouve, entre crochets ou dans la colonne
+        prévue. Les cases vides restent visibles à l’impression : vous pouvez aussi la remplir
+        au stylo.
+      </p>
+      <p class="recette-ops" data-ops hidden>
+        <button type="button" data-print>Exporter la fiche en PDF</button>
+        <button type="button" data-clear class="danger">Effacer mes saisies</button>
+        <span data-store-note>Vos saisies restent sur ce poste, dans ce navigateur. Exportez-les en PDF avant de partir.</span>
+      </p>
+    </div>
+
+    <div class="table-wrap">
+      <table id="fiche-identite" class="fiche-table">
+        <caption>1 — Identité</caption>
+        <thead><tr><th>Nom</th><th>Groupe</th><th>Date</th><th>Fichier de maquette</th></tr></thead>
+        <tbody><tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr></tbody>
+      </table>
+    </div>
+
+    <h3>Phase 2 — Le relevé</h3>
+
+    <div class="table-wrap">
+      <table class="fiche-table">
+        <caption>2 — Inventaire des équipements Cisco</caption>
+        <thead><tr><th>Équipement</th><th>Modèle</th><th>Version du système</th><th>Interfaces physiques (nombre, types)</th><th>Commande</th></tr></thead>
+        <tbody>
+          <tr><th scope="row" class="row-head">GW-NUBLAR</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+          <tr><th scope="row" class="row-head">CORE-NUBLAR</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+          <tr><th scope="row" class="row-head">SW-N3-01</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-wrap">
+      <table class="fiche-table">
+        <caption>3 — Segmentation : un VLAN par ligne, le VLAN 1 compris</caption>
+        <thead><tr><th>Id</th><th>Nom</th><th>Adresse réseau / masque</th><th>Passerelle</th><th>Existe sur SW-N3-01 ?</th><th>Ports d’accès (les deux commutateurs)</th></tr></thead>
+        <tbody>
+          <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+          <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+          <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+          <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+          <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+          <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-wrap">
+      <table class="fiche-table">
+        <caption>4 — SW-N3-01 : configuration globale et ports</caption>
+        <thead><tr><th>Nom</th><th>Adresse IP d’administration</th><th>Passerelle par défaut</th><th>Conséquence pour l’administrer</th></tr></thead>
+        <tbody><tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr></tbody>
+      </table>
+    </div>
+    <div class="table-wrap">
+      <table class="fiche-table">
+        <thead><tr><th>Port</th><th>Mode opérationnel</th><th>VLAN (ou natif si trunk)</th><th>Matériel connecté</th><th>Adresse(s) MAC apprise(s)</th></tr></thead>
+        <tbody>
+          <tr><th scope="row" class="row-head mono">F0/1</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+          <tr><th scope="row" class="row-head mono">F0/2</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+          <tr><th scope="row" class="row-head mono">F0/3</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+          <tr><th scope="row" class="row-head mono">F0/4 → G0/2</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-wrap">
+      <table class="fiche-table">
+        <caption>5 — CORE-NUBLAR : interfaces virtuelles (SVI)</caption>
+        <thead><tr><th>Interface</th><th>Adresse / masque</th><th>État</th><th>Relais DHCP (O/N) et adresse</th><th>Liste appliquée et sens</th></tr></thead>
+        <tbody>
+          <tr><th scope="row" class="row-head mono">Vlan1</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+          <tr><th scope="row" class="row-head mono">Vlan10</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+          <tr><th scope="row" class="row-head mono">Vlan30</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+          <tr><th scope="row" class="row-head mono">Vlan70</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+          <tr><th scope="row" class="row-head mono">Vlan200</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+          <tr><th scope="row" class="row-head mono">Vlan300</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="table-wrap">
+      <table class="fiche-table">
+        <caption>CORE-NUBLAR : ports</caption>
+        <thead><tr><th>Port</th><th>Mode opérationnel</th><th>VLAN (ou natif si trunk)</th><th>Matériel connecté</th><th>Adresse(s) MAC apprise(s)</th></tr></thead>
+        <tbody>
+          <tr><th scope="row" class="row-head mono">F0/1</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+          <tr><th scope="row" class="row-head mono">F0/2 – F0/3</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+          <tr><th scope="row" class="row-head mono">F0/4</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+          <tr><th scope="row" class="row-head mono">F0/5</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+          <tr><th scope="row" class="row-head mono">F0/6</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+          <tr><th scope="row" class="row-head mono">F0/7</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+          <tr><th scope="row" class="row-head mono">F0/8 → G0/2</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="table-wrap">
+      <table class="fiche-table">
+        <caption>CORE-NUBLAR : routage et filtrage</caption>
+        <thead><tr><th>Question</th><th>Réponse</th><th>Commande</th></tr></thead>
+        <tbody>
+          <tr><th scope="row" class="row-head">Le routage IP est-il activé ?</th><td class="fill"></td><td class="fill"></td></tr>
+          <tr><th scope="row" class="row-head">Routes statiques (type S)</th><td class="fill"></td><td class="fill"></td></tr>
+          <tr><th scope="row" class="row-head">Passerelle de dernier recours</th><td class="fill"></td><td class="fill"></td></tr>
+          <tr><th scope="row" class="row-head">Liste 130 : lignes et rôle de chacune</th><td class="fill"></td><td class="fill"></td></tr>
+          <tr><th scope="row" class="row-head">Liste 170 : lignes et rôle de chacune</th><td class="fill"></td><td class="fill"></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-wrap">
+      <table class="fiche-table">
+        <caption>6 — GW-NUBLAR</caption>
+        <thead><tr><th>Interface</th><th>Adresse / masque</th><th>État</th><th>Matériel connecté</th></tr></thead>
+        <tbody>
+          <tr><th scope="row" class="row-head mono">G0/0</th><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+          <tr><th scope="row" class="row-head mono">G0/1</th><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+          <tr><th scope="row" class="row-head mono">S0/0/0 (si module posé)</th><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="table-wrap">
+      <table class="fiche-table">
+        <thead><tr><th>Question</th><th>Réponse</th><th>Commande</th></tr></thead>
+        <tbody>
+          <tr><th scope="row" class="row-head">Routes statiques (type S)</th><td class="fill"></td><td class="fill"></td></tr>
+          <tr><th scope="row" class="row-head">Réseaux de la maquette <em>sans</em> route de retour</th><td class="fill"></td><td class="fill"></td></tr>
+          <tr><th scope="row" class="row-head">Lignes vty : authentification et protocoles admis</th><td class="fill"></td><td class="fill"></td></tr>
+          <tr><th scope="row" class="row-head">SSH activé ?</th><td class="fill"></td><td class="fill"></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-wrap">
+      <table class="fiche-table">
+        <caption>7 — NUB-DC01 : configuration et services</caption>
+        <thead><tr><th>Adresse / masque</th><th>Passerelle</th><th>DNS</th><th>Adresse MAC</th></tr></thead>
+        <tbody><tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr></tbody>
+      </table>
+    </div>
+    <div class="table-wrap long">
+      <table class="fiche-table">
+        <thead><tr><th>Service (onglet <em>Services</em>)</th><th>État</th><th>Prévu par le livret ?</th><th>Remarque</th></tr></thead>
+        <tbody>
+          <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+          <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+          <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+          <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+          <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+          <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+          <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+          <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+          <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+          <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+          <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+          <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-wrap">
+      <table class="fiche-table">
+        <caption>8 — DHCP et DNS</caption>
+        <thead><tr><th>Étendue</th><th>Passerelle</th><th>DNS</th><th>Première adresse / masque</th><th>Nombre max.</th><th>Servie par quel relais ? Bail obtenu (poste, adresse)</th></tr></thead>
+        <tbody>
+          <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+          <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+          <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="table-wrap">
+      <table class="fiche-table">
+        <thead><tr><th>Nom (zone <code>nublar.intra</code>)</th><th>Type</th><th>Adresse</th><th>La machine existe-t-elle sur la maquette ?</th></tr></thead>
+        <tbody>
+          <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+          <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+          <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+          <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+          <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Phase 3 — Les essais</h3>
+
+    <div class="table-wrap long stack-sm">
+      <table id="fiche-essais" class="fiche-table">
+        <caption>9 — Essais d’audit (premier écho perdu = pas un échec)</caption>
+        <thead><tr><th class="num">N°</th><th>Depuis</th><th>Essai</th><th>Résultat obtenu</th><th>Conforme à l’état documenté</th><th>Politique : respectée ou règle violée (n°)</th></tr></thead>
+        <tbody>
+          <tr><td class="mono" data-label="N°">A1</td><td data-label="Depuis">PC-DSI-01</td><td data-label="Essai"><code>ipconfig /all</code> : adresse, passerelle, DNS, adresse MAC</td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+          <tr><td class="mono" data-label="N°">A2</td><td data-label="Depuis">PC-LAB-N3</td><td data-label="Essai"><code>ipconfig /all</code></td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+          <tr><td class="mono" data-label="N°">A3</td><td data-label="Depuis">AUTOMATE-N3</td><td data-label="Essai"><code>ipconfig /all</code></td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+          <tr><td class="mono" data-label="N°">A4</td><td data-label="Depuis">PC-DSI-01</td><td data-label="Essai"><code>ping 10.10.200.10</code></td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+          <tr><td class="mono" data-label="N°">A5</td><td data-label="Depuis">PC-DSI-01</td><td data-label="Essai">Ping de l’adresse obtenue par PC-LAB-N3 (A2)</td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+          <tr><td class="mono" data-label="N°">A6</td><td data-label="Depuis">PC-DSI-01</td><td data-label="Essai"><code>ping 10.10.70.21</code></td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+          <tr><td class="mono" data-label="N°">A7</td><td data-label="Depuis">PC-LAB-N3</td><td data-label="Essai">Ping de l’adresse obtenue par PC-DSI-01 (A1)</td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+          <tr><td class="mono" data-label="N°">A8</td><td data-label="Depuis">PC-LAB-N3</td><td data-label="Essai"><code>ping 10.10.70.21</code></td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+          <tr><td class="mono" data-label="N°">A9</td><td data-label="Depuis">PC-LAB-N3</td><td data-label="Essai"><code>ping nub-eon.nublar.intra</code></td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+          <tr><td class="mono" data-label="N°">A10</td><td data-label="Depuis">AUTOMATE-N3</td><td data-label="Essai"><code>ping 10.10.200.10</code></td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+          <tr><td class="mono" data-label="N°">A11</td><td data-label="Depuis">AUTOMATE-N3</td><td data-label="Essai">Ping de l’adresse de PC-DSI-01</td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+          <tr><td class="mono" data-label="N°">A12</td><td data-label="Depuis">AUTOMATE-N3</td><td data-label="Essai">Ping de l’adresse de PC-LAB-N3</td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+          <tr><td class="mono" data-label="N°">A13</td><td data-label="Depuis">AUTOMATE-N3</td><td data-label="Essai"><em>Desktop → Web Browser</em> : <code>http://10.10.200.10</code></td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+          <tr><td class="mono" data-label="N°">A14</td><td data-label="Depuis">NUB-DC01</td><td data-label="Essai"><code>ping 10.10.70.21</code>, puis ping de l’adresse de PC-LAB-N3</td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+          <tr><td class="mono" data-label="N°">A15</td><td data-label="Depuis">PC-LAB-N3</td><td data-label="Essai"><code>ping 172.31.0.2</code>, puis <code>ping 10.10.200.1</code></td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+          <tr><td class="mono" data-label="N°">A16</td><td data-label="Depuis">PC-DSI-01</td><td data-label="Essai"><code>telnet 172.31.0.2</code>, puis <code>telnet 10.10.10.1</code></td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+          <tr><td class="mono" data-label="N°">A17</td><td data-label="Depuis">CORE-NUBLAR</td><td data-label="Essai"><code>show access-lists</code> : relier chaque compteur non nul aux essais qui l’ont fait bouger</td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-wrap">
+      <table class="fiche-table">
+        <caption>10 — Matrice des flux observée : « aller-retour », « refusé (ACL n°) » ou « sans retour (route) »</caption>
+        <thead><tr><th>Depuis ↓ vers →</th><th>VLAN 200</th><th>VLAN 30</th><th>VLAN 70</th><th>VLAN 10</th><th>Transit (GW-NUBLAR)</th></tr></thead>
+        <tbody>
+          <tr><th scope="row" class="row-head">VLAN 10</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td>—</td><td class="fill"></td></tr>
+          <tr><th scope="row" class="row-head">VLAN 30</th><td class="fill"></td><td>—</td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+          <tr><th scope="row" class="row-head">VLAN 70</th><td class="fill"></td><td class="fill"></td><td>—</td><td class="fill"></td><td class="fill"></td></tr>
+          <tr><th scope="row" class="row-head">VLAN 200</th><td>—</td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Phase 4 — Les constats</h3>
+
+    <div class="table-wrap long stack-sm">
+      <table id="fiche-constats" class="fiche-table">
+        <caption>11 — Les dix constats vérifiables sur la maquette</caption>
+        <thead><tr><th class="num">N°</th><th>Constat (livret, partie 10)</th><th>Commande ou essai qui le prouve</th><th>Ce que montre votre sortie</th><th>Famille</th><th>Chantier</th></tr></thead>
+        <tbody>
+          <tr><td class="mono" data-label="N°">1</td><td data-label="Constat">Rien ne filtre ce qu’émettent les automates</td><td class="fill" data-label="Preuve"></td><td class="fill" data-label="Sortie"></td><td class="fill" data-label="Famille"></td><td class="fill" data-label="Chantier"></td></tr>
+          <tr><td class="mono" data-label="N°">2</td><td data-label="Constat">Aucun mot de passe, console ouverte</td><td class="fill" data-label="Preuve"></td><td class="fill" data-label="Sortie"></td><td class="fill" data-label="Famille"></td><td class="fill" data-label="Chantier"></td></tr>
+          <tr><td class="mono" data-label="N°">3</td><td data-label="Constat">Administration en clair, aucune clé SSH</td><td class="fill" data-label="Preuve"></td><td class="fill" data-label="Sortie"></td><td class="fill" data-label="Famille"></td><td class="fill" data-label="Chantier"></td></tr>
+          <tr><td class="mono" data-label="N°">4</td><td data-label="Constat">Journaux non horodatés, conservés nulle part ailleurs</td><td class="fill" data-label="Preuve"></td><td class="fill" data-label="Sortie"></td><td class="fill" data-label="Famille"></td><td class="fill" data-label="Chantier"></td></tr>
+          <tr><td class="mono" data-label="N°">5</td><td data-label="Constat">Mots de passe futurs en clair dans la configuration</td><td class="fill" data-label="Preuve"></td><td class="fill" data-label="Sortie"></td><td class="fill" data-label="Famille"></td><td class="fill" data-label="Chantier"></td></tr>
+          <tr><td class="mono" data-label="N°">6</td><td data-label="Constat">VLAN natif des trunks resté à 1</td><td class="fill" data-label="Preuve"></td><td class="fill" data-label="Sortie"></td><td class="fill" data-label="Famille"></td><td class="fill" data-label="Chantier"></td></tr>
+          <tr><td class="mono" data-label="N°">7</td><td data-label="Constat">Ports libres actifs, négociation DTP</td><td class="fill" data-label="Preuve"></td><td class="fill" data-label="Sortie"></td><td class="fill" data-label="Famille"></td><td class="fill" data-label="Chantier"></td></tr>
+          <tr><td class="mono" data-label="N°">8</td><td data-label="Constat">Routage par la source accepté</td><td class="fill" data-label="Preuve"></td><td class="fill" data-label="Sortie"></td><td class="fill" data-label="Famille"></td><td class="fill" data-label="Chantier"></td></tr>
+          <tr><td class="mono" data-label="N°">9</td><td data-label="Constat">L’administration exclue du laboratoire</td><td class="fill" data-label="Preuve"></td><td class="fill" data-label="Sortie"></td><td class="fill" data-label="Famille"></td><td class="fill" data-label="Chantier"></td></tr>
+          <tr><td class="mono" data-label="N°">10</td><td data-label="Constat">Relais DHCP inutile</td><td class="fill" data-label="Preuve"></td><td class="fill" data-label="Sortie"></td><td class="fill" data-label="Famille"></td><td class="fill" data-label="Chantier"></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="compte-rendu">
+    <div class="sec-head">
+      <span class="src">9 — L’explication</span>
+      <h2 class="sec-title">Le compte rendu</h2>
+      <p>
+        Seul. Répondez avec vos propres mots : la fiche montre <em>ce que</em> vous avez
+        relevé, le compte rendu montre que vous comprenez <em>pourquoi</em>.
+      </p>
+    </div>
+    <ol class="steps">
+      <li><strong>Le modèle.</strong> Qu’est-ce que votre maquette représente du site d’Isla Nublar, et qu’est-ce qu’elle laisse de côté ? Citez deux simplifications imposées par Packet Tracer. Pour chacune, donnez un exemple de test qui serait réussi sur la maquette sans rien prouver sur le réseau réel.</li>
+      <li><strong>Les flux, VLAN par VLAN.</strong> Pour les postes d’administration, le laboratoire, les automates et les serveurs, concluez : quels échanges aboutissent, lesquels sont refusés, et par quel mécanisme. Appuyez-vous sur vos essais.</li>
+      <li><strong>Deux cloisonnements.</strong> A8 et A15 échouent tous les deux. Pour chacun, dites si c’est une liste de contrôle d’accès ou une route de retour absente qui l’arrête, et quelle commande le prouve. Pourquoi le compteur de la liste 170 ne bouge-t-il pas pendant A8 ?</li>
+      <li><strong>Le constat n° 1.</strong> Expliquez, paquet par paquet, comment la session HTTP de l’essai A13 aboutit alors que la liste 170 est posée sur <code>Vlan70</code>. Quelle ligne de la liste laisse passer les réponses ? Quelle règle de la politique est violée ?</li>
+      <li><strong>Ce que le livret ne dit pas.</strong> Relevez tout écart entre votre maquette et le livret : un service actif que le livret ne prévoit pas, une étendue DHCP que vous n’avez pas créée, une valeur inattendue. Ne le corrigez pas : évaluez s’il crée une faiblesse, et dites s’il tient au modèle (Packet Tracer) ou s’il existerait sur le serveur réel.</li>
+      <li><strong>Les limites de l’audit.</strong> Pourquoi les constats 11 à 16 ne se vérifient-ils pas sur votre maquette ? Que faudrait-il y ajouter pour en vérifier un, et dans quel projet ?</li>
+      <li><strong>Les priorités.</strong> Classez les dix constats dans l’ordre où vous les traiteriez, et justifiez les trois premiers. Votre ordre est-il celui des chantiers 1, 2 et 3 du livret ? Sinon, argumentez.</li>
+      <li><strong>Annexe.</strong> Les sorties <code>show</code> et les captures qui prouvent votre fiche, dans l’ordre des tableaux.</li>
+    </ol>
+  </section>
+
+  <section id="livrables">
+    <div class="sec-head">
+      <span class="src">10 — Ce que vous rendez</span>
+      <h2 class="sec-title">Les livrables</h2>
+      <p>
+        Déposez un dossier nommé <code>Projet00-Audit-G&lt;xx&gt;-Nom</code>, où
+        <code>&lt;xx&gt;</code> est votre numéro de groupe, à l’emplacement et à la date indiqués par
+        l’enseignant.
+      </p>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Document</th><th>Nom du fichier</th><th>Remarque</th></tr></thead>
+        <tbody>
+          <tr><th scope="row" class="row-head">Maquette</th><td class="mono">INGEN-Nublar-G&lt;xx&gt;.pkt</td><td>Dans l’état livré, non corrigée : c’est le point de départ de tous les projets</td></tr>
+          <tr><th scope="row" class="row-head">Fiche d’audit</th><td class="mono">Projet00-Fiche-G&lt;xx&gt;-Nom.pdf</td><td>Export de la section 8</td></tr>
+          <tr><th scope="row" class="row-head">Compte rendu</th><td class="mono">Projet00-CR-G&lt;xx&gt;-Nom.pdf</td><td>Annexe comprise</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note warn">
+      <span class="label">Un fichier, toute l’année</span>
+      <p>
+        Chaque projet commencera par une copie de <code>INGEN-Nublar-G&lt;xx&gt;.pkt</code>. Une
+        maquette fausse ou corrigée en douce vous suivra dans tous les projets. Gardez-en deux
+        copies, sur deux supports.
+      </p>
+    </div>
+  </section>
+
+  <section id="evaluation">
+    <div class="sec-head">
+      <span class="src">11 — Les critères</span>
+      <h2 class="sec-title">Ce qui sera évalué</h2>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Élément</th><th>Preuves</th></tr></thead>
+        <tbody>
+          <tr><td>Maquette fidèle à l’état livré : T1 à T10 conformes, rien de corrigé</td><td class="mono">.pkt</td></tr>
+          <tr><td>Relevé exact, chaque valeur accompagnée de la commande qui la prouve</td><td class="mono">Fiche, tableaux 2 à 8</td></tr>
+          <tr><td>Essais joués et jugés par rapport aux deux référentiels</td><td class="mono">Fiche, tableaux 9 et 10</td></tr>
+          <tr><td>Dix constats prouvés sur la maquette, classés par famille et rattachés à leur chantier</td><td class="mono">Fiche, tableau 11</td></tr>
+          <tr><td>Écarts avec le livret repérés et signalés sans être corrigés</td><td class="mono">CR, question 5</td></tr>
+          <tr><td>Explication des mécanismes : ACL en sortie, pseudo-état, route de retour, valeurs par défaut</td><td class="mono">CR, oral</td></tr>
+          <tr><td>Capacité à rejouer une preuve de la fiche, à la demande, sur sa maquette</td><td class="mono">Oral</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="suite">
+    <div class="sec-head">
+      <span class="src">12 — La suite</span>
+      <h2 class="sec-title">Vers les projets</h2>
+      <p>
+        Ce travail est le prérequis du <a href="INGEN-Projet01-Durcissement.html">Projet 01</a>,
+        qui ferme les constats 2, 3, 5, 6, 7 et 8. On ne corrige bien que ce qu’on a d’abord
+        constaté : votre tableau 11 deviendra la colonne « avant » de chaque recette.
+      </p>
+    </div>
+    <div class="note good">
+      <span class="label">Pour aller plus loin</span>
+      <p>
+        Sur une copie de votre maquette, jamais sur l’original : ajoutez une liste en entrée de
+        <code>Vlan70</code> qui ferme le constat n° 1, rejouez A10 à A13, et notez ce qui casse.
+        C’est un avant-goût du chantier 2, et une bonne question d’oral.
+      </p>
+    </div>
+  </section>
+
+  </main>
+
+  <footer class="colophon">
+    <p>
+      <strong>InGen — Projet 00.</strong> Travail préparatoire du contexte InGen, BTS SIO parcours
+      SISR. Il transpose l’ancien « Audit de la configuration du réseau GSB », qui fournissait la
+      maquette : ici, l’étudiant la construit. Les valeurs reprennent le
+      <a href="INGEN-Livret-Contexte.html">livret de contexte</a>, parties 3, 7, 8 et 10, et la
+      <a href="INGEN-Maquette-PacketTracer.html">fiche de montage</a> : en cas de divergence,
+      le livret fait foi. Sont propres à ce document : les essais A1 à A17, le relevé des
+      adresses MAC et des services, la matrice observée et le double référentiel de conformité.
+    </p>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var KEY = 'ingen-projet00-audit', fiche = document.getElementById('fiche');
+  var ops = document.querySelector('[data-ops]');
+  var fills = fiche.querySelectorAll('td.fill'), confs = fiche.querySelectorAll('td.conf');
+  var saved = {}, canStore = true;
+  try { saved = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { canStore = false; }
+  function save() {
+    var data = { f: [], c: [] };
+    fills.forEach(function (td) { data.f.push(td.textContent); });
+    confs.forEach(function (td) { data.c.push(td.firstChild.checked); });
+    try { localStorage.setItem(KEY, JSON.stringify(data)); } catch (e) { canStore = false; }
+  }
+  function rowName(td) {
+    var t = td.closest('table'), cap = t.caption ? t.caption.textContent.split(' — ')[0] + ', ' : '';
+    var head = t.tHead ? t.tHead.rows[0].cells[td.cellIndex] : null;
+    var first = td.parentNode.cells[0] === td ? '' : td.parentNode.cells[0].textContent + ', ';
+    return 'Tableau ' + cap + first + (head ? head.textContent : 'saisie');
+  }
+  fills.forEach(function (td, i) {
+    td.setAttribute('contenteditable', 'plaintext-only');
+    if (td.contentEditable !== 'plaintext-only') td.setAttribute('contenteditable', 'true');
+    td.setAttribute('role', 'textbox');
+    td.setAttribute('aria-label', rowName(td));
+    if (saved.f && saved.f[i]) td.textContent = saved.f[i];
+    td.addEventListener('input', save);
+  });
+  confs.forEach(function (td, i) {
+    var box = document.createElement('input');
+    box.type = 'checkbox';
+    box.setAttribute('aria-label', 'Conforme à l’état documenté, essai ' + td.parentNode.cells[0].textContent);
+    box.checked = !!(saved.c && saved.c[i]);
+    box.addEventListener('change', save);
+    td.appendChild(box);
+  });
+  ops.hidden = false;
+  if (!canStore) ops.querySelector('[data-store-note]').textContent =
+    'Ce navigateur n’enregistre pas les saisies : exportez-les en PDF avant de fermer la page.';
+  ops.querySelector('[data-print]').addEventListener('click', function () { document.body.classList.add('print-fiche'); window.print(); });
+  ops.querySelector('[data-clear]').addEventListener('click', function () {
+    if (!window.confirm('Effacer toutes vos saisies de la fiche d’audit ?')) return;
+    fills.forEach(function (td) { td.textContent = ''; });
+    confs.forEach(function (td) { td.firstChild.checked = false; });
+    try { localStorage.removeItem(KEY); } catch (e) {}
+  });
+  /* À l’impression, les rappels repliés s’ouvrent */
+  window.addEventListener('beforeprint', function () {
+    document.querySelectorAll('details').forEach(function (d) { d.dataset.wasOpen = d.open; d.open = true; });
+  });
+  window.addEventListener('afterprint', function () {
+    document.querySelectorAll('details').forEach(function (d) { d.open = d.dataset.wasOpen === 'true'; });
+    document.body.classList.remove('print-fiche');
+  });
+})();
+</script>
+</body>
+</html>

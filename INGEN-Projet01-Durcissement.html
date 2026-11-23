@@ -1,0 +1,1071 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>InGen — Projet 01 : durcissement</title>
+<style>
+  :root {
+    --ground:#F7F4EE; --surface:#FFFFFF; --sunken:#F0EADE;
+    --ink:#1C1913; --ink-muted:#5E5647; --ink-faint:#726958;
+    --rule:#E2DACA; --rule-strong:#C4B89F;
+    --accent:#8A5407; --accent-soft:#F7EBD6;
+    --signal:#A32A1E; --signal-soft:#FAE5E1;
+    --okc:#0E6A4E; --ok-soft:#E3F0E7;
+    --zebra:#FBF8F3; --ctrl:#85785F;
+    --code-bg:#F3EEE4; --code-ink:#241F16;
+    --shadow:0 1px 2px rgba(28,25,19,.05), 0 8px 24px -16px rgba(28,25,19,.3);
+    --f-display:Constantia,"Sitka Text",Cambria,Georgia,serif;
+    --f-body:Corbel,"Segoe UI","Helvetica Neue",system-ui,sans-serif;
+    --f-mono:"Cascadia Mono",Consolas,ui-monospace,monospace;
+    --measure:68ch; --plate:80rem;
+  }
+  @media screen and (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:#131109; --surface:#1C1911; --sunken:#262218;
+      --ink:#EFEADD; --ink-muted:#ADA290; --ink-faint:#9A907F;
+      --rule:#302B20; --rule-strong:#4A4232;
+      --accent:#E4A84F; --accent-soft:#2E2210;
+      --signal:#F0907E; --signal-soft:#331A14;
+      --okc:#6FBE96; --ok-soft:#14261C;
+      --zebra:#211E15; --ctrl:#857A63;
+      --code-bg:#16130C; --code-ink:#E3DCCC;
+      --shadow:0 1px 2px rgba(0,0,0,.45), 0 10px 28px -18px rgba(0,0,0,.85);
+    }
+  }
+  /* Palette sombre sur choix explicite (data-theme), identique à la palette système (livret) */
+  :root[data-theme="dark"] {
+    --ground:#131109; --surface:#1C1911; --sunken:#262218;
+    --ink:#EFEADD; --ink-muted:#ADA290; --ink-faint:#9A907F;
+    --rule:#302B20; --rule-strong:#4A4232;
+    --accent:#E4A84F; --accent-soft:#2E2210;
+    --signal:#F0907E; --signal-soft:#331A14;
+    --okc:#6FBE96; --ok-soft:#14261C;
+    --zebra:#211E15; --ctrl:#857A63;
+    --code-bg:#16130C; --code-ink:#E3DCCC;
+    --shadow:0 1px 2px rgba(0,0,0,.45), 0 10px 28px -18px rgba(0,0,0,.85);
+  }
+  * { box-sizing:border-box; }
+  html, body { overflow-x:clip; }
+  body { margin:0; background:var(--ground); color:var(--ink); font-family:var(--f-body);
+         font-size:17px; line-height:1.62; -webkit-font-smoothing:antialiased; }
+  .shell { max-width:88rem; margin:0 auto; padding:0 1.5rem 5rem; }
+  .masthead { border-bottom:2px solid var(--ink); padding:2.5rem 0 1.4rem; margin-bottom:2.2rem; }
+  .eyebrow { font-size:.75rem; letter-spacing:.14em; text-transform:uppercase; color:var(--accent);
+             font-weight:700; margin:0 0 .8rem; }
+  .masthead h1 { font-family:var(--f-display); font-size:clamp(1.9rem,4.5vw,2.7rem); line-height:1.1;
+                 font-weight:700; margin:0 0 .55rem; }
+  .standfirst { max-width:var(--measure); color:var(--ink-muted); font-size:1.05rem; margin:0 0 1.4rem; }
+  .masthead-meta { display:flex; flex-wrap:wrap; gap:.5rem 2rem; font-size:.82rem; color:var(--ink-faint);
+                   border-top:1px solid var(--rule); padding-top:.9rem; }
+  .masthead-meta b { color:var(--ink-muted); font-weight:600; }
+  section { scroll-margin-top:1.5rem; }
+  section + section { margin-top:3.6rem; }
+  .sec-head { border-top:2px solid var(--ink); padding-top:1rem; margin-bottom:1.4rem; }
+  .sec-head .src { font-family:var(--f-mono); font-size:.74rem; letter-spacing:.04em; color:var(--accent);
+                   text-transform:uppercase; display:block; margin-bottom:.45rem; }
+  h2.sec-title { font-family:var(--f-display); font-size:clamp(1.4rem,2.8vw,1.8rem); font-weight:700; margin:0; }
+  .sec-head p { max-width:var(--measure); color:var(--ink-muted); margin:.6rem 0 0; font-size:.95rem; }
+  h3 { font-family:var(--f-display); font-size:1.2rem; font-weight:700; margin:2.1rem 0 .7rem; }
+  p, ul, ol { max-width:var(--measure); }
+  p { margin:0 0 1rem; }
+  ul, ol { margin:0 0 1.1rem; padding-left:1.15rem; }
+  li { margin-bottom:.35rem; }
+  li::marker { color:var(--accent); }
+  a { color:var(--accent); }
+  .plate { max-width:var(--plate); margin:1.4rem 0 1.8rem; }
+  .table-wrap { overflow-x:auto; border:1px solid var(--rule); border-radius:3px;
+                background:var(--surface); box-shadow:var(--shadow); }
+  table { border-collapse:collapse; width:100%; font-size:.87rem; }
+  caption { caption-side:top; text-align:left; font-size:.76rem; letter-spacing:.09em;
+            text-transform:uppercase; font-weight:700; color:var(--ink-faint); padding:0 0 .55rem; }
+  th, td { padding:.5rem .75rem; text-align:left; vertical-align:top; border-bottom:1px solid var(--rule); }
+  thead th { background:var(--sunken); font-size:.72rem; letter-spacing:.07em; text-transform:uppercase;
+             font-weight:700; color:var(--ink-muted); white-space:nowrap; }
+  tbody tr:last-child td { border-bottom:0; }
+  td.mono, .mono { font-family:var(--f-mono); font-size:.8rem; }
+  .row-head { font-weight:700; white-space:nowrap; }
+  .ok { color:var(--okc); font-weight:700; }
+  .ko { color:var(--signal); font-weight:700; }
+  code { font-family:var(--f-mono); font-size:.88em; }
+  p code, li code, td code { background:var(--sunken); padding:.07em .3em; border-radius:2px; }
+  .config { margin:1.2rem 0 1.8rem; max-width:var(--plate); }
+  .config-head { display:flex; flex-wrap:wrap; align-items:baseline; gap:.5rem 1rem;
+                 border:1px solid var(--rule); border-bottom:0; background:var(--sunken);
+                 padding:.5rem .85rem; border-radius:3px 3px 0 0; }
+  .config-head .name { font-family:var(--f-mono); font-weight:700; font-size:.86rem; }
+  .config-head .kind { font-size:.76rem; color:var(--ink-muted); }
+  pre { margin:0; padding:.95rem 1.05rem; background:var(--code-bg); color:var(--code-ink);
+        border:1px solid var(--rule); border-radius:0 0 3px 3px; overflow-x:auto;
+        font-family:var(--f-mono); font-size:.79rem; line-height:1.58; tab-size:2; }
+  pre .c { color:var(--ink-faint); font-style:italic; }
+  .note { max-width:var(--plate); border-left:3px solid var(--accent); background:var(--accent-soft);
+          padding:.9rem 1.05rem; margin:1.4rem 0; border-radius:0 3px 3px 0; font-size:.93rem; }
+  .note.warn { border-left-color:var(--signal); background:var(--signal-soft); }
+  .note.good { border-left-color:var(--okc); background:var(--ok-soft); }
+  .note > :last-child { margin-bottom:0; }
+  .note p, .note ul, .note ol { max-width:none; }
+  .note .label { display:block; font-size:.71rem; letter-spacing:.11em; text-transform:uppercase;
+                 font-weight:700; color:var(--accent); margin-bottom:.35rem; }
+  .note.warn .label { color:var(--signal); }
+  .note.good .label { color:var(--okc); }
+  .steps { list-style:none; padding:0; counter-reset:step; max-width:var(--plate); }
+  .steps li { counter-increment:step; padding-left:2.1rem; position:relative; margin-bottom:.55rem; }
+  .steps li::before { content:counter(step); position:absolute; left:0; top:.05em; width:1.5rem;
+                      height:1.5rem; display:grid; place-items:center; border-radius:50%;
+                      background:var(--accent); color:var(--ground); font-family:var(--f-mono);
+                      font-size:.72rem; font-weight:700; }
+  figure { margin:1.5rem 0 2rem; max-width:var(--plate); }
+  .fig-frame { border:1px solid var(--rule); background:var(--surface); border-radius:3px;
+               padding:1rem; overflow-x:auto; box-shadow:var(--shadow); }
+  .fig-frame img { width:100%; display:block; background:#fff; border-radius:2px; }
+  figcaption { font-size:.83rem; color:var(--ink-muted); margin-top:.6rem; max-width:var(--measure); }
+  .toc-inline { max-width:var(--plate); background:var(--surface); border:1px solid var(--rule);
+                border-radius:3px; padding:1rem 1.3rem; box-shadow:var(--shadow); margin:0 0 2rem; }
+  .toc-inline b { display:block; font-size:.72rem; letter-spacing:.12em; text-transform:uppercase;
+                  color:var(--ink-faint); margin-bottom:.5rem; }
+  .toc-inline ol { columns:2; column-gap:2.5rem; margin:0; padding-left:1.1rem; font-size:.9rem; }
+  @media (max-width:640px){ .toc-inline ol { columns:1; } }
+  footer.colophon { margin-top:4rem; border-top:2px solid var(--ink); padding-top:1.1rem;
+                    font-size:.82rem; color:var(--ink-faint); max-width:var(--plate); }
+  @media print {
+    :root, :root[data-theme="dark"] {
+      --ground:#fff; --surface:#fff; --sunken:#f2f0ea; --ink:#000; --ink-muted:#333;
+      --ink-faint:#555; --rule:#bbb; --rule-strong:#888; --accent:#6B3F04; --accent-soft:#f7f0e4;
+      --signal:#8B231A; --signal-soft:#faece9; --okc:#0d4a34; --ok-soft:#e9f2ec;
+      --zebra:#f7f7f7; --ctrl:#555;
+      --code-bg:#f6f6f6; --code-ink:#111; --shadow:none;
+    }
+    body { font-size:10.5pt; }
+    .shell { max-width:none; padding:0; }
+    .sec-head, h3 { break-after:avoid; }
+    .sec-head { break-inside:avoid; }
+    .note, .table-wrap, figure { break-inside:avoid; }
+    tr { break-inside:avoid; }
+    a { color:inherit; text-decoration:none; }
+  }
+
+  /* ---------- Rappels de cours repliables ---------- */
+  details.note.rappel { padding-top: .6rem; padding-bottom: .6rem; }
+  details.note.rappel > summary {
+    cursor: pointer;
+    list-style: none;
+  }
+  details.note.rappel > summary::-webkit-details-marker { display: none; }
+  details.note.rappel > summary .label { display: inline; margin: 0; }
+  details.note.rappel > summary .label::before { content: "▸\00a0"; }
+  details.note.rappel[open] > summary .label::before { content: "▾\00a0"; }
+  details.note.rappel[open] > summary { margin-bottom: .5rem; }
+  details.note.rappel > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  /* ---------- Refonte : pictogrammes (tracés inspirés de Lucide, licence ISC) — mêmes jetons que le livret ---------- */
+  :root {
+    --ico-book: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z'/%3E%3Cpath d='M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z'/%3E%3C/svg%3E");
+    --ico-warn: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z'/%3E%3Cpath d='M12 9v4'/%3E%3Cpath d='M12 17h.01'/%3E%3C/svg%3E");
+    --ico-pencil: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z'/%3E%3Cpath d='m15 5 4 4'/%3E%3C/svg%3E");
+    --ico-mark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z'/%3E%3C/svg%3E");
+    --ico-teacher: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 3h6v3H9z'/%3E%3Cpath d='M15 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2'/%3E%3Cpath d='M9 12h6M9 16h4'/%3E%3C/svg%3E");
+    --ico-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 11.1V12a10 10 0 1 1-5.9-9.1'/%3E%3Cpath d='M22 4 12 14l-3-3'/%3E%3C/svg%3E");
+    --ico-tick: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7'/%3E%3C/svg%3E");
+    --ico-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 6 6 6-6 6'/%3E%3C/svg%3E");
+  }
+
+  /* ---------- Refonte : typographie (C2) ---------- */
+  p { text-wrap: pretty; }
+  @media (max-width: 560px) { p, li, dd { hyphens: auto; } }
+  /* Encadrés : la boîte peut rester large, le texte reste à la mesure */
+  .note { max-width: calc(var(--measure) + 2.5rem); }
+  .note p, .note ul, .note ol { max-width: var(--measure); }
+  .note:has(pre, table, .plate) { max-width: var(--plate); }
+  /* Chiffres alignés et de même hauteur */
+  table { font-variant-numeric: lining-nums tabular-nums; }
+  /* Chiffres alignés dans le texte courant : « VLAN 10 », « E5 », adresses IP */
+  body { font-variant-numeric: lining-nums; }
+
+  /* ---------- Refonte : encadrés typés (C3) — le pictogramme double le libellé, il ne le remplace pas ---------- */
+  .ico, .note.warn > .label::before, .note.task > .label::before, .note.key > .label::before,
+  details.note.rappel > summary::before {
+    content: "";
+    display: inline-block;
+    flex: none;
+    width: 1.15em; height: 1.15em;
+    background-color: currentColor;
+    -webkit-mask: var(--ico) center / contain no-repeat;
+            mask: var(--ico) center / contain no-repeat;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .note > .label { display: flex; align-items: center; gap: .45rem; }
+  .note.warn    > .label { --ico: var(--ico-warn); }
+  .note.task    > .label { --ico: var(--ico-pencil); color: var(--okc); }
+  .note.key     > .label { --ico: var(--ico-mark); }
+
+  .note.task    { border-left-color: var(--okc); background: var(--ok-soft); }
+  .note.key     { background: var(--surface); border: 1px solid var(--accent); border-left-width: 4px; }
+
+  /* Rappels : contenu facultatif, donc visuellement en retrait ; pictogramme de type à gauche, chevron d'état à droite */
+  details.note.rappel { background: var(--sunken); border-left-color: var(--rule-strong); }
+  details.note.rappel > summary {
+    display: flex; align-items: center; gap: .5rem;
+    min-height: 1.75rem;
+    color: var(--accent); --ico: var(--ico-book);
+  }
+  details.note.rappel > summary .label::before, details.note.rappel[open] > summary .label::before { content: none; }   /* retire ▸ / ▾ (aussi à l'état ouvert) */
+  details.note.rappel > summary::after {
+    content: ""; margin-left: auto; flex: none; width: 1rem; height: 1rem; background-color: currentColor;
+    -webkit-mask: var(--ico-chevron) center / contain no-repeat; mask: var(--ico-chevron) center / contain no-repeat;
+    transition: transform .15s ease;
+  }
+  details.note.rappel[open] > summary::after { transform: rotate(90deg); }
+  @media print { details.note.rappel > summary::after { display: none; } }
+
+  /* ---------- Refonte : cases à cocher (même dessin que .crit input du livret, C8) ---------- */
+  .step-done input[type="checkbox"], .cp-ok input[type="checkbox"], td.conf input[type="checkbox"] {
+    -webkit-appearance: none; appearance: none; margin: 0; flex: none;
+    width: 1.3rem; height: 1.3rem; display: inline-grid; place-content: center;
+    background: var(--surface); border: 2px solid var(--ctrl); border-radius: 3px; cursor: pointer;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .step-done input[type="checkbox"]::after, .cp-ok input[type="checkbox"]::after, td.conf input[type="checkbox"]::after {
+    content: ""; width: .9rem; height: .9rem; background-color: var(--surface); transform: scale(0);
+    -webkit-mask: var(--ico-tick) center/contain no-repeat; mask: var(--ico-tick) center/contain no-repeat;
+  }
+  .step-done input[type="checkbox"]:checked, .cp-ok input[type="checkbox"]:checked, td.conf input[type="checkbox"]:checked { background: var(--okc); border-color: var(--okc); }
+  .step-done input[type="checkbox"]:checked::after, .cp-ok input[type="checkbox"]:checked::after, td.conf input[type="checkbox"]:checked::after { transform: scale(1); }
+  td.conf { text-align: center; vertical-align: middle; }
+
+  /* ---------- Refonte : tableaux (C7) ---------- */
+  tbody tr:last-child > th { border-bottom: 0; }
+  .table-wrap.long tbody tr:nth-child(even) > :is(td, th) { background: var(--zebra); }
+  tbody th.row-head { font-weight: 700; text-align: left; vertical-align: top; }
+  /* En-têtes collants : uniquement sur grand écran, où le tableau tient sans défilement horizontal */
+  @media screen and (min-width: 1080px) {
+    .table-wrap.long { overflow: visible; }
+    .table-wrap.long thead th { position: sticky; top: var(--bar-h, 0px); z-index: 2; box-shadow: inset 0 -1px 0 var(--rule-strong); }
+  }
+  /* Empilement : sous 640 px, chaque ligne devient une fiche, chaque cellule est précédée de son en-tête */
+  @media screen and (max-width: 640px) {
+    .stack-sm table, .stack-sm tbody, .stack-sm tr, .stack-sm td, .stack-sm tbody th { display: block; width: 100%; }
+    .stack-sm thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+    .stack-sm tr { padding: .65rem .85rem; border-bottom: 1px solid var(--rule-strong); }
+    .stack-sm tbody tr:last-child { border-bottom: 0; }
+    .stack-sm td, .stack-sm tbody th { border: 0; padding: .12rem 0; white-space: normal; }
+    .stack-sm [data-label]::before {
+      content: attr(data-label); display: block; margin-top: .35rem;
+      font-family: var(--f-body); font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; font-weight: 700; color: var(--ink-faint);
+    }
+    .stack-sm caption { display: block; padding: .6rem .85rem .2rem; }
+    .stack-sm tr > :first-child::before { margin-top: 0; }
+    .stack-sm td.conf { text-align: left; }
+    .table-wrap.long.stack-sm tbody tr:nth-child(even) > * { background: none; }
+    .table-wrap.long.stack-sm tbody tr:nth-child(even) { background: var(--zebra); }
+  }
+
+  /* ---------- Refonte : accessibilité (C6, C12) ---------- */
+  .sr-only { position:absolute !important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
+  .skip { position:absolute; left:1rem; top:-5rem; z-index:100; padding:.5rem .8rem; background:var(--ink); color:var(--ground); border-radius:3px; font-weight:700; }
+  .skip:focus { top:.75rem; }
+  main:focus { outline: none; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+  html { scroll-padding-top: calc(var(--bar-h, 0px) + .75rem); }
+  section { scroll-margin-top: calc(var(--bar-h, 0px) + 1rem); }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  }
+  @media print {
+    .skip { display: none !important; }
+    /* Cases imprimées vides, à cocher au stylo */
+    .step-done input[type="checkbox"], .cp-ok input[type="checkbox"], td.conf input[type="checkbox"] {
+      width: .9rem; height: .9rem; background: #fff !important; border: 1.5px solid #555 !important;
+    }
+    .step-done input[type="checkbox"]::after, .cp-ok input[type="checkbox"]::after, td.conf input[type="checkbox"]::after { transform: scale(0) !important; }
+    .table-wrap.long thead th { position: static; }
+  }
+
+  /* ---------- Refonte : fiche TP (C10) ---------- */
+  /* Points de contrôle : dans la fiche TP, .note.good est le type « contrôle » (pictogramme coche) */
+  .note.good > .label { --ico: var(--ico-check); }
+  .note.good > .label::before {
+    content: ""; display: inline-block; flex: none; width: 1.15em; height: 1.15em; background-color: currentColor;
+    -webkit-mask: var(--ico) center / contain no-repeat; mask: var(--ico) center / contain no-repeat;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .step-meta { display:flex; flex-wrap:wrap; gap:.4rem 1.2rem; align-items:center; margin:.7rem 0 0; font-size:.84rem; }
+  .sec-head p.step-meta { color: var(--ink); font-size: .84rem; }
+  .budget { font-family:var(--f-mono); font-size:.76rem; padding:.05rem .45rem; border:1px solid var(--rule-strong); border-radius:2px; color:var(--ink-muted); }
+  .step-done, .cp-ok { display:inline-flex; gap:.5rem; align-items:center; min-height:1.75rem; cursor:pointer; font-weight:700; }
+  .cp-ok { margin-top:.6rem; color:var(--okc); }
+  .note.good.checkpoint > .label { display:flex; align-items:center; gap:.45rem; }
+  .note.checkpoint > p { margin-bottom:.45rem; }
+  /* Liste d'étapes : le texte reste à la mesure (C2) */
+  .steps { max-width: calc(var(--measure) + 2.1rem); }
+  .toc-inline li.is-done > a::after { content:" ✓"; color:var(--okc); }
+  .tp-ops { display:flex; flex-wrap:wrap; gap:.3rem 1rem; align-items:center; margin:.85rem 0 0; padding-top:.65rem;
+            border-top:1px solid var(--rule); font-size:.8rem; color:var(--ink-muted); max-width:none; }
+  .tp-ops[hidden] { display: none; }
+  .tp-ops button, .tp-chrono button {
+    min-height: 1.75rem; padding: .1rem .6rem; font: inherit; font-size: .8rem; background: var(--surface);
+    color: var(--ink); border: 1px solid var(--ctrl); border-radius: 3px; cursor: pointer;
+  }
+  .tp-ops button:hover, .tp-chrono button:hover { border-color: var(--ink-muted); }
+  .tp-ops button.danger { color: var(--signal); border-color: var(--signal); }
+  .tp-bar {
+    position: sticky; top: 0; z-index: 30; display: flex; flex-wrap: wrap; gap: .3rem 1.2rem; align-items: center;
+    margin: 0 -1.5rem 1.5rem; padding: .45rem 1.5rem; background: var(--ground); border-bottom: 1px solid var(--rule);
+    font-size: .84rem; color: var(--ink-muted); font-variant-numeric: tabular-nums lining-nums;
+  }
+  .tp-bar[hidden] { display: none; }
+  .tp-here { font-weight: 700; color: var(--ink); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1 1 14rem; }
+  .tp-count { white-space: nowrap; }
+  .tp-count b { color: var(--ink); }
+  .tp-chrono { display: inline-flex; flex-wrap: wrap; gap: .45rem; align-items: center; }
+  .tp-chrono [role="timer"] { font-family: var(--f-mono); color: var(--ink); min-width: 4.5ch; }
+  /* Petit écran : la barre ne colle plus (elle mangerait l'écran), elle reste en tête de fiche */
+  @media screen and (max-width: 640px) {
+    .tp-bar { position: static; gap: .3rem .9rem; }
+    .tp-here { flex-basis: 100%; }
+  }
+  @media print {
+    .tp-bar, .tp-ops { display: none !important; }
+    .toc-inline li.is-done > a::after { content: none; }
+  }
+
+  /* ---------- Projet : fiche de recette à remplir ---------- */
+  #recette td.fill { min-width: 7rem; height: 2.2rem; background: var(--zebra); }
+  #recette td.fill:focus { outline: 2px solid var(--accent); outline-offset: -2px; }
+  #fiche-recette td.mono { white-space: nowrap; }
+  .table-wrap + .table-wrap { margin-top: 1.5rem; }
+  @media print { .config { break-inside: avoid; } }
+  /* Cadres en pleine largeur */
+  .note, details.note.rappel, .note:has(pre, table, .plate), .config, .table-wrap, .toc-inline { max-width: none; width: auto; }
+  .note p, .note ul, .note ol { max-width: none; }
+  .recette-ops[hidden] { display: none; }
+  .recette-ops { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; }
+  .recette-ops button { font: inherit; padding: .35rem .7rem; cursor: pointer; color: var(--ink);
+    background: var(--surface); border: 1px solid var(--ctrl); border-radius: 4px; }
+  .recette-ops span { font-size: .85rem; color: var(--ink-muted); }
+  @media print {
+    .recette-ops, .toc-inline { display: none !important; }
+    /* La fiche est une preuve : les cases cochées restent visibles dans le PDF */
+    #fiche-recette td.conf input[type="checkbox"]:checked { background: #0d4a34 !important; border-color: #0d4a34 !important; }
+    #fiche-recette td.conf input[type="checkbox"]:checked::after { transform: scale(1) !important; background-color: #fff !important; }
+    body.print-fiche .masthead, body.print-fiche .colophon, body.print-fiche main > section:not(#recette) { display: none !important; }
+    body.print-fiche #recette .sec-head { display: none !important; }
+    #recette .table-wrap { break-inside: auto; }
+    #recette .table-wrap.long { overflow: visible; }
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#contenu">Aller au contenu</a>
+<div class="shell">
+
+  <header class="masthead">
+    <p class="eyebrow">Contexte InGen · Projet 01 · Cahier des charges</p>
+    <h1>Durcir et administrer à distance les équipements d’Isla Nublar</h1>
+    <p class="standfirst">
+      Trois équipements sans mot de passe, qu’on ne peut pas administrer à distance aujourd’hui
+      et qui passeraient en clair dès qu’un mot de passe serait posé sans SSH. Votre mission :
+      les rendre administrables à distance, de façon sûre, et le prouver.
+    </p>
+    <div class="masthead-meta">
+      <span><b>Chantier</b> n° 1 du livret</span>
+      <span><b>Constats traités</b> 2, 3, 5, 6, 7 et 8</span>
+      <span><b>Épreuves</b> E6 · installer, tester, déployer — E7 · équipements et usages</span>
+      <span><b>Organisation</b> maquette seul, matériel en binôme</span>
+      <span><b>Durée indicative</b> 8 h : maquette 2 h, matériel 4 h 30, compte rendu 1 h 30</span>
+      <span><b>Version Packet Tracer</b> 9.1, comme la fiche de montage</span>
+    </div>
+  </header>
+
+  <main id="contenu" tabindex="-1">
+
+  <div class="toc-inline">
+    <b>Sommaire</b>
+    <ol>
+      <li><a href="#demande">La demande</a></li>
+      <li><a href="#perimetre">Le périmètre</a></li>
+      <li><a href="#cdc">Le cahier des charges</a></li>
+      <li><a href="#phase1">Phase 1 : la maquette</a></li>
+      <li><a href="#phase2">Phase 2 : le matériel</a></li>
+      <li><a href="#pieges">Les pièges à éviter</a></li>
+      <li><a href="#recette">La fiche de recette</a></li>
+      <li><a href="#compte-rendu">Le compte rendu</a></li>
+      <li><a href="#livrables">Les livrables</a></li>
+      <li><a href="#evaluation">Ce qui sera évalué</a></li>
+      <li><a href="#evolution">Vers l’épreuve E6</a></li>
+    </ol>
+  </div>
+
+  <section id="demande">
+    <div class="sec-head">
+      <span class="src">1 — Le besoin</span>
+      <h2 class="sec-title">La demande de votre responsable</h2>
+    </div>
+    <div class="note key">
+      <span class="label">Demande du responsable Systèmes &amp; Réseaux d’Isla Nublar</span>
+      <p>
+        L’audit de la configuration livrée est sans appel. Sur nos trois équipements, aucun
+        mot de passe n’est défini et rien n’interdit Telnet. La console s’ouvre à quiconque
+        atteint l’équipement, or les locaux de brassage des paliers, où se trouve SW-N3-01,
+        ouvrent tous avec la même clé. Les ports libres des commutateurs sont actifs.
+      </p>
+      <p>
+        Nous avons besoin d’administrer ces équipements à distance depuis le VLAN 10, sans
+        monter dans les baies. Nous avons aussi besoin de retrouver leurs configurations au
+        même endroit si l’un d’eux tombe. Depuis le précédent Nedry, la direction n’accepte
+        plus d’accès anonyme ni de « ça marche » sans preuve.
+      </p>
+      <p>
+        Durcissez CORE-NUBLAR, SW-N3-01 et GW-NUBLAR, mettez en place la sauvegarde de leurs
+        configurations, puis remettez-moi une recette que nous pourrons rejouer ensemble.
+      </p>
+    </div>
+  </section>
+
+  <section id="perimetre">
+    <div class="sec-head">
+      <span class="src">2 — Le point de départ</span>
+      <h2 class="sec-title">Ce que vous traitez, et ce que vous ne traitez pas</h2>
+      <p><strong>Prérequis :</strong> avoir réalisé le <a href="INGEN-Projet00-Preparatoire.html">travail préparatoire</a> : maquette montée avec la <a href="INGEN-Maquette-PacketTracer.html">fiche de montage</a>, jeu d’essais T1 à T10 conforme, et <a href="INGEN-Livret-Contexte.html#audit">dix constats</a> prouvés. On ne corrige bien que ce qu’on a d’abord constaté.</p>
+      <p><strong>Documents utiles :</strong> livret, parties 7, 8 et 10 ; fiche de montage ; carte du <a href="INGEN-Livret-Contexte.html#mission-1">chantier 1</a>.</p>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <caption>Les six constats à fermer (livret, <a href="INGEN-Livret-Contexte.html#audit">partie 10</a>)</caption>
+        <thead><tr><th class="num">N°</th><th>Faiblesse</th><th>Où</th><th>Ce que vous devez obtenir</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">2</td><td>Aucun mot de passe, console ouverte</td><td>Les trois</td><td>Comptes nominatifs, secret privilégié, console protégée</td></tr>
+          <tr><td class="mono">3</td><td>Telnet non interdit, aucune clé SSH</td><td>Les trois</td><td>SSH v2 seul, depuis le VLAN 10 seul</td></tr>
+          <tr><td class="mono">5</td><td><code>no service password-encryption</code></td><td>Les trois</td><td>Aucun secret lisible dans <code>show running-config</code></td></tr>
+          <tr><td class="mono">6</td><td>VLAN natif resté à 1</td><td>Trunk CORE F0/5 ↔ SW F0/1</td><td>VLAN natif dédié et inutilisé, VLAN autorisés limités</td></tr>
+          <tr><td class="mono">7</td><td>Ports libres actifs et négociation DTP</td><td>CORE-NUBLAR, SW-N3-01</td><td>Ports libres éteints dans un VLAN parking, négociation coupée</td></tr>
+          <tr><td class="mono">8</td><td><code>ip source-route</code> activé</td><td>GW-NUBLAR</td><td>Routage par la source désactivé</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note warn">
+      <span class="label">Hors périmètre : n’y touchez pas</span>
+      <p>
+        Ne modifiez ni les listes 130 et 170, ni le routage, ni la sortie Internet. Les
+        constats 1, 9 et 10 relèvent du chantier 2, le constat 4 du chantier 3 et la
+        sortie Internet du chantier 9. <strong>Après ce projet, un automate pourra donc
+        toujours joindre le VLAN serveurs (test T5).</strong> Ce n’est pas une erreur de
+        votre part, mais un risque résiduel à signaler dans votre compte rendu.
+      </p>
+    </div>
+  </section>
+
+  <section id="cdc">
+    <div class="sec-head">
+      <span class="src">3 — Les exigences</span>
+      <h2 class="sec-title">Le cahier des charges</h2>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <caption>Valeurs à appliquer</caption>
+        <thead><tr><th>Équipement</th><th>Adresse d’administration</th><th>Nom DNS (zone <code>nublar.intra</code>)</th><th>Fichier de sauvegarde</th></tr></thead>
+        <tbody>
+          <tr><th scope="row" class="row-head">CORE-NUBLAR</th><td class="mono">10.10.10.1</td><td class="mono">core.nublar.intra <span class="ok">existe</span></td><td class="mono">core-nublar-confg</td></tr>
+          <tr><th scope="row" class="row-head">SW-N3-01</th><td class="mono">10.10.10.4 <span class="ko">à créer</span></td><td class="mono">sw-n3-01.nublar.intra <span class="ko">à créer</span></td><td class="mono">sw-n3-01-confg</td></tr>
+          <tr><th scope="row" class="row-head">GW-NUBLAR</th><td class="mono">172.31.0.2</td><td class="mono">gw.nublar.intra <span class="ok">existe</span></td><td class="mono">gw-nublar-confg</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <caption>Deux VLAN à ajouter, sans interface routée</caption>
+        <thead><tr><th class="num">VLAN</th><th>Nom</th><th>Rôle</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">998</td><td class="mono">NATIF-TRUNK</td><td>VLAN natif du trunk. Aucun port d’accès n’y est affecté.</td></tr>
+          <tr><td class="mono">999</td><td class="mono">PARKING</td><td>Reçoit tous les ports libres, éteints.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3>Exigences</h3>
+    <ol class="steps">
+      <li><strong>Comptes.</strong> Des comptes locaux nominatifs de la forme <code>prenom.nom</code>, protégés par <code>secret</code>, sans compte générique comme <code>admin</code>. Sur votre maquette : votre compte. Sur le matériel : un compte par membre du binôme, chacun saisissant son propre secret. Un <code>enable secret</code> distinct sur chaque équipement.</li>
+      <li><strong>Secrets.</strong> Au moins 12 caractères, conservés dans un gestionnaire de mots de passe. Le masquage réversible des autres mots de passe est activé.</li>
+      <li><strong>Console.</strong> Authentification obligatoire et déconnexion après 5 minutes d’inactivité, y compris sur la ligne auxiliaire de GW-NUBLAR.</li>
+      <li><strong>Accès à distance.</strong> SSH version 2 seul, clé RSA de 2048 bits, authentification par compte local et déconnexion après 5 minutes, sur <strong>toutes</strong> les lignes vty. Telnet est refusé partout. Le serveur web d’administration est désactivé.</li>
+      <li><strong>Origine des connexions.</strong> Les lignes vty n’acceptent que le réseau 10.10.10.0/24, par une liste standard appliquée avec <code>access-class</code>.</li>
+      <li><strong>SW-N3-01 administrable.</strong> Interface Vlan10 en 10.10.10.4/24 et passerelle 10.10.10.1. Le VLAN 10 doit donc exister sur ce commutateur et traverser le trunk.</li>
+      <li><strong>Trunk.</strong> Aux deux extrémités : VLAN natif 998, VLAN autorisés 10, 30 et 70 uniquement, négociation DTP coupée.</li>
+      <li><strong>Ports d’accès utilisés.</strong> <code>switchport nonegotiate</code> partout. Vers les postes, l’automate et le serveur : <code>spanning-tree portfast</code>, <code>spanning-tree bpduguard enable</code> et <code>no cdp enable</code>. Sur CORE-NUBLAR, F0/7, vers le routeur, reçoit seulement <code>switchport nonegotiate</code>.</li>
+      <li><strong>Ports libres.</strong> Accès, VLAN 999, éteints. Sur CORE-NUBLAR : F0/2, F0/3, F0/6, F0/8 à F0/24, G0/1 et G0/2. Sur SW-N3-01 : F0/4 à F0/24, G0/1 et G0/2.</li>
+      <li><strong>GW-NUBLAR.</strong> <code>no ip source-route</code>.</li>
+      <li><strong>Avertissement.</strong> Une bannière juridique <code>banner motd</code> sur chaque équipement.</li>
+      <li><strong>Sauvegarde.</strong> Les trois configurations sont copiées sur NUB-DC01, sous les noms indiqués, avec un compte dédié non administrateur et sans accès anonyme. Ce service n’existe pas à l’état initial : vous le mettez en place ici.</li>
+    </ol>
+  </section>
+
+  <section id="phase1">
+    <div class="sec-head">
+      <span class="src">4 — Seul, dans Packet Tracer · ≈ 2 h</span>
+      <h2 class="sec-title">Phase 1 : la maquette</h2>
+      <p>
+        Dupliquez votre <code>INGEN-Nublar-G&lt;xx&gt;.pkt</code>, conservez l’original et nommez la
+        copie selon la <a href="#livrables">section 9</a>. L’original reste dans l’état livré : c’est le point de départ
+        de chaque projet. Travaillez dans l’ordre, <strong>depuis la console</strong>,
+        et faites le contrôle indiqué après chaque bloc.
+      </p>
+    </div>
+    <div class="config">
+      <div class="config-head"><span class="name">Bloc 1</span><span class="kind">les trois équipements — secrets et comptes</span></div>
+<pre><code>enable
+configure terminal
+service password-encryption
+enable secret &lt;secret-privilege&gt;
+username &lt;prenom.nom&gt; secret &lt;secret-personnel&gt;
+banner motd # Acces reserve aux personnes autorisees. Tout acces non autorise est interdit. #
+line con 0
+ login local
+ exec-timeout 5 0
+! GW-NUBLAR seulement :
+line aux 0
+ login local
+ exec-timeout 5 0
+end</code></pre>
+    </div>
+    <p><strong>Contrôle :</strong> quittez la console puis rouvrez-la : la bannière, l’identifiant et le mot de passe sont demandés, puis <code>enable</code> demande le secret.</p>
+    <div class="config">
+      <div class="config-head"><span class="name">Bloc 2</span><span class="kind">SW-N3-01 — le rendre joignable</span></div>
+<pre><code>configure terminal
+vlan 10
+ name SYS-RESEAUX
+interface Vlan10
+ ip address 10.10.10.4 255.255.255.0
+ no shutdown
+exit
+ip default-gateway 10.10.10.1
+end</code></pre>
+    </div>
+    <p><strong>Contrôle :</strong> <code>ping 10.10.10.4</code> depuis PC-DSI-01 répond, après une trentaine de secondes&nbsp;: le temps que le spanning-tree ouvre le VLAN&nbsp;10, qui vient d’apparaître sur le trunk. Un premier ping en échec n’est donc pas une panne. Ajoutez sur NUB-DC01 l’enregistrement DNS de SW-N3-01.</p>
+    <div class="config">
+      <div class="config-head"><span class="name">Bloc 3</span><span class="kind">les trois équipements — SSH et limitation au VLAN 10</span></div>
+<pre><code>configure terminal
+ip domain-name nublar.intra
+crypto key generate rsa general-keys modulus 2048
+! Saisissez la ligne ci-dessus seule et attendez le retour de l'invite.
+ip ssh version 2
+no ip http server
+no ip http secure-server
+access-list 10 remark Administration depuis le VLAN 10 uniquement
+access-list 10 permit 10.10.10.0 0.0.0.255
+access-list 10 deny any log
+line vty &lt;premiere&gt; &lt;derniere&gt;
+ login local
+ transport input ssh
+ access-class 10 in
+ exec-timeout 5 0
+end</code></pre>
+    </div>
+    <p>
+      Sur CORE-NUBLAR et SW-N3-01, visez <code>line vty 0 15</code>. Sur GW-NUBLAR, traitez les lignes
+      existantes, listées par <code>show line</code>, sans en créer d’autres. Puis contrôlez sur chacun avec
+      <code>show running-config | section line vty</code>.
+      <strong>Contrôle :</strong> depuis PC-DSI-01, <code>ssh -l &lt;prenom.nom&gt; core.nublar.intra</code>
+      ouvre une session, et de même pour les deux autres noms.
+    </p>
+    <div class="note warn">
+      <span class="label">Trois lignes que la maquette refuse</span>
+      <p>
+        Dans Packet&nbsp;Tracer, sur les trois équipements, <code>no ip http server</code> et
+        <code>no ip http secure-server</code> provoquent <code>% Invalid input detected</code>&nbsp;: le
+        simulateur n’a pas de serveur web d’administration, il n’y a donc rien à couper. De même,
+        le mot-clé <code>log</code> est refusé sur une liste standard&nbsp;: sur la maquette, saisissez
+        <code>access-list 10 deny any</code>. Cette ligne explicite reste indispensable, car c’est son
+        compteur qui prouve les refus en V11 à V14&nbsp;; le refus implicite, lui, ne compte rien.
+        Sur le matériel, saisissez le bloc tel qu’il est écrit, <code>log</code> compris.
+      </p>
+    </div>
+    <div class="config">
+      <div class="config-head"><span class="name">Bloc 4</span><span class="kind">CORE-NUBLAR et SW-N3-01 — trunk et ports</span></div>
+<pre><code>configure terminal
+vlan 998
+ name NATIF-TRUNK
+vlan 999
+ name PARKING
+interface &lt;port-trunk&gt;
+ switchport trunk native vlan 998
+ switchport trunk allowed vlan 10,30,70
+ switchport nonegotiate
+interface range &lt;ports-libres&gt;
+ switchport mode access
+ switchport access vlan 999
+ switchport nonegotiate
+ shutdown
+interface &lt;port-vers-un-poste-l-automate-ou-le-serveur&gt;
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ no cdp enable
+! CORE-NUBLAR seulement :
+interface FastEthernet0/7
+ switchport nonegotiate
+end</code></pre>
+    </div>
+    <p><strong>Contrôle :</strong> <code>show interfaces trunk</code> sur les deux commutateurs, puis les tests T1 à T10 de la fiche de montage : leurs résultats ne doivent pas changer.</p>
+    <div class="config">
+      <div class="config-head"><span class="name">Bloc 5</span><span class="kind">GW-NUBLAR — matériel seulement, en phase 2</span></div>
+<pre><code>configure terminal
+no ip source-route
+end</code></pre>
+    </div>
+    <div class="note warn">
+      <span class="label">Ne le saisissez pas sur la maquette</span>
+      <p>
+        L’IOS simulé du 2901 ne connaît pas la commande <code>ip source-route</code> : sur la
+        maquette, elle provoque <code>% Invalid input detected</code>. Le constat 8 ne se prouve
+        donc pas dans Packet&nbsp;Tracer, et ne s’y corrige pas non plus. Vous appliquerez ce bloc
+        sur le routeur réel, à l’étape 5 de la phase&nbsp;2, et vous le contrôlerez avec le test V20
+        de la <a href="#recette">fiche de recette</a>. Retenez la leçon pour le compte rendu&nbsp;:
+        une maquette ne reproduit que ce que son simulateur sait faire.
+      </p>
+    </div>
+    <h3>La sauvegarde sur la maquette</h3>
+    <p>
+      Activez le service FTP de NUB-DC01, créez-y un compte dédié, avec le droit d’écriture, et supprimez le
+      compte par défaut. FTP n’est retenu ici que parce que le simulateur ne propose pas SCP. Ce compte de
+      maquette ne doit servir nulle part ailleurs. Sur chaque équipement :
+    </p>
+    <div class="config">
+      <div class="config-head"><span class="name">Sauvegarde FTP</span><span class="kind">les trois équipements — maquette</span></div>
+<pre><code>configure terminal
+ip ftp username &lt;compte-sauvegarde&gt;
+ip ftp password &lt;secret-sauvegarde&gt;
+end
+copy running-config ftp:
+configure terminal
+no ip ftp username
+no ip ftp password
+end
+copy running-config startup-config</code></pre>
+    </div>
+    <p>
+      Ne collez pas ce bloc d’un seul tenant&nbsp;: <code>copy running-config ftp:</code> pose deux questions. À <em>Address or name of remote host</em>, répondez <code>10.10.200.10</code>&nbsp;; à <em>Destination filename</em>, validez le nom proposé (<code>GW-NUBLAR-confg</code>, par exemple) par Entrée. Saisissez ensuite la fin du bloc. <strong>Contrôle :</strong> sur NUB-DC01, <em>Services → FTP</em>, les trois fichiers apparaissent en tête de liste.
+    </p>
+    <p>
+      Le mot de passe FTP resterait sinon dans la configuration, en type 7 réversible : vous le
+      retirez donc aussitôt après la copie. Les fichiers copiés le contiennent malgré tout, car il
+      était actif au moment de la copie : c’est l’une des raisons de ne pas retenir FTP sur le
+      réseau réel.
+    </p>
+    <div class="note good">
+      <span class="label">Pour passer au matériel</span>
+      <p>Sur la maquette, les tests V1 à V3, V6 à V19 et V21 de la <a href="#recette">fiche de recette</a> donnent le résultat attendu, avec <code>ssh</code> depuis le Command Prompt et FTP pour V21. Quatre d’entre eux demandent une adaptation&nbsp;:</p>
+      <ul>
+        <li><strong>V3.</strong> La déconnexion automatique se vérifie sur les deux commutateurs. La console du routeur simulé ne l’applique pas&nbsp;: sur GW-NUBLAR, lisez seulement <code>exec-timeout 5 0</code> dans <code>show running-config | section line con</code>.</li>
+        <li><strong>V9.</strong> La taille de la clé ne s’affiche pas&nbsp;: c’est le message de génération (<code>The key modulus size is 2048 bits</code>) qui la prouve.</li>
+        <li><strong>V17.</strong> Débranché, le poste continue d’afficher son ancien bail. Faites <code>ipconfig /release</code> puis <code>ipconfig /renew</code>&nbsp;: sur le port libre, il reste en 0.0.0.0. Remis sur son port, il retrouve son adresse.</li>
+        <li><strong>V19.</strong> <code>show running-config interface &lt;port&gt;</code> n’existe pas dans le simulateur. Utilisez <code>show running-config | section interface FastEthernet0/1$</code>&nbsp;: le <code>$</code> évite d’afficher aussi F0/10 à F0/19.</li>
+      </ul>
+      <p>V4 demande deux comptes, donc le binôme&nbsp;: il se joue sur le matériel. V5 n’est pas probant sur la maquette&nbsp;: Packet&nbsp;Tracer affiche <em>Open</em> puis ferme la connexion, que Telnet soit interdit ou simplement sans mot de passe. V20 ne se joue que sur le matériel (bloc 5). La fiche à remplir et à rendre porte, elle, sur le matériel.</p>
+    </div>
+    <details class="note rappel">
+      <summary><span class="label">Rappel de cours — Trois façons de protéger un mot de passe</span></summary>
+      <ul>
+        <li><strong><code>password</code></strong> : le mot de passe est stocké en clair.</li>
+        <li><strong><code>service password-encryption</code></strong> : il devient de type 7. Ce masquage est réversible en quelques secondes. Il protège seulement d’un regard par-dessus l’épaule.</li>
+        <li><strong><code>secret</code></strong> : seule une empreinte est conservée, en type 5 (MD5) sur ces versions d’IOS. Sur un IOS récent, préférez les types 8 ou 9, plus résistants.</li>
+      </ul>
+    </details>
+    <details class="note rappel">
+      <summary><span class="label">Rappel de cours — access-class ou access-group</span></summary>
+      <p>
+        <code>access-group</code> filtre ce qui entre par une interface ou en sort. En
+        <code>in</code>, cela inclut le trafic destiné à l’équipement.
+        <code>access-class</code> filtre uniquement les connexions destinées à l’équipement
+        <strong>par ses lignes vty</strong>. Elle protège donc toutes ses adresses en une fois, sans
+        modifier le trafic des utilisateurs : c’est pourquoi elle convient ici.
+      </p>
+    </details>
+    <details class="note rappel">
+      <summary><span class="label">Rappel de cours — Pourquoi un VLAN natif dédié</span></summary>
+      <p>
+        Le VLAN natif circule sans étiquette sur le trunk. Un attaquant placé dans ce VLAN peut
+        envoyer une trame à deux étiquettes : le premier commutateur retire la première, car elle
+        correspond au natif, puis le second lit la seconde et livre la trame dans un autre VLAN.
+        L’attaque fonctionne en aller simple. Si le natif est un VLAN sans aucun port d’accès,
+        personne ne peut la lancer.
+      </p>
+    </details>
+  </section>
+
+  <section id="phase2">
+    <div class="sec-head">
+      <span class="src">5 — En binôme, en salle · ≈ 4 h 30</span>
+      <h2 class="sec-title">Phase 2 : le matériel</h2>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <caption>Ce qui change entre la maquette et le matériel</caption>
+        <thead><tr><th>Sujet</th><th>Dans Packet&nbsp;Tracer</th><th>Sur le matériel</th><th>Ce que vous faites</th></tr></thead>
+        <tbody>
+          <tr><th scope="row" class="row-head">Accès à l’équipement</th><td>Onglet <em>CLI</em> de l’équipement.</td><td>Câble console et PuTTY en mode <em>Serial</em>, port COM indiqué par le Gestionnaire de périphériques, 9600 bauds.</td><td>Repérez le port COM avant de commencer : c’est la première panne de la séance.</td></tr>
+          <tr><th scope="row" class="row-head">Coller un bloc</th><td>Bouton <em>Paste</em>, tout le bloc passe d’un coup.</td><td>Clic droit dans PuTTY. À 9600 bauds, une console peut perdre des caractères sur un long collage.</td><td>Collez par petits blocs et lisez chaque ligne renvoyée avant de continuer.</td></tr>
+          <tr><th scope="row" class="row-head">Image IOS et SSH</th><td>SSH toujours disponible.</td><td>SSH n’existe que sur une image cryptographique : <code>show version</code> doit afficher <code>k9</code> dans le nom de l’image.</td><td>Sans <code>k9</code>, le bloc 3 est impossible : appelez l’enseignant avant d’aller plus loin.</td></tr>
+          <tr><th scope="row" class="row-head"><code>no ip http server</code>, <code>no ip http secure-server</code></th><td>Refusés : pas de serveur web simulé.</td><td>Acceptés sur le 2901. Sur un commutateur, l’une des deux peut manquer selon l’image.</td><td>Saisissez-les. Une commande absente de l’image est « sans objet » : notez-le pour V15.</td></tr>
+          <tr><th scope="row" class="row-head"><code>access-list 10 deny any log</code></th><td>Le mot-clé <code>log</code> est refusé.</td><td>Accepté. Chaque refus produit un message <code>%SEC-6-IPACCESSLOGS</code> à la console.</td><td>Saisissez la ligne avec <code>log</code> : V11 à V14 se lisent aussi dans ces messages.</td></tr>
+          <tr><th scope="row" class="row-head"><code>no ip source-route</code> (bloc 5)</th><td>Commande inconnue.</td><td>Acceptée sur le 2901, où le routage par la source est actif par défaut.</td><td>Appliquez le bloc 5 et jouez V20 : c’est sur le matériel que le constat 8 se prouve.</td></tr>
+          <tr><th scope="row" class="row-head">Telnet après durcissement (V5)</th><td><em>Open</em>, puis fermeture : impossible à distinguer de l’état initial.</td><td>La connexion est refusée d’emblée : PuTTY affiche une erreur réseau.</td><td>V5 n’a de sens que sur le matériel.</td></tr>
+          <tr><th scope="row" class="row-head">Déconnexion de la console (V3)</th><td>Appliquée sur les commutateurs, pas sur le routeur.</td><td>Appliquée sur les trois équipements.</td><td>Attendez réellement 5 minutes, sur chacun.</td></tr>
+          <tr><th scope="row" class="row-head">Lecture de la configuration (V19, relevé)</th><td><code>show running-config interface &lt;port&gt;</code> refusé ; <em>Outgoing access list</em> toujours à <em>not set</em>.</td><td>Les deux commandes fonctionnent et disent la vérité.</td><td>Utilisez la commande écrite dans la fiche de recette.</td></tr>
+          <tr><th scope="row" class="row-head">Port débranché (V17)</th><td>Le poste garde l’affichage de son ancien bail.</td><td>Windows affiche <em>Média déconnecté</em> ; après <code>ipconfig /renew</code> sur le port libre, aucune adresse n’est obtenue.</td><td>Le voyant du port reste éteint : c’est la première preuve.</td></tr>
+          <tr><th scope="row" class="row-head">DHCP et DNS</th><td>Onglet <em>Services</em> du serveur simulé ; l’étendue est choisie d’après sa passerelle.</td><td>Rôles DHCP et DNS de Windows Server ; l’étendue est choisie d’après le réseau du relais.</td><td>Une étendue mal saisie se trahit autrement : vérifiez son réseau, pas seulement sa passerelle.</td></tr>
+          <tr><th scope="row" class="row-head">Sauvegarde</th><td>FTP, faute de SCP dans le simulateur.</td><td>SCP vers OpenSSH sur NUB-DC01 : le mot de passe est demandé à chaque copie.</td><td>Aucun identifiant ne reste dans la configuration : V2 et V21 sont plus simples à prouver.</td></tr>
+          <tr><th scope="row" class="row-head">Ping entre postes</th><td>Toujours permis par les postes simulés.</td><td>Le pare-feu de Windows bloque l’écho par défaut.</td><td>Autorisez l’écho ICMPv4 entrant (étape 2), sinon un échec ne prouve rien sur le réseau.</td></tr>
+          <tr><th scope="row" class="row-head">Délais</th><td>Démarrage immédiat ; le temps peut être accéléré.</td><td>Un redémarrage prend plusieurs minutes ; un port sans <code>portfast</code> attend environ 30 secondes avant de transmettre.</td><td>Prévoyez ces attentes dans les 4 h 30 et ne concluez pas trop vite à une panne.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Les commandes, l’ordre des blocs et les contrôles restent ceux de la phase&nbsp;1. Ce qui change, ce
+      sont les outils et quelques comportements que le simulateur ne reproduit pas. Quand le matériel
+      et la maquette se contredisent, c’est le matériel qui a raison&nbsp;: notez l’écart dans votre compte
+      rendu.
+    </p>
+
+    <h3>Étape 1 — Remettre le matériel à zéro</h3>
+    <p>Sur chaque équipement, depuis la console. Si un groupe précédent a laissé ses secrets, appelez l’enseignant.</p>
+    <div class="config">
+      <div class="config-head"><span class="name">Remise à zéro</span><span class="kind">les trois équipements</span></div>
+<pre><code>enable
+erase startup-config
+delete flash:vlan.dat
+configure terminal
+crypto key zeroize rsa
+end
+reload</code></pre>
+    </div>
+    <p>Saisissez ces lignes une par une et validez chaque confirmation, avec <code>yes</code> pour la suppression des clés. Refusez d’enregistrer la configuration si le <code>reload</code> le propose. <code>vlan.dat</code> n’existe pas sur le routeur : ignorez cette ligne sur GW-NUBLAR.</p>
+
+    <h3>Étape 2 — Remonter l’état initial</h3>
+    <ol class="steps">
+      <li><strong>Équipements.</strong> Appliquez les configurations de la fiche de montage, sans rien corriger.</li>
+      <li><strong>NUB-DC01.</strong> La fiche décrit Packet Tracer : sous Windows Server, configurez les rôles DHCP et DNS avec les valeurs de la partie 7 du livret, sans oublier l’enregistrement de SW-N3-01.</li>
+      <li><strong>Postes.</strong> Autorisez l’écho ICMPv4 entrant dans le pare-feu Windows des quatre machines. Sinon, un ping peut échouer à cause du pare-feu et non du réseau. Vérifiez aussi que PuTTY, fourni par l’enseignant, est présent sur les quatre.</li>
+      <li><strong>Contrôle.</strong> Rejouez T1 à T10. Ne continuez pas tant que les résultats ne sont pas conformes.</li>
+    </ol>
+
+    <h3>Étape 3 — Constater le danger</h3>
+    <p>
+      Sur GW-NUBLAR, posez un mot de passe temporaire sur les lignes vty, sans SSH. Lancez
+      Wireshark sur PC-DSI-01, puis connectez-vous en Telnet avec PuTTY. Suivez le flux TCP sur le
+      port 23 : le mot de passe y apparaît en clair, caractère par caractère. Gardez cette capture,
+      puis retirez ce mot de passe.
+    </p>
+    <div class="config">
+      <div class="config-head"><span class="name">GW-NUBLAR</span><span class="kind">temporaire, pour la capture seulement</span></div>
+<pre><code>configure terminal
+line vty 0 4
+ password &lt;mot-de-passe-jetable&gt;
+ login
+end
+! Après la capture :
+configure terminal
+line vty 0 4
+ no password
+end</code></pre>
+    </div>
+
+    <h3>Étape 4 — Appliquer le durcissement</h3>
+    <p>
+      Appliquez les blocs 1 à 3, en gardant le contrôle SSH du bloc 3 pour l’étape 5. Créez les
+      deux comptes du binôme, chacun saisissant son secret, et vérifiez chaque commande sur
+      l’équipement réel.
+    </p>
+
+    <h3>Étape 5 — Ouvrir la première session SSH, puis terminer</h3>
+    <p>
+      Lancez Wireshark <strong>avant</strong> de vous connecter à <code>core.nublar.intra</code> avec
+      PuTTY. Faites une capture de l’alerte de sécurité, puis conservez la capture du flux SSH.
+    </p>
+    <div class="note warn">
+      <span class="label">Si le client refuse la connexion</span>
+      <p>
+        Un IOS ancien propose des algorithmes que les clients récents refusent. PuTTY reste
+        généralement utilisable. Avec le client <code>ssh</code> de Windows, il faut les réautoriser
+        pour cette connexion. Adaptez les options au message d’erreur et notez-les, car cette
+        obsolescence fait partie du risque résiduel à signaler.
+      </p>
+<pre><code>ssh -oKexAlgorithms=+diffie-hellman-group1-sha1 -oHostKeyAlgorithms=+ssh-rsa -oCiphers=+aes128-cbc &lt;prenom.nom&gt;@core.nublar.intra</code></pre>
+    </div>
+    <p>
+      Contrôlez ensuite les deux autres équipements, appliquez les blocs 4 et 5, puis enregistrez
+      avec <code>copy running-config startup-config</code>.
+    </p>
+
+    <h3>Étape 6 — Sauvegarder par SCP</h3>
+    <ol class="steps">
+      <li><strong>Serveur OpenSSH.</strong> Sur NUB-DC01, activez la fonctionnalité OpenSSH Server (Windows Server 2019 ou plus récent), puis démarrez le service <code>sshd</code>. Si elle exige Internet, demandez à l’enseignant : la salle n’a pas de sortie.</li>
+      <li><strong>Compte.</strong> Créez un compte local dédié, non administrateur. Son dossier personnel, déjà réservé à ce compte et aux administrateurs, reçoit les sauvegardes.</li>
+      <li><strong>Copie.</strong> Sur chaque équipement : <code>copy running-config scp://&lt;compte&gt;@10.10.200.10/&lt;fichier&gt;</code>. Le mot de passe est demandé à chaque copie, donc il ne reste pas dans la configuration.</li>
+    </ol>
+    <p>
+      Si le serveur refuse les algorithmes de l’équipement, autorisez-les dans
+      <code>sshd_config</code> d’après le message du journal, puis notez cet affaiblissement dans
+      votre compte rendu. Un fichier de configuration contient des empreintes de secrets et décrit
+      tout le réseau : il reste sensible.
+    </p>
+
+    <h3>Étape 7 — Dérouler la recette</h3>
+    <p>Déroulez toute la <a href="#recette">fiche</a>, proposez vos propres tests, puis gardez les sorties <code>show</code> et les captures pour l’annexe du compte rendu.</p>
+
+    <h3>Étape 8 — Rendre le matériel</h3>
+    <ol class="steps">
+      <li>Rejouez la recette devant l’enseignant, en ouvrant vous-mêmes vos sessions.</li>
+      <li>Vérifiez que vous avez bien copié tous vos fichiers.</li>
+      <li>Effacez les équipements comme à l’étape 1 : le groupe suivant doit pouvoir repartir de zéro.</li>
+      <li>Sur NUB-DC01, supprimez le compte de sauvegarde, ses fichiers et le compte de test. Sur PC-DSI-01, utilisez « Effacer mes saisies » une fois le PDF exporté.</li>
+    </ol>
+  </section>
+
+  <section id="pieges">
+    <div class="sec-head">
+      <span class="src">6 — Avant de vous enfermer dehors</span>
+      <h2 class="sec-title">Les pièges à éviter</h2>
+    </div>
+    <div class="note warn">
+      <span class="label">Gardez le câble console branché et vos identifiants à portée</span>
+      <ul>
+        <li><strong>Enregistrez seulement après avoir testé.</strong> Si vous vous enfermez dehors, un redémarrage rétablit la dernière configuration enregistrée. Les VLAN, eux, sont déjà écrits dans <code>vlan.dat</code> et ne reviennent pas en arrière.</li>
+        <li><strong>Liste de VLAN du trunk.</strong> Oublier le VLAN 10 coupe l’administration de SW-N3-01. Oublier le 30 ou le 70 coupe les postes.</li>
+        <li><strong>Modification du trunk.</strong> Tant que les deux extrémités ne sont pas identiques, des messages de discordance du VLAN natif apparaissent. Traitez les deux côtés à la suite.</li>
+        <li><strong>Lignes vty oubliées.</strong> Une connexion utilise d’abord la ligne 0 : un test réussi ne prouve rien sur les autres. Une ligne oubliée reste sans <code>access-class</code> ni <code>transport input ssh</code>. Lisez toujours la configuration.</li>
+        <li><strong>Liste 10 et route de retour.</strong> Un refus n’est pas toujours dû à votre liste : GW-NUBLAR n’a aucune route de retour vers le VLAN 30.</li>
+        <li><strong>Empreinte déjà connue.</strong> Si un groupe précédent s’est connecté depuis ce poste, le client signale une clé différente. Comprenez pourquoi avant de l’accepter.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="recette">
+    <div class="sec-head">
+      <span class="src">7 — La preuve</span>
+      <h2 class="sec-title">La fiche de recette</h2>
+      <p>
+        Jouez chaque test sur le matériel réel, notez le résultat obtenu, puis cochez s’il est
+        conforme. Ouvrez cette page sur PC-DSI-01 et remplissez-la depuis ce seul poste. Les lignes
+        V24 à V27 sont à vous : trouvez ce que les tests précédents ne prouvent pas encore.
+      </p>
+      <p class="recette-ops" data-ops hidden>
+        <button type="button" data-print>Exporter la fiche en PDF</button>
+        <button type="button" data-clear class="danger">Effacer mes saisies</button>
+        <span data-store-note>Vos saisies restent sur ce poste, dans ce navigateur. Exportez-les en PDF avant de partir.</span>
+      </p>
+    </div>
+    <div class="table-wrap">
+      <table id="fiche-identite">
+        <caption>Fiche de recette — Projet 01</caption>
+        <thead><tr><th>Groupe</th><th>Noms du binôme</th><th>Date de la recette</th></tr></thead>
+        <tbody><tr><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr></tbody>
+      </table>
+    </div>
+    <div class="table-wrap long">
+      <table id="fiche-recette">
+        <caption>Tests à jouer sur le matériel</caption>
+        <thead><tr><th class="num">N°</th><th>Depuis</th><th>Test</th><th>Résultat attendu</th><th>Obtenu</th><th>Conforme</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">V1</td><td>Tous les postes</td><td>Rejouer les tests T1 à T10 de la fiche de montage</td><td>Mêmes résultats qu’avant le projet, T5 compris</td><td class="fill"></td><td class="conf"></td></tr>
+          <tr><td class="mono">V2</td><td>Console, les trois</td><td><code>show running-config</code></td><td><code>service password-encryption</code> présent, <code>enable secret</code> et comptes en <code>secret</code>, aucun compte générique, aucun <code>ip ftp password</code></td><td class="fill"></td><td class="conf"></td></tr>
+          <tr><td class="mono">V3</td><td>Console, les trois</td><td>Ouvrir une session, puis attendre 5 minutes sans rien saisir. Sur GW-NUBLAR, lire aussi <code>line aux 0</code></td><td>Bannière, identifiant et mot de passe demandés, puis déconnexion automatique</td><td class="fill"></td><td class="conf"></td></tr>
+          <tr><td class="mono">V4</td><td>Une session par compte, sur les trois</td><td><code>enable</code></td><td>Les deux comptes fonctionnent, et le secret privilégié est demandé</td><td class="fill"></td><td class="conf"></td></tr>
+          <tr><td class="mono">V5</td><td>PC-DSI-01</td><td>Telnet (PuTTY) vers 10.10.10.1, 10.10.10.4 et 172.31.0.2</td><td>Connexion refusée sur les trois, avec le client qui a fonctionné à l’étape 3</td><td class="fill"></td><td class="conf"></td></tr>
+          <tr><td class="mono">V6</td><td>PC-DSI-01</td><td>SSH vers <code>core.nublar.intra</code></td><td>Session ouverte avec le compte nominatif</td><td class="fill"></td><td class="conf"></td></tr>
+          <tr><td class="mono">V7</td><td>PC-DSI-01</td><td>SSH vers <code>sw-n3-01.nublar.intra</code></td><td>Session ouverte avec le compte nominatif</td><td class="fill"></td><td class="conf"></td></tr>
+          <tr><td class="mono">V8</td><td>PC-DSI-01</td><td>SSH vers <code>gw.nublar.intra</code></td><td>Session ouverte avec le compte nominatif</td><td class="fill"></td><td class="conf"></td></tr>
+          <tr><td class="mono">V9</td><td>Session, les trois</td><td><code>show ip ssh</code> et <code>show crypto key mypubkey rsa</code></td><td>Version 2, clé RSA de 2048 bits</td><td class="fill"></td><td class="conf"></td></tr>
+          <tr><td class="mono">V10</td><td>Session, les trois</td><td><code>show running-config | section line vty</code></td><td>Toutes les lignes portent <code>login local</code>, <code>transport input ssh</code>, <code>access-class 10 in</code> et le délai</td><td class="fill"></td><td class="conf"></td></tr>
+          <tr><td class="mono">V11</td><td>PC-LAB-N3</td><td>SSH vers 10.10.30.1 (CORE-NUBLAR), avec le même client qu’en V6</td><td>Aucune session, et compteur de <code>show access-lists 10</code> en hausse sur la cible</td><td class="fill"></td><td class="conf"></td></tr>
+          <tr><td class="mono">V12</td><td>PC-LAB-N3</td><td>SSH vers 10.10.10.4 (SW-N3-01), même client</td><td>Aucune session, et compteur en hausse sur la cible</td><td class="fill"></td><td class="conf"></td></tr>
+          <tr><td class="mono">V13</td><td>AUTOMATE-N3</td><td>SSH vers 10.10.70.1 (CORE-NUBLAR), même client</td><td>Aucune session, et compteur en hausse sur la cible</td><td class="fill"></td><td class="conf"></td></tr>
+          <tr><td class="mono">V14</td><td>NUB-DC01</td><td>SSH vers 172.31.0.2 (GW-NUBLAR), même client</td><td>Aucune session alors que la route de retour existe, et compteur en hausse sur la cible</td><td class="fill"></td><td class="conf"></td></tr>
+          <tr><td class="mono">V15</td><td>PC-LAB-N3, puis les trois</td><td>Navigateur vers <code>http://10.10.30.1</code> et <code>http://10.10.10.4</code>. Puis <code>show running-config | include ip http</code></td><td>Aucune page d’administration ; <code>no ip http server</code> et <code>no ip http secure-server</code> présents, ou commande sans objet sur cet équipement</td><td class="fill"></td><td class="conf"></td></tr>
+          <tr><td class="mono">V16</td><td>CORE, SW</td><td><code>show interfaces status</code> et <code>show vlan brief</code></td><td>Ports libres <em>disabled</em> dans le VLAN 999, aucun port d’accès dans le VLAN 998</td><td class="fill"></td><td class="conf"></td></tr>
+          <tr><td class="mono">V17</td><td>PC-LAB-N3</td><td>Déplacer le poste sur un port libre de SW-N3-01, puis le remettre en place</td><td>Aucun lien, aucune adresse obtenue</td><td class="fill"></td><td class="conf"></td></tr>
+          <tr><td class="mono">V18</td><td>CORE, SW</td><td><code>show interfaces trunk</code></td><td>Mode <em>on</em>, natif 998, VLAN autorisés 10, 30 et 70</td><td class="fill"></td><td class="conf"></td></tr>
+          <tr><td class="mono">V19</td><td>CORE, SW</td><td><code>show interfaces &lt;port&gt; switchport</code> et <code>show running-config interface &lt;port&gt;</code>, sur CORE F0/1, F0/4, F0/5, F0/7 et SW F0/1, F0/2, F0/3</td><td><em>Negotiation of Trunking: Off</em> et <code>switchport nonegotiate</code> partout. Vers les postes, l’automate et le serveur : <code>portfast</code>, <code>bpduguard</code>, <code>no cdp enable</code></td><td class="fill"></td><td class="conf"></td></tr>
+          <tr><td class="mono">V20</td><td>GW-NUBLAR</td><td><code>show running-config | include source-route</code></td><td><code>no ip source-route</code></td><td class="fill"></td><td class="conf"></td></tr>
+          <tr><td class="mono">V21</td><td>Les trois</td><td>Copier la configuration vers NUB-DC01 par SCP</td><td>Les trois fichiers sont présents et datés du jour</td><td class="fill"></td><td class="conf"></td></tr>
+          <tr><td class="mono">V22</td><td>PC-LAB-N3, puis NUB-DC01</td><td>Avec un compte local ordinaire créé pour ce test : <code>scp</code> vers le dossier du compte dédié. Puis, sur NUB-DC01, <code>icacls</code> sur ce dossier</td><td>Écriture refusée ; droits limités à SYSTEM, aux administrateurs et au compte dédié</td><td class="fill"></td><td class="conf"></td></tr>
+          <tr><td class="mono">V23</td><td>Les trois</td><td><code>reload</code>, puis rejouer V6 à V8 et V18</td><td>Mêmes résultats : la configuration a survécu au redémarrage</td><td class="fill"></td><td class="conf"></td></tr>
+          <tr><td class="mono">V24</td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="conf"></td></tr>
+          <tr><td class="mono">V25</td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="conf"></td></tr>
+          <tr><td class="mono">V26</td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="conf"></td></tr>
+          <tr><td class="mono">V27</td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="conf"></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="compte-rendu">
+    <div class="sec-head">
+      <span class="src">8 — L’explication</span>
+      <h2 class="sec-title">Le compte rendu</h2>
+      <p>
+        En binôme. Répondez avec vos propres mots. Masquez tout secret réel. Seul le mot de passe
+        jetable de l’étape 3, retiré ensuite et utilisé nulle part ailleurs, reste visible : c’est
+        la preuve demandée.
+      </p>
+    </div>
+    <ol class="steps">
+      <li><strong>Telnet.</strong> Votre capture du flux Telnet. Que peut faire une personne présente dans le VLAN 10 ?</li>
+      <li><strong>Première connexion SSH.</strong> Votre capture de l’alerte, sa traduction et son explication. Quelle attaque permet-elle de détecter ? Comment s’assurer que la clé présentée est bien celle de l’équipement ?</li>
+      <li><strong>SSH.</strong> Votre capture du même échange en SSH. Qu’est-ce qui reste visible, et qu’est-ce qui ne l’est plus ?</li>
+      <li><strong>Preuve.</strong> Depuis PC-LAB-N3, un SSH vers 172.31.0.2 échoue aussi. Pourquoi ce test ne prouve-t-il pas que votre liste 10 fonctionne, alors que V14 le prouve ?</li>
+      <li><strong>Secrets.</strong> Pourquoi <code>service password-encryption</code> ne suffit-il pas à fermer le constat 5 ? Et pourquoi un fichier de sauvegarde reste-t-il sensible ?</li>
+      <li><strong>Sauvegarde.</strong> Comparez FTP et SCP. Pourquoi le FTP utilisé sur la maquette ne serait-il pas acceptable sur le réseau réel ?</li>
+      <li><strong>Risque résiduel.</strong> Citez au moins trois risques qui subsistent après ce projet, dont l’obsolescence éventuelle des algorithmes d’IOS, en les reliant aux constats et aux chantiers suivants.</li>
+      <li><strong>Conclusion.</strong> Ces mesures auraient-elles empêché Nedry d’agir ? Justifiez, puis donnez l’intérêt et la principale difficulté de cette solution.</li>
+      <li><strong>Annexe.</strong> Les sorties <code>show</code> et les captures qui prouvent votre recette, secrets masqués.</li>
+    </ol>
+  </section>
+
+  <section id="livrables">
+    <div class="sec-head">
+      <span class="src">9 — Ce que vous rendez</span>
+      <h2 class="sec-title">Les livrables</h2>
+      <p>
+        Déposez un dossier nommé <code>Projet01-Durcissement-G&lt;xx&gt;-Nom1-Nom2</code>, où
+        <code>&lt;xx&gt;</code> est votre numéro de groupe, à l’emplacement et à la date indiqués par
+        l’enseignant. Cet emplacement doit être lisible par l’enseignant seul.
+      </p>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Document</th><th>Nom du fichier</th><th>Travail</th></tr></thead>
+        <tbody>
+          <tr><th scope="row" class="row-head">Maquette</th><td class="mono">Projet01-Durcissement-G&lt;xx&gt;-Nom.pkt</td><td>Un par étudiant</td></tr>
+          <tr><th scope="row" class="row-head">Compte rendu</th><td class="mono">Projet01-CR-G&lt;xx&gt;-Nom1-Nom2.pdf</td><td>Binôme</td></tr>
+          <tr><th scope="row" class="row-head">Fiche de recette</th><td class="mono">Projet01-Recette-G&lt;xx&gt;-Nom1-Nom2.pdf</td><td>Binôme</td></tr>
+          <tr><th scope="row" class="row-head">Configurations du matériel</th><td class="mono">core-nublar-confg, sw-n3-01-confg, gw-nublar-confg</td><td>Binôme</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note warn">
+      <span class="label">Aucun mot de passe en clair dans le dépôt</span>
+      <p>
+        Aucun document rendu ne doit contenir de mot de passe réel. Les configurations et la
+        maquette contiennent des empreintes : c’est pourquoi le dépôt reste à accès restreint.
+        La maquette contient aussi le mot de passe FTP jetable, qui ne doit servir nulle part
+        ailleurs.
+      </p>
+    </div>
+  </section>
+
+  <section id="evaluation">
+    <div class="sec-head">
+      <span class="src">10 — Les critères</span>
+      <h2 class="sec-title">Ce qui sera évalué</h2>
+      <p>Le chantier 1 n’est bouclé que lorsque ses quatre critères sont prouvés.</p>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <caption>Critères du livret et autres éléments évalués</caption>
+        <thead><tr><th>Élément</th><th>Preuves</th></tr></thead>
+        <tbody>
+          <tr><td>Aucun secret lisible dans <code>show running-config</code></td><td class="mono">V2</td></tr>
+          <tr><td>SSH v2 accepté depuis le VLAN 10, refusé depuis le VLAN 30, Telnet refusé partout</td><td class="mono">V5 à V14</td></tr>
+          <tr><td>Ports libres éteints dans un VLAN parking</td><td class="mono">V16, V17</td></tr>
+          <tr><td><code>show interfaces trunk</code> montre un VLAN natif dédié et la liste des VLAN autorisés</td><td class="mono">V18</td></tr>
+          <tr><td>Autres exigences : console, comptes, serveur web, ports utilisés, routage par la source</td><td class="mono">V3, V4, V15, V19, V20</td></tr>
+          <tr><td>Sauvegarde, persistance et non-régression</td><td class="mono">V21 à V23, V1</td></tr>
+          <tr><td>Pertinence de vos propres tests</td><td class="mono">V24 à V27</td></tr>
+          <tr><td>Maquette individuelle conforme au cahier des charges</td><td class="mono">.pkt</td></tr>
+          <tr><td>Compte rendu, et capacité à expliquer chaque commande sans support</td><td class="mono">Oral</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="evolution">
+    <div class="sec-head">
+      <span class="src">11 — La suite</span>
+      <h2 class="sec-title">Vers l’épreuve E6</h2>
+      <p>
+        En E6, la commission choisit une réalisation et vous demande de la faire évoluer.
+        Vérifiez que vous sauriez répondre à des demandes comme celles-ci, sans recopier votre
+        configuration :
+      </p>
+    </div>
+    <ul>
+      <li>Un prestataire doit intervenir une journée sur SW-N3-01. Comment lui ouvrir un accès, puis le retirer proprement ?</li>
+      <li>Un nouveau poste du laboratoire arrive sur le port F0/6 de SW-N3-01. Que changez-vous, et comment le prouvez-vous ?</li>
+      <li>Le point d’accès du projet Wi-Fi arrive sur F0/4 avec le VLAN 100. Que devez-vous modifier sur le trunk ?</li>
+      <li>La direction veut administrer le routeur depuis un second réseau d’administration. Quelles lignes changent, et quel test ajoutez-vous ?</li>
+    </ul>
+    <div class="note good">
+      <span class="label">Conservez vos preuves</span>
+      <p>
+        Le matériel est effacé à la fin du projet. Chaque membre du binôme garde donc ses captures,
+        ses configurations, sa fiche de recette et sa maquette, et ses secrets dans son gestionnaire.
+        Si vous retenez ce projet pour E6, rédigez sa fiche descriptive pendant que le travail est frais.
+      </p>
+    </div>
+  </section>
+
+  </main>
+
+  <footer class="colophon">
+    <p>
+      <strong>InGen — Projet 01.</strong> Cahier des charges du contexte InGen, BTS SIO parcours
+      SISR. Les valeurs reprennent le <a href="INGEN-Livret-Contexte.html">livret de contexte</a>,
+      parties 7, 8 et 10 : en cas de divergence, le livret fait foi. Sont propres à ce projet :
+      les VLAN 998 et 999, le nom DNS de SW-N3-01, la sauvegarde des configurations, les seuils de
+      secrets et de délai, et le numéro de la liste 10.
+    </p>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var KEY = 'ingen-projet01-recette', table = document.getElementById('fiche-recette');
+  var ops = document.querySelector('[data-ops]');
+  var fills = document.querySelectorAll('#recette td.fill'), confs = table.querySelectorAll('td.conf');
+  var saved = {}, canStore = true;
+  try { saved = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { canStore = false; }
+  function save() {
+    var data = { f: [], c: [] };
+    fills.forEach(function (td) { data.f.push(td.textContent); });
+    confs.forEach(function (td) { data.c.push(td.firstChild.checked); });
+    try { localStorage.setItem(KEY, JSON.stringify(data)); } catch (e) { canStore = false; }
+  }
+  fills.forEach(function (td, i) {
+    td.setAttribute('contenteditable', 'plaintext-only');
+    if (td.contentEditable !== 'plaintext-only') td.setAttribute('contenteditable', 'true');
+    td.setAttribute('role', 'textbox');
+    td.setAttribute('aria-label', td.closest('table').id === 'fiche-identite' ? td.closest('table').tHead.rows[0].cells[td.cellIndex].textContent : 'Saisie, ligne ' + td.parentNode.cells[0].textContent);
+    if (saved.f && saved.f[i]) td.textContent = saved.f[i];
+    td.addEventListener('input', save);
+  });
+  confs.forEach(function (td, i) {
+    var box = document.createElement('input');
+    box.type = 'checkbox';
+    box.setAttribute('aria-label', 'Conforme, ligne ' + td.parentNode.cells[0].textContent);
+    box.checked = !!(saved.c && saved.c[i]);
+    box.addEventListener('change', save);
+    td.appendChild(box);
+  });
+  ops.hidden = false;
+  if (!canStore) ops.querySelector('[data-store-note]').textContent =
+    'Ce navigateur n’enregistre pas les saisies : exportez-les en PDF avant de fermer la page.';
+  ops.querySelector('[data-print]').addEventListener('click', function () { document.body.classList.add('print-fiche'); window.print(); });
+  ops.querySelector('[data-clear]').addEventListener('click', function () {
+    if (!window.confirm('Effacer toutes vos saisies de la fiche de recette ?')) return;
+    fills.forEach(function (td) { td.textContent = ''; });
+    confs.forEach(function (td) { td.firstChild.checked = false; });
+    try { localStorage.removeItem(KEY); } catch (e) {}
+  });
+  /* À l’impression, les rappels repliés s’ouvrent */
+  window.addEventListener('beforeprint', function () {
+    document.querySelectorAll('details').forEach(function (d) { d.dataset.wasOpen = d.open; d.open = true; });
+  });
+  window.addEventListener('afterprint', function () {
+    document.querySelectorAll('details').forEach(function (d) { d.open = d.dataset.wasOpen === 'true'; });
+    document.body.classList.remove('print-fiche');
+  });
+})();
+</script>
+</body>
+
+</html>
