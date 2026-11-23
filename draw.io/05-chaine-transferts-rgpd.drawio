@@ -1,0 +1,105 @@
+<mxfile host="Electron" agent="draw.io" version="27.0.9">
+  <diagram name="Chaîne des transferts RGPD" id="chaine-transferts-rgpd-01">
+    <mxGraphModel dx="1600" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="650" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Titre -->
+        <mxCell id="f2-title" value="&lt;b&gt;Chaîne des transferts de données personnelles&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;fontSize=22;fontColor=#3D3D3D;" vertex="1" parent="1">
+          <mxGeometry x="40" y="16" width="1320" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Bloc 1 : Union européenne -->
+        <mxCell id="f2-b1" value="" style="shape=mxgraph.bootstrap.rrect;rSize=10;html=1;fillColor=#F7ECD9;strokeColor=#8A5407;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="40" y="100" width="340" height="300" as="geometry" />
+        </mxCell>
+        <mxCell id="f2-b1-bandeau" value="&lt;b&gt;UNION EUROPÉENNE&lt;/b&gt;" style="rounded=0;html=1;fillColor=#8A5407;strokeColor=none;fontColor=#FFFFFF;fontSize=14;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="42" y="102" width="336" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="f2-b1-texte" value="&lt;b&gt;&lt;font style=&quot;font-size: 16px;&quot;&gt;Nublar Leisure Europe Ltd&lt;/font&gt;&lt;/b&gt;&lt;br&gt;Dublin, Irlande&lt;br&gt;&lt;br&gt;Réservation et vente en ligne&lt;br&gt;&lt;br&gt;&lt;b&gt;Responsable de traitement (art. 3.1)&lt;/b&gt;&lt;br&gt;Guichet unique&#8239;: DPC irlandaise" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontColor=#3D3D3D;" vertex="1" parent="1">
+          <mxGeometry x="55" y="155" width="310" height="230" as="geometry" />
+        </mxCell>
+
+        <!-- Flèche 1 -->
+        <mxCell id="f2-fleche1" value="" style="endArrow=block;endFill=1;endSize=10;html=1;rounded=0;strokeColor=#A32A1E;strokeWidth=6;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="384" y="250" as="sourcePoint" />
+            <mxPoint x="526" y="250" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="f2-fleche1-label" value="&lt;b&gt;Transfert n° 1&lt;br&gt;UE → Costa Rica&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontColor=#A32A1E;" vertex="1" parent="1">
+          <mxGeometry x="360" y="185" width="190" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="f2-encadre1" value="&lt;b&gt;Aucune décision d’adéquation&lt;/b&gt;&lt;br&gt;→ clauses contractuelles types&lt;br&gt;+ analyse d’impact du transfert" style="rounded=1;html=1;whiteSpace=wrap;fillColor=#FDF3F2;strokeColor=#A32A1E;strokeWidth=2;fontColor=#A32A1E;fontSize=12;align=center;verticalAlign=middle;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="330" y="425" width="250" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="f2-lien1" value="" style="endArrow=none;html=1;rounded=0;dashed=1;strokeColor=#A32A1E;strokeWidth=2;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="455" y="256" as="sourcePoint" />
+            <mxPoint x="455" y="425" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Bloc 2 : Costa Rica -->
+        <mxCell id="f2-b2" value="" style="shape=mxgraph.bootstrap.rrect;rSize=10;html=1;fillColor=#F2F2F0;strokeColor=#7A7A7A;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="530" y="100" width="340" height="300" as="geometry" />
+        </mxCell>
+        <mxCell id="f2-b2-bandeau" value="&lt;b&gt;COSTA RICA — PAYS TIERS&lt;/b&gt;" style="rounded=0;html=1;fillColor=#5F5F5F;strokeColor=none;fontColor=#FFFFFF;fontSize=14;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="532" y="102" width="336" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="f2-b2-entete" value="&lt;b&gt;&lt;font style=&quot;font-size: 16px;&quot;&gt;Nublar Leisure S.A.&lt;/font&gt;&lt;/b&gt;&lt;br&gt;Isla Nublar" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontColor=#3D3D3D;" vertex="1" parent="1">
+          <mxGeometry x="545" y="148" width="310" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="f2-srv-parkops" value="&lt;b&gt;Serveur PARKOPS&lt;/b&gt;" style="shape=mxgraph.networks.server;html=1;fillColor=#CCCCCC;strokeColor=#7A7A7A;strokeWidth=2;verticalLabelPosition=bottom;verticalAlign=top;align=center;fontSize=11;fontColor=#3D3D3D;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="680" y="205" width="40" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="f2-b2-texte" value="&lt;b&gt;Responsable de traitement (art. 3.2)&lt;/b&gt;&lt;br&gt;Pas de guichet unique" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontColor=#3D3D3D;" vertex="1" parent="1">
+          <mxGeometry x="545" y="310" width="310" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Flèche 2 -->
+        <mxCell id="f2-fleche2" value="" style="endArrow=block;endFill=1;endSize=10;html=1;rounded=0;strokeColor=#A32A1E;strokeWidth=6;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="874" y="250" as="sourcePoint" />
+            <mxPoint x="1016" y="250" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="f2-fleche2-label" value="&lt;b&gt;Transfert n° 2&lt;br&gt;Costa Rica → États-Unis&lt;br&gt;(transfert ultérieur)&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontColor=#A32A1E;" vertex="1" parent="1">
+          <mxGeometry x="840" y="170" width="210" height="66" as="geometry" />
+        </mxCell>
+        <mxCell id="f2-encadre2" value="&lt;b&gt;Doit reprendre les garanties du transfert n°&amp;nbsp;1&lt;br&gt;(DPF ou engagement écrit)&lt;br&gt;— ABSENTES À CE JOUR&lt;/b&gt;" style="rounded=1;html=1;whiteSpace=wrap;fillColor=#FDF3F2;strokeColor=#A32A1E;strokeWidth=2;fontColor=#A32A1E;fontSize=12;align=center;verticalAlign=middle;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="785" y="425" width="320" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="f2-lien2" value="" style="endArrow=none;html=1;rounded=0;dashed=1;strokeColor=#A32A1E;strokeWidth=2;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="945" y="256" as="sourcePoint" />
+            <mxPoint x="945" y="425" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Bloc 3 : États-Unis -->
+        <mxCell id="f2-b3" value="" style="shape=mxgraph.bootstrap.rrect;rSize=10;html=1;fillColor=#F2F2F0;strokeColor=#7A7A7A;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="100" width="340" height="300" as="geometry" />
+        </mxCell>
+        <mxCell id="f2-b3-bandeau" value="&lt;b&gt;ÉTATS-UNIS — PAYS TIERS&lt;/b&gt;" style="rounded=0;html=1;fillColor=#5F5F5F;strokeColor=none;fontColor=#FFFFFF;fontSize=14;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1022" y="102" width="336" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="f2-b3-entete" value="&lt;b&gt;&lt;font style=&quot;font-size: 16px;&quot;&gt;InGen&lt;/font&gt;&lt;/b&gt;&lt;br&gt;Palo Alto" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontColor=#3D3D3D;" vertex="1" parent="1">
+          <mxGeometry x="1035" y="148" width="310" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="f2-srv-backup" value="&lt;b&gt;Serveur BACKUP&lt;br&gt;réplication quotidienne&lt;/b&gt;" style="shape=mxgraph.networks.server;html=1;fillColor=#CCCCCC;strokeColor=#7A7A7A;strokeWidth=2;verticalLabelPosition=bottom;verticalAlign=top;align=center;fontSize=11;fontColor=#3D3D3D;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="1170" y="200" width="40" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="f2-b3-texte" value="&lt;b&gt;Sous-traitant (art. 28)&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#A32A1E&quot;&gt;&lt;b&gt;Contrat de sous-traitance requis&lt;br&gt;ABSENT À CE JOUR&lt;/b&gt;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontColor=#3D3D3D;" vertex="1" parent="1">
+          <mxGeometry x="1035" y="305" width="310" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Note finale -->
+        <mxCell id="f2-note" value="&lt;i&gt;Un seul achat de billet — une sortie de l’Union, puis un transfert ultérieur&lt;/i&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=15;fontColor=#3D3D3D;" vertex="1" parent="1">
+          <mxGeometry x="40" y="545" width="1320" height="34" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

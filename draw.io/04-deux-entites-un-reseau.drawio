@@ -1,0 +1,112 @@
+<mxfile host="Electron" agent="draw.io" version="27.0.9">
+  <diagram name="Deux entités, un réseau" id="deux-entites-un-reseau-01">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="870" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Titre -->
+        <mxCell id="f1-title" value="&lt;b&gt;Deux entités, un réseau&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;fontSize=24;fontColor=#3D3D3D;" vertex="1" parent="1">
+          <mxGeometry x="40" y="14" width="1120" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Bloc gauche : InGen -->
+        <mxCell id="f1-bloc-ingen" value="" style="shape=mxgraph.bootstrap.rrect;rSize=10;html=1;fillColor=#F7ECD9;strokeColor=#8A5407;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="40" y="70" width="530" height="440" as="geometry" />
+        </mxCell>
+        <mxCell id="f1-ingen-titre" value="&lt;b&gt;&lt;font style=&quot;font-size: 16px;&quot;&gt;InGen — International Genetic Technologies, Inc.&lt;/font&gt;&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;fontColor=#8A5407;" vertex="1" parent="1">
+          <mxGeometry x="60" y="82" width="490" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="f1-ingen-infos" value="Société de droit américain (Delaware) — &lt;b&gt;210 salariés&lt;/b&gt;&lt;br&gt;&lt;b&gt;VLAN propres&#8239;: 10 · 30 · 40 · 70 · 300&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontColor=#3D3D3D;" vertex="1" parent="1">
+          <mxGeometry x="60" y="122" width="490" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="f1-srv-genome" value="&lt;b&gt;GENOME&lt;/b&gt;" style="shape=mxgraph.networks.server;html=1;fillColor=#CCCCCC;strokeColor=#8A5407;strokeWidth=2;verticalLabelPosition=bottom;verticalAlign=top;align=center;fontSize=11;fontColor=#3D3D3D;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="115" y="190" width="40" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="f1-srv-embryo" value="&lt;b&gt;EMBRYO&lt;/b&gt;" style="shape=mxgraph.networks.server;html=1;fillColor=#CCCCCC;strokeColor=#8A5407;strokeWidth=2;verticalLabelPosition=bottom;verticalAlign=top;align=center;fontSize=11;fontColor=#3D3D3D;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="285" y="190" width="40" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="f1-srv-vetcare" value="&lt;b&gt;VETCARE&lt;/b&gt;" style="shape=mxgraph.networks.server;html=1;fillColor=#CCCCCC;strokeColor=#8A5407;strokeWidth=2;verticalLabelPosition=bottom;verticalAlign=top;align=center;fontSize=11;fontColor=#3D3D3D;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="455" y="190" width="40" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="f1-srv-scada" value="&lt;b&gt;SCADA-HMI&lt;/b&gt;" style="shape=mxgraph.networks.server;html=1;fillColor=#CCCCCC;strokeColor=#8A5407;strokeWidth=2;verticalLabelPosition=bottom;verticalAlign=top;align=center;fontSize=11;fontColor=#3D3D3D;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="115" y="300" width="40" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="f1-srv-backup" value="&lt;b&gt;BACKUP&lt;/b&gt;" style="shape=mxgraph.networks.server;html=1;fillColor=#CCCCCC;strokeColor=#8A5407;strokeWidth=2;verticalLabelPosition=bottom;verticalAlign=top;align=center;fontSize=11;fontColor=#3D3D3D;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="285" y="300" width="40" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="f1-srv-siem" value="&lt;b&gt;SIEM&lt;/b&gt;" style="shape=mxgraph.networks.server;html=1;fillColor=#CCCCCC;strokeColor=#8A5407;strokeWidth=2;verticalLabelPosition=bottom;verticalAlign=top;align=center;fontSize=11;fontColor=#3D3D3D;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="455" y="300" width="40" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="f1-ingen-donnees" value="&lt;b&gt;Données rouges et orange&lt;/b&gt;" style="rounded=1;html=1;fillColor=#A32A1E;strokeColor=none;fontColor=#FFFFFF;fontSize=13;align=center;verticalAlign=middle;arcSize=40;" vertex="1" parent="1">
+          <mxGeometry x="170" y="455" width="270" height="32" as="geometry" />
+        </mxCell>
+
+        <!-- Bloc droit : Nublar Leisure -->
+        <mxCell id="f1-bloc-nublar" value="" style="shape=mxgraph.bootstrap.rrect;rSize=10;html=1;fillColor=#F2F2F0;strokeColor=#7A7A7A;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="630" y="70" width="530" height="440" as="geometry" />
+        </mxCell>
+        <mxCell id="f1-nublar-titre" value="&lt;b&gt;&lt;font style=&quot;font-size: 16px;&quot;&gt;Nublar Leisure S.A.&lt;/font&gt;&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;fontColor=#3D3D3D;" vertex="1" parent="1">
+          <mxGeometry x="650" y="82" width="490" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="f1-nublar-infos" value="Société de droit costaricien — &lt;b&gt;180 salariés&lt;/b&gt; dont 120 saisonniers&lt;br&gt;&lt;b&gt;VLAN propres&#8239;: 50 · 100&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontColor=#3D3D3D;" vertex="1" parent="1">
+          <mxGeometry x="650" y="122" width="490" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="f1-srv-parkops" value="&lt;b&gt;PARKOPS&lt;/b&gt;" style="shape=mxgraph.networks.server;html=1;fillColor=#CCCCCC;strokeColor=#7A7A7A;strokeWidth=2;verticalLabelPosition=bottom;verticalAlign=top;align=center;fontSize=11;fontColor=#3D3D3D;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="790" y="230" width="40" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="f1-srv-www" value="&lt;b&gt;WWW&lt;/b&gt;" style="shape=mxgraph.networks.server;html=1;fillColor=#CCCCCC;strokeColor=#7A7A7A;strokeWidth=2;verticalLabelPosition=bottom;verticalAlign=top;align=center;fontSize=11;fontColor=#3D3D3D;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="950" y="230" width="40" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="f1-nublar-donnees" value="&lt;b&gt;Données personnelles des visiteurs&lt;/b&gt;" style="rounded=1;html=1;fillColor=#6E6E6E;strokeColor=none;fontColor=#FFFFFF;fontSize=13;align=center;verticalAlign=middle;arcSize=40;" vertex="1" parent="1">
+          <mxGeometry x="740" y="455" width="310" height="32" as="geometry" />
+        </mxCell>
+
+        <!-- Frontière juridique : ligne verticale pointillée rouge -->
+        <mxCell id="f1-frontiere" value="" style="endArrow=none;html=1;rounded=0;dashed=1;dashPattern=8 6;strokeColor=#A32A1E;strokeWidth=3;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="600" y="58" as="sourcePoint" />
+            <mxPoint x="600" y="572" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="f1-frontiere-label" value="&lt;b&gt;FRONTIÈRE JURIDIQUE&lt;/b&gt;" style="text;html=1;horizontal=0;align=center;verticalAlign=middle;fontColor=#A32A1E;fontSize=14;fillColor=#FFFFFF;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="586" y="180" width="28" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="f1-croix" value="✕" style="text;html=1;align=center;verticalAlign=middle;fontSize=32;fontStyle=1;fontColor=#A32A1E;" vertex="1" parent="1">
+          <mxGeometry x="582" y="562" width="36" height="36" as="geometry" />
+        </mxCell>
+
+        <!-- Bande infrastructure mutualisée -->
+        <mxCell id="f1-bande" value="" style="shape=mxgraph.bootstrap.rrect;rSize=10;html=1;fillColor=#F8DCD8;strokeColor=#A32A1E;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="40" y="596" width="1120" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="f1-bande-titre" value="&lt;b&gt;&lt;font style=&quot;font-size: 16px;&quot;&gt;Infrastructure mutualisée — aucune convention écrite&lt;/font&gt;&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;fontColor=#A32A1E;" vertex="1" parent="1">
+          <mxGeometry x="60" y="602" width="1080" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="f1-core" value="&lt;b&gt;CORE-NUBLAR&lt;br&gt;switch L3&lt;/b&gt;" style="shape=mxgraph.networks.switch;html=1;fillColor=#CCCCCC;strokeColor=#6E6E6E;strokeWidth=2;verticalLabelPosition=bottom;verticalAlign=top;align=center;fontSize=11;fontColor=#3D3D3D;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="90" y="655" width="90" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="f1-swn3" value="&lt;b&gt;SW-N3-01&lt;br&gt;switch&lt;/b&gt;" style="shape=mxgraph.networks.switch;html=1;fillColor=#CCCCCC;strokeColor=#6E6E6E;strokeWidth=2;verticalLabelPosition=bottom;verticalAlign=top;align=center;fontSize=11;fontColor=#3D3D3D;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="300" y="655" width="90" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="f1-gw" value="&lt;b&gt;GW-NUBLAR&lt;br&gt;routeur&lt;/b&gt;" style="shape=mxgraph.cisco.routers.router;html=1;sketch=0;pointerEvents=1;dashed=0;fillColor=#6E6E6E;strokeColor=#FFFFFF;strokeWidth=2;verticalLabelPosition=bottom;verticalAlign=top;align=center;fontSize=11;fontColor=#3D3D3D;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="520" y="646" width="70" height="54" as="geometry" />
+        </mxCell>
+        <mxCell id="f1-dc01" value="&lt;b&gt;NUB-DC01&lt;br&gt;annuaire&lt;/b&gt;" style="shape=mxgraph.networks.server;html=1;fillColor=#CCCCCC;strokeColor=#6E6E6E;strokeWidth=2;verticalLabelPosition=bottom;verticalAlign=top;align=center;fontSize=11;fontColor=#3D3D3D;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="742" y="644" width="42" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="f1-internet" value="&lt;b&gt;Sortie Internet&lt;/b&gt;" style="shape=mxgraph.networks2.icon;aspect=fixed;html=1;fillColor=#EDEDED;strokeColor=#6E6E6E;gradientColor=none;network2IconShadow=0;network2bgFillColor=none;network2Icon=mxgraph.networks2.globe;network2IconW=1;network2IconH=1;strokeWidth=3;verticalLabelPosition=bottom;verticalAlign=top;align=center;fontSize=11;fontColor=#3D3D3D;" vertex="1" parent="1">
+          <mxGeometry x="930" y="640" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="f1-vlan-partages" value="&lt;b&gt;VLAN partagés&#8239;: 20 · 60 · 200 · 250&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=14;fontColor=#A32A1E;" vertex="1" parent="1">
+          <mxGeometry x="60" y="758" width="1080" height="28" as="geometry" />
+        </mxCell>
+
+        <!-- Légende -->
+        <mxCell id="f1-legende" value="&lt;i&gt;La frontière juridique s’arrête ici — techniquement, tout communique avec tout&lt;/i&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=14;fontColor=#3D3D3D;" vertex="1" parent="1">
+          <mxGeometry x="40" y="806" width="1120" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

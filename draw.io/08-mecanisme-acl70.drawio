@@ -1,0 +1,94 @@
+<mxfile host="Electron" version="27.0.9">
+  <diagram name="Mécanisme ACL 170" id="ingen-acl70-08">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="760" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="t1" value="&lt;b&gt;&lt;font style=&quot;font-size: 20px;&quot;&gt;Le piège de l’ACL 170 — ce qu’elle filtre, et ce qu’elle ne filtre pas&lt;/font&gt;&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="180" y="10" width="800" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Source VLAN 10 (icône à gauche, texte décalé) -->
+        <mxCell id="v10" value="&lt;b&gt;VLAN 10 · Administration&lt;/b&gt;&lt;div&gt;source 10.10.10.0/24&lt;/div&gt;&lt;div&gt;PC-DSI-01&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#C4B89F;strokeWidth=2;verticalAlign=middle;fontSize=12;spacingLeft=60;" vertex="1" parent="1">
+          <mxGeometry x="40" y="90" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="v10pc" value="" style="fontColor=#0066CC;html=1;outlineConnect=0;fillColor=#CCCCCC;strokeColor=#6881B3;strokeWidth=2;shape=mxgraph.networks.desktop_pc;" vertex="1" parent="1">
+          <mxGeometry x="55" y="102" width="40" height="56" as="geometry" />
+        </mxCell>
+
+        <!-- Source VLAN 30 -->
+        <mxCell id="v30" value="&lt;b&gt;VLAN 30 · Laboratoire&lt;/b&gt;&lt;div&gt;source 10.10.30.0/24&lt;/div&gt;&lt;div&gt;PC-LAB-N3&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#C4B89F;strokeWidth=2;verticalAlign=middle;fontSize=12;spacingLeft=60;" vertex="1" parent="1">
+          <mxGeometry x="40" y="340" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="v30pc" value="" style="fontColor=#0066CC;html=1;outlineConnect=0;fillColor=#CCCCCC;strokeColor=#6881B3;strokeWidth=2;shape=mxgraph.networks.desktop_pc;" vertex="1" parent="1">
+          <mxGeometry x="55" y="352" width="40" height="56" as="geometry" />
+        </mxCell>
+
+        <!-- CORE-NUBLAR -->
+        <mxCell id="core" value="" style="shape=mxgraph.cisco.switches.layer_3_switch;sketch=0;html=1;pointerEvents=1;dashed=0;fillColor=#036897;strokeColor=#ffffff;strokeWidth=2;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="340" y="205" width="100" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="corel" value="&lt;b&gt;CORE-NUBLAR&lt;/b&gt;&lt;div&gt;routage inter-VLAN&lt;/div&gt;&lt;div&gt;ip routing&lt;/div&gt;" style="text;html=1;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="315" y="300" width="150" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" style="edgeStyle=none;rounded=0;endArrow=classic;html=1;strokeWidth=3;strokeColor=#0E6A4E;" edge="1" parent="1" source="v10" target="core">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e30" style="edgeStyle=none;rounded=0;endArrow=classic;html=1;strokeWidth=3;strokeColor=#0E6A4E;" edge="1" parent="1" source="v30" target="core">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Filtre ACL 170 -->
+        <mxCell id="acl" value="&lt;b&gt;&lt;font color=&quot;#A32A1E&quot; style=&quot;font-size: 15px;&quot;&gt;ACL 170 (étendue)&lt;/font&gt;&lt;/b&gt;&lt;div&gt;&lt;font color=&quot;#A32A1E&quot;&gt;évaluée en SORTIE de Vlan70 (out)&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left; margin-top: 6px;&quot;&gt;&lt;b&gt;permit ip&lt;/b&gt; 10.10.10.0/24 → 10.10.70.0/24&lt;br&gt;&lt;b&gt;permit tcp&lt;/b&gt; any → VLAN 70 &lt;b&gt;established&lt;/b&gt;&lt;br&gt;&lt;b&gt;permit icmp&lt;/b&gt; any → VLAN 70 &lt;b&gt;echo-reply&lt;/b&gt;&lt;br&gt;&lt;i&gt;(refus implicite de tout le reste)&lt;/i&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FAE5E1;strokeColor=#A32A1E;strokeWidth=3;verticalAlign=middle;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="560" y="170" width="270" height="160" as="geometry" />
+        </mxCell>
+
+        <!-- Flèche verte : ouverture depuis le VLAN 10 -->
+        <mxCell id="eok" value="" style="edgeStyle=none;rounded=0;endArrow=classic;html=1;strokeWidth=4;strokeColor=#0E6A4E;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="440" y="225" as="sourcePoint" /><mxPoint x="558" y="225" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="eokl" value="&lt;b&gt;&lt;font color=&quot;#0E6A4E&quot;&gt;✓ VLAN 10&lt;br&gt;ouvre l’échange&lt;/font&gt;&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=bottom;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="444" y="180" width="110" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Flèche rouge stoppée : VLAN 30 -->
+        <mxCell id="eko" value="" style="edgeStyle=none;rounded=0;endArrow=cross;html=1;strokeWidth=3;strokeColor=#A32A1E;dashed=1;dashPattern=6 4;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="440" y="275" as="sourcePoint" /><mxPoint x="556" y="275" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="ekol" value="&lt;b&gt;&lt;font color=&quot;#A32A1E&quot;&gt;✗ VLAN 30&lt;br&gt;refusé&lt;/font&gt;&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="444" y="280" width="110" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Destination VLAN 70 -->
+        <mxCell id="v70" value="&lt;b&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;VLAN 70 — Automates des enclos&lt;/font&gt;&lt;/b&gt;&lt;div&gt;interface Vlan70&lt;/div&gt;&lt;div&gt;ip access-group 170 out&lt;/div&gt;&lt;div&gt;10.10.70.0/24 · SCADA-HMI .10&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FAE5E1;strokeColor=#A32A1E;strokeWidth=2;verticalAlign=middle;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="870" y="180" width="250" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="eacl" style="edgeStyle=none;rounded=0;endArrow=classic;html=1;strokeWidth=4;strokeColor=#0E6A4E;" edge="1" parent="1" source="acl" target="v70">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- LA flèche sortante non filtrée -->
+        <mxCell id="eout" value="&lt;b&gt;&lt;font color=&quot;#A32A1E&quot; style=&quot;font-size: 13px;&quot;&gt;rien ne filtre ce qu’émettent&lt;br&gt;les automates — un automate&lt;br&gt;compromis joint tout&lt;/font&gt;&lt;/b&gt;" style="edgeStyle=none;rounded=0;endArrow=classic;html=1;strokeWidth=6;strokeColor=#A32A1E;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.671;entryY=0;entryDx=0;entryDy=0;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="v70" target="targets">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="targets" value="&lt;b&gt;VLAN 200 — serveurs (GENOME…)&lt;br&gt;VLAN 10 — administration&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EDEDED;strokeColor=#6C767D;dashed=1;verticalAlign=middle;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="740" y="490" width="380" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Les réponses reviennent à travers la 170 -->
+        <mxCell id="eret" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=classic;html=1;strokeWidth=3;strokeColor=#0E6A4E;dashed=1;dashPattern=6 4;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="targets" target="acl">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eretl" value="&lt;b&gt;&lt;font color=&quot;#0E6A4E&quot;&gt;les réponses reviennent&#8239;:&lt;br&gt;TCP established, ICMP echo-reply&lt;br&gt;(admises par la 170)&lt;/font&gt;&lt;/b&gt;" style="text;html=1;align=right;verticalAlign=middle;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="470" y="395" width="215" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- Légende -->
+        <mxCell id="leg" value="&lt;b&gt;&lt;font style=&quot;font-size: 13px;&quot;&gt;Une ACL «&#8239;out&#8239;» posée sur une SVI filtre tout ce qui ENTRE dans le VLAN, réponses comprises — pas ce qu’il émet.&lt;/font&gt;&lt;/b&gt;&lt;div&gt;Seul le VLAN 10 peut ouvrir un échange vers les automates&#8239;; le labo (VLAN 30) est refusé. Mais ce qu’émettent les automates ne traverse jamais la 170&#8239;:&lt;/div&gt;&lt;div&gt;la politique annonce que les automates «&#8239;n’initient eux-mêmes aucun flux&#8239;», la configuration livrée ne l’applique pas. Constat d’audit n°&#8239;1.&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;fillColor=#F7ECD9;strokeColor=#8A5407;rounded=1;fontSize=12;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="100" y="600" width="960" height="85" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

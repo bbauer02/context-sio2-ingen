@@ -1,0 +1,106 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/27.0.9 Chrome/134.0.6998.205 Electron/35.4.0 Safari/537.36" version="27.0.9">
+  <diagram name="Chronologie Nedry" id="chrono-nedry-001">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="700" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="&lt;b&gt;&lt;font style=&quot;font-size: 24px;&quot;&gt;Chronologie de l’incident Dennis Nedry — Isla Nublar&lt;/font&gt;&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#8A5407;" parent="1" vertex="1">
+          <mxGeometry x="120" y="15" width="1150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="icon-dodgson" value="" style="shape=mxgraph.networks.user_male;html=1;fillColor=#F2F2F2;strokeColor=#666666;strokeWidth=2;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;" parent="1" vertex="1">
+          <mxGeometry x="184" y="80" width="32" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="icon-pc-prep" value="" style="shape=mxgraph.networks.desktop_pc;html=1;fillColor=#CCCCCC;strokeColor=#666666;gradientColor=none;strokeWidth=2;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;" parent="1" vertex="1">
+          <mxGeometry x="427" y="78" width="26" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="icon-horloge" value="" style="shape=mxgraph.ios7.icons.clock;html=1;fillColor=none;strokeColor=#A32A1E;strokeWidth=2;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;" parent="1" vertex="1">
+          <mxGeometry x="658" y="82" width="44" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="icon-pc-lock" value="" style="shape=mxgraph.networks.desktop_pc;html=1;fillColor=#F8CECC;strokeColor=#A32A1E;gradientColor=none;strokeWidth=2;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;" parent="1" vertex="1">
+          <mxGeometry x="907" y="78" width="26" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="icon-alerte" value="&lt;b&gt;&lt;font color=&quot;#ffffff&quot; style=&quot;font-size: 20px;&quot;&gt;!&lt;/font&gt;&lt;/b&gt;" style="triangle;direction=north;html=1;fillColor=#A32A1E;strokeColor=#7A1F16;strokeWidth=2;verticalAlign=middle;align=center;spacingTop=10;" parent="1" vertex="1">
+          <mxGeometry x="1136" y="80" width="52" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="card1" value="&lt;b&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;Approche&lt;/font&gt;&lt;/b&gt;&lt;br&gt;&lt;br&gt;Lewis Dodgson (Biosyn) recrute Nedry à San José — 1,5 M$ contre 15 embryons" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#8C8C8C;fontColor=#333333;verticalAlign=top;spacing=8;fontSize=13;arcSize=8;" parent="1" vertex="1">
+          <mxGeometry x="95" y="140" width="210" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="card2" value="&lt;b&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;Préparation&lt;/font&gt;&lt;/b&gt;&lt;br&gt;&lt;br&gt;Il écrit &lt;b&gt;whte_rbt.obj&lt;/b&gt;, porte dérobée logique que personne ne relira" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#8C8C8C;fontColor=#333333;verticalAlign=top;spacing=8;fontSize=13;arcSize=8;" parent="1" vertex="1">
+          <mxGeometry x="335" y="140" width="210" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="card3" value="&lt;b&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;Déclenchement&lt;/font&gt;&lt;/b&gt;&lt;br&gt;&lt;br&gt;Pendant l’orage — sas déverrouillés, caméras et clôtures coupées" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEAE8;strokeColor=#A32A1E;fontColor=#5A1710;verticalAlign=top;spacing=8;fontSize=13;arcSize=8;strokeWidth=2;" parent="1" vertex="1">
+          <mxGeometry x="575" y="140" width="210" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="card4" value="&lt;b&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;Verrouillage&lt;/font&gt;&lt;/b&gt;&lt;br&gt;&lt;br&gt;Postes bloqués par un mot de passe connu de lui seul, aucun secours" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEAE8;strokeColor=#A32A1E;fontColor=#5A1710;verticalAlign=top;spacing=8;fontSize=13;arcSize=8;strokeWidth=2;" parent="1" vertex="1">
+          <mxGeometry x="815" y="140" width="210" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="card5" value="&lt;b&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;Impact&lt;/font&gt;&lt;/b&gt;&lt;br&gt;&lt;br&gt;Animaux hors enclos, SI de sécurité perdu à 100&amp;nbsp;%, des morts" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEAE8;strokeColor=#A32A1E;fontColor=#5A1710;verticalAlign=top;spacing=8;fontSize=13;arcSize=8;strokeWidth=2;" parent="1" vertex="1">
+          <mxGeometry x="1055" y="140" width="210" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="link1" value="" style="edgeStyle=none;rounded=0;endArrow=none;dashed=1;html=1;strokeColor=#8C8C8C;strokeWidth=2;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="200" y="320" as="sourcePoint" />
+            <mxPoint x="200" y="372" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="link2" value="" style="edgeStyle=none;rounded=0;endArrow=none;dashed=1;html=1;strokeColor=#8C8C8C;strokeWidth=2;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="440" y="320" as="sourcePoint" />
+            <mxPoint x="440" y="372" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="link3" value="" style="edgeStyle=none;rounded=0;endArrow=none;dashed=1;html=1;strokeColor=#A32A1E;strokeWidth=2;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="680" y="320" as="sourcePoint" />
+            <mxPoint x="680" y="372" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="link4" value="" style="edgeStyle=none;rounded=0;endArrow=none;dashed=1;html=1;strokeColor=#A32A1E;strokeWidth=2;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="920" y="320" as="sourcePoint" />
+            <mxPoint x="920" y="372" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="link5" value="" style="edgeStyle=none;rounded=0;endArrow=none;dashed=1;html=1;strokeColor=#A32A1E;strokeWidth=2;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1160" y="320" as="sourcePoint" />
+            <mxPoint x="1160" y="372" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bar-gris" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#C9C9C9;strokeColor=none;" parent="1" vertex="1">
+          <mxGeometry x="120" y="394" width="440" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="bar-rouge" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#A32A1E;strokeColor=none;" parent="1" vertex="1">
+          <mxGeometry x="560" y="394" width="710" height="12" as="geometry" />
+        </mxCell>
+        <mxCell id="bar-fleche" value="" style="triangle;direction=east;html=1;fillColor=#A32A1E;strokeColor=none;" parent="1" vertex="1">
+          <mxGeometry x="1270" y="386" width="34" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="jalon1" value="&lt;b&gt;&lt;font style=&quot;font-size: 22px;&quot;&gt;1&lt;/font&gt;&lt;/b&gt;" style="ellipse;whiteSpace=wrap;html=1;fillColor=#E8E8E8;strokeColor=#8C8C8C;strokeWidth=3;fontColor=#444444;" parent="1" vertex="1">
+          <mxGeometry x="172" y="372" width="56" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="jalon2" value="&lt;b&gt;&lt;font style=&quot;font-size: 22px;&quot;&gt;2&lt;/font&gt;&lt;/b&gt;" style="ellipse;whiteSpace=wrap;html=1;fillColor=#E8E8E8;strokeColor=#8C8C8C;strokeWidth=3;fontColor=#444444;" parent="1" vertex="1">
+          <mxGeometry x="412" y="372" width="56" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="jalon3" value="&lt;b&gt;&lt;font style=&quot;font-size: 22px;&quot;&gt;3&lt;/font&gt;&lt;/b&gt;" style="ellipse;whiteSpace=wrap;html=1;fillColor=#A32A1E;strokeColor=#7A1F16;strokeWidth=3;fontColor=#FFFFFF;" parent="1" vertex="1">
+          <mxGeometry x="652" y="372" width="56" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="jalon4" value="&lt;b&gt;&lt;font style=&quot;font-size: 22px;&quot;&gt;4&lt;/font&gt;&lt;/b&gt;" style="ellipse;whiteSpace=wrap;html=1;fillColor=#A32A1E;strokeColor=#7A1F16;strokeWidth=3;fontColor=#FFFFFF;" parent="1" vertex="1">
+          <mxGeometry x="892" y="372" width="56" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="jalon5" value="&lt;b&gt;&lt;font style=&quot;font-size: 22px;&quot;&gt;5&lt;/font&gt;&lt;/b&gt;" style="ellipse;whiteSpace=wrap;html=1;fillColor=#A32A1E;strokeColor=#7A1F16;strokeWidth=3;fontColor=#FFFFFF;" parent="1" vertex="1">
+          <mxGeometry x="1132" y="372" width="56" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="phase-prep" value="&lt;i&gt;&lt;b&gt;Phase de préparation&lt;/b&gt; — des semaines, aucun signal technique&lt;/i&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#666666;fontSize=13;" parent="1" vertex="1">
+          <mxGeometry x="120" y="436" width="440" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="phase-exec" value="&lt;b&gt;Phase d’exécution — quelques minutes, irrattrapable&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#A32A1E;fontSize=14;" parent="1" vertex="1">
+          <mxGeometry x="560" y="436" width="710" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="note" value="&lt;b&gt;« Toute la défense possible se joue avant l’étape 3 — après, il est trop tard »&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F7EBD8;strokeColor=#8A5407;strokeWidth=2;fontColor=#8A5407;fontSize=16;arcSize=12;" parent="1" vertex="1">
+          <mxGeometry x="270" y="500" width="850" height="56" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

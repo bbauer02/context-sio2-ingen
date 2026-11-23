@@ -1,0 +1,234 @@
+<div class="table-wrap">
+  <table id="fiche-identite" class="fiche-table">
+    <caption>1 — Identité</caption>
+    <thead><tr><th>Nom</th><th>Groupe</th><th>Date</th><th>Fichier de maquette</th></tr></thead>
+    <tbody><tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr></tbody>
+  </table>
+</div>
+
+<h3>Phase 2 — Le relevé</h3>
+
+<div class="table-wrap">
+  <table class="fiche-table">
+    <caption>2 — Inventaire des équipements Cisco</caption>
+    <thead><tr><th>Équipement</th><th>Modèle</th><th>Version du système</th><th>Interfaces physiques (nombre, types)</th><th>Commande</th></tr></thead>
+    <tbody>
+      <tr><th scope="row" class="row-head">GW-NUBLAR</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head">CORE-NUBLAR</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head">SW-N3-01</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="table-wrap">
+  <table class="fiche-table">
+    <caption>3 — Segmentation : un VLAN par ligne, le VLAN 1 compris</caption>
+    <thead><tr><th>Id</th><th>Nom</th><th>Adresse réseau / masque</th><th>Passerelle</th><th>Existe sur SW-N3-01 ?</th><th>Ports d’accès (les deux commutateurs)</th></tr></thead>
+    <tbody>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="table-wrap">
+  <table class="fiche-table">
+    <caption>4 — SW-N3-01 : configuration globale et ports</caption>
+    <thead><tr><th>Nom</th><th>Adresse IP d’administration</th><th>Passerelle par défaut</th><th>Conséquence pour l’administrer</th></tr></thead>
+    <tbody><tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr></tbody>
+  </table>
+</div>
+<div class="table-wrap">
+  <table class="fiche-table">
+    <thead><tr><th>Port</th><th>Mode opérationnel</th><th>VLAN (ou natif si trunk)</th><th>Matériel connecté</th><th>Adresse(s) MAC apprise(s)</th></tr></thead>
+    <tbody>
+      <tr><th scope="row" class="row-head mono">F0/1</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head mono">F0/2</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head mono">F0/3</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head mono">F0/4 → G0/2</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="table-wrap">
+  <table class="fiche-table">
+    <caption>5 — CORE-NUBLAR : interfaces virtuelles (SVI)</caption>
+    <thead><tr><th>Interface</th><th>Adresse / masque</th><th>État</th><th>Relais DHCP (O/N) et adresse</th><th>Liste appliquée et sens</th></tr></thead>
+    <tbody>
+      <tr><th scope="row" class="row-head mono">Vlan1</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head mono">Vlan10</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head mono">Vlan30</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head mono">Vlan70</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head mono">Vlan200</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head mono">Vlan300</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+    </tbody>
+  </table>
+</div>
+<div class="table-wrap">
+  <table class="fiche-table">
+    <caption>CORE-NUBLAR : ports</caption>
+    <thead><tr><th>Port</th><th>Mode opérationnel</th><th>VLAN (ou natif si trunk)</th><th>Matériel connecté</th><th>Adresse(s) MAC apprise(s)</th></tr></thead>
+    <tbody>
+      <tr><th scope="row" class="row-head mono">F0/1</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head mono">F0/2 – F0/3</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head mono">F0/4</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head mono">F0/5</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head mono">F0/6</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head mono">F0/7</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head mono">F0/8 → G0/2</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+    </tbody>
+  </table>
+</div>
+<div class="table-wrap">
+  <table class="fiche-table">
+    <caption>CORE-NUBLAR : routage et filtrage</caption>
+    <thead><tr><th>Question</th><th>Réponse</th><th>Commande</th></tr></thead>
+    <tbody>
+      <tr><th scope="row" class="row-head">Le routage IP est-il activé ?</th><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head">Routes statiques (type S)</th><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head">Passerelle de dernier recours</th><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head">Liste 130 : lignes et rôle de chacune</th><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head">Liste 170 : lignes et rôle de chacune</th><td class="fill"></td><td class="fill"></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="table-wrap">
+  <table class="fiche-table">
+    <caption>6 — GW-NUBLAR</caption>
+    <thead><tr><th>Interface</th><th>Adresse / masque</th><th>État</th><th>Matériel connecté</th></tr></thead>
+    <tbody>
+      <tr><th scope="row" class="row-head mono">G0/0</th><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head mono">G0/1</th><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head mono">S0/0/0 (si module posé)</th><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+    </tbody>
+  </table>
+</div>
+<div class="table-wrap">
+  <table class="fiche-table">
+    <thead><tr><th>Question</th><th>Réponse</th><th>Commande</th></tr></thead>
+    <tbody>
+      <tr><th scope="row" class="row-head">Routes statiques (type S)</th><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head">Réseaux de la maquette <em>sans</em> route de retour</th><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head">Lignes vty : authentification et protocoles admis</th><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head">SSH activé ?</th><td class="fill"></td><td class="fill"></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="table-wrap">
+  <table class="fiche-table">
+    <caption>7 — NUB-DC01 : configuration et services</caption>
+    <thead><tr><th>Adresse / masque</th><th>Passerelle</th><th>DNS</th><th>Adresse MAC</th></tr></thead>
+    <tbody><tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr></tbody>
+  </table>
+</div>
+<div class="table-wrap long">
+  <table class="fiche-table">
+    <thead><tr><th>Service (onglet <em>Services</em>)</th><th>État</th><th>Prévu par le livret ?</th><th>Remarque</th></tr></thead>
+    <tbody>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="table-wrap">
+  <table class="fiche-table">
+    <caption>8 — DHCP et DNS</caption>
+    <thead><tr><th>Étendue</th><th>Passerelle</th><th>DNS</th><th>Première adresse / masque</th><th>Nombre max.</th><th>Servie par quel relais ? Bail obtenu (poste, adresse)</th></tr></thead>
+    <tbody>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+    </tbody>
+  </table>
+</div>
+<div class="table-wrap">
+  <table class="fiche-table">
+    <thead><tr><th>Nom (zone <code>nublar.intra</code>)</th><th>Type</th><th>Adresse</th><th>La machine existe-t-elle sur la maquette ?</th></tr></thead>
+    <tbody>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<h3>Phase 3 — Les essais</h3>
+
+<div class="table-wrap long stack-sm">
+  <table id="fiche-essais" class="fiche-table">
+    <caption>9 — Essais d’audit (premier écho perdu = pas un échec)</caption>
+    <thead><tr><th class="num">N°</th><th>Depuis</th><th>Essai</th><th>Résultat obtenu</th><th>Conforme à l’état documenté</th><th>Politique : respectée ou règle violée (n°)</th></tr></thead>
+    <tbody>
+      <tr><td class="mono" data-label="N°">A1</td><td data-label="Depuis">PC-DSI-01</td><td data-label="Essai"><code>ipconfig /all</code> : adresse, passerelle, DNS, adresse MAC</td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+      <tr><td class="mono" data-label="N°">A2</td><td data-label="Depuis">PC-LAB-N3</td><td data-label="Essai"><code>ipconfig /all</code></td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+      <tr><td class="mono" data-label="N°">A3</td><td data-label="Depuis">AUTOMATE-N3</td><td data-label="Essai"><code>ipconfig /all</code></td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+      <tr><td class="mono" data-label="N°">A4</td><td data-label="Depuis">PC-DSI-01</td><td data-label="Essai"><code>ping 10.10.200.10</code></td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+      <tr><td class="mono" data-label="N°">A5</td><td data-label="Depuis">PC-DSI-01</td><td data-label="Essai">Ping de l’adresse obtenue par PC-LAB-N3 (A2)</td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+      <tr><td class="mono" data-label="N°">A6</td><td data-label="Depuis">PC-DSI-01</td><td data-label="Essai"><code>ping 10.10.70.21</code></td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+      <tr><td class="mono" data-label="N°">A7</td><td data-label="Depuis">PC-LAB-N3</td><td data-label="Essai">Ping de l’adresse obtenue par PC-DSI-01 (A1)</td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+      <tr><td class="mono" data-label="N°">A8</td><td data-label="Depuis">PC-LAB-N3</td><td data-label="Essai"><code>ping 10.10.70.21</code></td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+      <tr><td class="mono" data-label="N°">A9</td><td data-label="Depuis">PC-LAB-N3</td><td data-label="Essai"><code>ping nub-eon.nublar.intra</code></td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+      <tr><td class="mono" data-label="N°">A10</td><td data-label="Depuis">AUTOMATE-N3</td><td data-label="Essai"><code>ping 10.10.200.10</code></td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+      <tr><td class="mono" data-label="N°">A11</td><td data-label="Depuis">AUTOMATE-N3</td><td data-label="Essai">Ping de l’adresse de PC-DSI-01</td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+      <tr><td class="mono" data-label="N°">A12</td><td data-label="Depuis">AUTOMATE-N3</td><td data-label="Essai">Ping de l’adresse de PC-LAB-N3</td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+      <tr><td class="mono" data-label="N°">A13</td><td data-label="Depuis">AUTOMATE-N3</td><td data-label="Essai"><em>Desktop → Web Browser</em> : <code>http://10.10.200.10</code></td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+      <tr><td class="mono" data-label="N°">A14</td><td data-label="Depuis">NUB-DC01</td><td data-label="Essai"><code>ping 10.10.70.21</code>, puis ping de l’adresse de PC-LAB-N3</td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+      <tr><td class="mono" data-label="N°">A15</td><td data-label="Depuis">PC-LAB-N3</td><td data-label="Essai"><code>ping 172.31.0.2</code>, puis <code>ping 10.10.200.1</code></td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+      <tr><td class="mono" data-label="N°">A16</td><td data-label="Depuis">PC-DSI-01</td><td data-label="Essai"><code>telnet 172.31.0.2</code>, puis <code>telnet 10.10.10.1</code></td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+      <tr><td class="mono" data-label="N°">A17</td><td data-label="Depuis">CORE-NUBLAR</td><td data-label="Essai"><code>show access-lists</code> : relier chaque compteur non nul aux essais qui l’ont fait bouger</td><td class="fill" data-label="Obtenu"></td><td class="conf" data-label="Conforme"></td><td class="fill" data-label="Politique"></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="table-wrap">
+  <table class="fiche-table">
+    <caption>10 — Matrice des flux observée : « aller-retour », « refusé (ACL n°) » ou « sans retour (route) »</caption>
+    <thead><tr><th>Depuis ↓ vers →</th><th>VLAN 200</th><th>VLAN 30</th><th>VLAN 70</th><th>VLAN 10</th><th>Transit (GW-NUBLAR)</th></tr></thead>
+    <tbody>
+      <tr><th scope="row" class="row-head">VLAN 10</th><td class="fill"></td><td class="fill"></td><td class="fill"></td><td>—</td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head">VLAN 30</th><td class="fill"></td><td>—</td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head">VLAN 70</th><td class="fill"></td><td class="fill"></td><td>—</td><td class="fill"></td><td class="fill"></td></tr>
+      <tr><th scope="row" class="row-head">VLAN 200</th><td>—</td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<h3>Phase 4 — Les constats</h3>
+
+<div class="table-wrap long stack-sm">
+  <table id="fiche-constats" class="fiche-table">
+    <caption>11 — Les dix constats vérifiables sur la maquette</caption>
+    <thead><tr><th class="num">N°</th><th>Constat (livret, partie 10)</th><th>Commande ou essai qui le prouve</th><th>Ce que montre votre sortie</th><th>Famille</th><th>Chantier</th></tr></thead>
+    <tbody>
+      <tr><td class="mono" data-label="N°">1</td><td data-label="Constat">Rien ne filtre ce qu’émettent les automates</td><td class="fill" data-label="Preuve"></td><td class="fill" data-label="Sortie"></td><td class="fill" data-label="Famille"></td><td class="fill" data-label="Chantier"></td></tr>
+      <tr><td class="mono" data-label="N°">2</td><td data-label="Constat">Aucun mot de passe, console ouverte</td><td class="fill" data-label="Preuve"></td><td class="fill" data-label="Sortie"></td><td class="fill" data-label="Famille"></td><td class="fill" data-label="Chantier"></td></tr>
+      <tr><td class="mono" data-label="N°">3</td><td data-label="Constat">Administration en clair, aucune clé SSH</td><td class="fill" data-label="Preuve"></td><td class="fill" data-label="Sortie"></td><td class="fill" data-label="Famille"></td><td class="fill" data-label="Chantier"></td></tr>
+      <tr><td class="mono" data-label="N°">4</td><td data-label="Constat">Journaux non horodatés, conservés nulle part ailleurs</td><td class="fill" data-label="Preuve"></td><td class="fill" data-label="Sortie"></td><td class="fill" data-label="Famille"></td><td class="fill" data-label="Chantier"></td></tr>
+      <tr><td class="mono" data-label="N°">5</td><td data-label="Constat">Mots de passe futurs en clair dans la configuration</td><td class="fill" data-label="Preuve"></td><td class="fill" data-label="Sortie"></td><td class="fill" data-label="Famille"></td><td class="fill" data-label="Chantier"></td></tr>
+      <tr><td class="mono" data-label="N°">6</td><td data-label="Constat">VLAN natif des trunks resté à 1</td><td class="fill" data-label="Preuve"></td><td class="fill" data-label="Sortie"></td><td class="fill" data-label="Famille"></td><td class="fill" data-label="Chantier"></td></tr>
+      <tr><td class="mono" data-label="N°">7</td><td data-label="Constat">Ports libres actifs, négociation DTP</td><td class="fill" data-label="Preuve"></td><td class="fill" data-label="Sortie"></td><td class="fill" data-label="Famille"></td><td class="fill" data-label="Chantier"></td></tr>
+      <tr><td class="mono" data-label="N°">8</td><td data-label="Constat">Routage par la source accepté</td><td class="fill" data-label="Preuve"></td><td class="fill" data-label="Sortie"></td><td class="fill" data-label="Famille"></td><td class="fill" data-label="Chantier"></td></tr>
+      <tr><td class="mono" data-label="N°">9</td><td data-label="Constat">L’administration exclue du laboratoire</td><td class="fill" data-label="Preuve"></td><td class="fill" data-label="Sortie"></td><td class="fill" data-label="Famille"></td><td class="fill" data-label="Chantier"></td></tr>
+      <tr><td class="mono" data-label="N°">10</td><td data-label="Constat">Relais DHCP inutile</td><td class="fill" data-label="Preuve"></td><td class="fill" data-label="Sortie"></td><td class="fill" data-label="Famille"></td><td class="fill" data-label="Chantier"></td></tr>
+    </tbody>
+  </table>
+</div>

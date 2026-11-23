@@ -1,0 +1,42 @@
+<div class="table-wrap">
+  <table id="fiche-identite">
+    <caption>Identité</caption>
+    <thead><tr><th>Groupe</th><th>Noms du binôme</th><th>Date de la recette</th></tr></thead>
+    <tbody><tr><td class="fill"></td><td class="fill"></td><td class="fill"></td></tr></tbody>
+  </table>
+</div>
+<div class="table-wrap long">
+  <table id="fiche-recette">
+    <caption>Tests à jouer sur le matériel</caption>
+    <thead><tr><th class="num">N°</th><th>Depuis</th><th>Test</th><th>Résultat attendu</th><th>Obtenu</th><th>Conforme</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">V1</td><td>Tous les postes</td><td>Rejouer les tests T1 à T10 de la fiche de montage</td><td>Mêmes résultats qu’avant le projet, T5 compris</td><td class="fill"></td><td class="conf"></td></tr>
+      <tr><td class="mono">V2</td><td>Console, les trois</td><td><code>show running-config</code></td><td><code>service password-encryption</code> présent, <code>enable secret</code> et comptes en <code>secret</code>, aucun compte générique, aucun <code>ip ftp password</code></td><td class="fill"></td><td class="conf"></td></tr>
+      <tr><td class="mono">V3</td><td>Console, les trois</td><td>Ouvrir une session, puis attendre 5 minutes sans rien saisir. Sur GW-NUBLAR, lire aussi <code>line aux 0</code></td><td>Bannière, identifiant et mot de passe demandés, puis déconnexion automatique</td><td class="fill"></td><td class="conf"></td></tr>
+      <tr><td class="mono">V4</td><td>Une session par compte, sur les trois</td><td><code>enable</code></td><td>Les deux comptes fonctionnent, et le secret privilégié est demandé</td><td class="fill"></td><td class="conf"></td></tr>
+      <tr><td class="mono">V5</td><td>PC-DSI-01</td><td>Telnet (PuTTY) vers 10.10.10.1, 10.10.10.4 et 172.31.0.2</td><td>Connexion refusée sur les trois, avec le client qui a fonctionné à l’étape 3</td><td class="fill"></td><td class="conf"></td></tr>
+      <tr><td class="mono">V6</td><td>PC-DSI-01</td><td>SSH vers <code>core.nublar.intra</code></td><td>Session ouverte avec le compte nominatif</td><td class="fill"></td><td class="conf"></td></tr>
+      <tr><td class="mono">V7</td><td>PC-DSI-01</td><td>SSH vers <code>sw-n3-01.nublar.intra</code></td><td>Session ouverte avec le compte nominatif</td><td class="fill"></td><td class="conf"></td></tr>
+      <tr><td class="mono">V8</td><td>PC-DSI-01</td><td>SSH vers <code>gw.nublar.intra</code></td><td>Session ouverte avec le compte nominatif</td><td class="fill"></td><td class="conf"></td></tr>
+      <tr><td class="mono">V9</td><td>Session, les trois</td><td><code>show ip ssh</code> et <code>show crypto key mypubkey rsa</code></td><td>Version 2, clé RSA de 2048 bits</td><td class="fill"></td><td class="conf"></td></tr>
+      <tr><td class="mono">V10</td><td>Session, les trois</td><td><code>show running-config | section line vty</code></td><td>Toutes les lignes portent <code>login local</code>, <code>transport input ssh</code>, <code>access-class 10 in</code> et le délai</td><td class="fill"></td><td class="conf"></td></tr>
+      <tr><td class="mono">V11</td><td>PC-LAB-N3</td><td>SSH vers 10.10.30.1 (CORE-NUBLAR), avec le même client qu’en V6</td><td>Aucune session, et compteur de <code>show access-lists 10</code> en hausse sur la cible</td><td class="fill"></td><td class="conf"></td></tr>
+      <tr><td class="mono">V12</td><td>PC-LAB-N3</td><td>SSH vers 10.10.10.4 (SW-N3-01), même client</td><td>Aucune session, et compteur en hausse sur la cible</td><td class="fill"></td><td class="conf"></td></tr>
+      <tr><td class="mono">V13</td><td>AUTOMATE-N3</td><td>SSH vers 10.10.70.1 (CORE-NUBLAR), même client</td><td>Aucune session, et compteur en hausse sur la cible</td><td class="fill"></td><td class="conf"></td></tr>
+      <tr><td class="mono">V14</td><td>NUB-DC01</td><td>SSH vers 172.31.0.2 (GW-NUBLAR), même client</td><td>Aucune session alors que la route de retour existe, et compteur en hausse sur la cible</td><td class="fill"></td><td class="conf"></td></tr>
+      <tr><td class="mono">V15</td><td>PC-LAB-N3, puis les trois</td><td>Navigateur vers <code>http://10.10.30.1</code> et <code>http://10.10.10.4</code>. Puis <code>show running-config | include ip http</code></td><td>Aucune page d’administration ; <code>no ip http server</code> et <code>no ip http secure-server</code> présents, ou commande sans objet sur cet équipement</td><td class="fill"></td><td class="conf"></td></tr>
+      <tr><td class="mono">V16</td><td>CORE, SW</td><td><code>show interfaces status</code> et <code>show vlan brief</code></td><td>Ports libres <em>disabled</em> dans le VLAN 999, aucun port d’accès dans le VLAN 998</td><td class="fill"></td><td class="conf"></td></tr>
+      <tr><td class="mono">V17</td><td>PC-LAB-N3</td><td>Déplacer le poste sur un port libre de SW-N3-01, puis le remettre en place</td><td>Aucun lien, aucune adresse obtenue</td><td class="fill"></td><td class="conf"></td></tr>
+      <tr><td class="mono">V18</td><td>CORE, SW</td><td><code>show interfaces trunk</code></td><td>Mode <em>on</em>, natif 998, VLAN autorisés 10, 30 et 70</td><td class="fill"></td><td class="conf"></td></tr>
+      <tr><td class="mono">V19</td><td>CORE, SW</td><td><code>show interfaces &lt;port&gt; switchport</code> et <code>show running-config interface &lt;port&gt;</code>, sur CORE F0/1, F0/4, F0/5, F0/7 et SW F0/1, F0/2, F0/3</td><td><em>Negotiation of Trunking: Off</em> et <code>switchport nonegotiate</code> partout. Vers les postes, l’automate et le serveur : <code>portfast</code>, <code>bpduguard</code>, <code>no cdp enable</code></td><td class="fill"></td><td class="conf"></td></tr>
+      <tr><td class="mono">V20</td><td>GW-NUBLAR</td><td><code>show running-config | include source-route</code></td><td><code>no ip source-route</code></td><td class="fill"></td><td class="conf"></td></tr>
+      <tr><td class="mono">V21</td><td>Les trois</td><td>Copier la configuration vers NUB-DC01 par SCP</td><td>Les trois fichiers sont présents et datés du jour</td><td class="fill"></td><td class="conf"></td></tr>
+      <tr><td class="mono">V22</td><td>PC-LAB-N3, puis NUB-DC01</td><td>Avec un compte local ordinaire créé pour ce test : <code>scp</code> vers le dossier du compte dédié. Puis, sur NUB-DC01, <code>icacls</code> sur ce dossier</td><td>Écriture refusée ; droits limités à SYSTEM, aux administrateurs et au compte dédié</td><td class="fill"></td><td class="conf"></td></tr>
+      <tr><td class="mono">V23</td><td>Les trois</td><td><code>reload</code>, puis rejouer V6 à V8 et V18</td><td>Mêmes résultats : la configuration a survécu au redémarrage</td><td class="fill"></td><td class="conf"></td></tr>
+      <tr><td class="mono">V24</td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="conf"></td></tr>
+      <tr><td class="mono">V25</td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="conf"></td></tr>
+      <tr><td class="mono">V26</td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="conf"></td></tr>
+      <tr><td class="mono">V27</td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="fill"></td><td class="conf"></td></tr>
+    </tbody>
+  </table>
+</div>
