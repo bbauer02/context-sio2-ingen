@@ -513,17 +513,19 @@
     <div class="note">
       <span class="label">Renommer proprement, tout de suite</span>
       <p>
-        Pour chaque équipement&nbsp;: clic sur l&rsquo;icône → onglet <strong>Config</strong> →
-        champ <strong>Display Name</strong>, puis pour les matériels Cisco le champ
-        <strong>Hostname</strong> — ou mieux, la commande <code>hostname</code> en CLI, comme
-        dans les configurations plus bas. Le nom d&rsquo;affichage et le hostname doivent être
+        <strong>Maintenant</strong>, pour chacun des sept équipements&nbsp;: clic sur
+        l&rsquo;icône → onglet <strong>Config</strong> → champ <strong>Display Name</strong>,
+        avec le nom du tableau. C&rsquo;est tout pour cette étape. Le <em>hostname</em> des trois
+        matériels Cisco, lui, n&rsquo;est pas à saisir ici&nbsp;: la commande
+        <code>hostname</code> ouvre chacun des blocs de configuration des étapes 4, 5 et 6, que
+        vous collerez tels quels. Le nom d&rsquo;affichage et le hostname seront alors
         identiques&nbsp;: un correcteur qui voit <code>Router0</code> dans un
         <code>show running-config</code> a déjà son opinion.
       </p>
     </div>
 
     <div class="note">
-      <span class="label">Le module série du 2901 — seulement si vous préparez la suite</span>
+      <span class="label">Facultatif — le module série du 2901</span>
       <p>
         Le 2901 sort de boîte sans port série&nbsp;; or l&rsquo;interface <code>S0/0/0</code>
         (liaison VSAT) n&rsquo;est utilisée qu&rsquo;au projet «&nbsp;sortie Internet&nbsp;».
@@ -556,6 +558,12 @@
       <h2 class="sec-title">Tirer les câbles</h2>
       <p>Six liens cuivre. Le type de câble n&rsquo;est pas un détail&nbsp;: un mauvais choix
         donne un lien mort, et Packet Tracer ne corrige pas à votre place.</p>
+      <p>Pour chaque ligne du plan&nbsp;: choisissez le type de câble dans
+        <em>Connections</em> (icône éclair, en bas à gauche), cliquez sur l&rsquo;équipement de
+        départ et choisissez l&rsquo;interface dans le menu, puis faites de même sur
+        l&rsquo;équipement d&rsquo;arrivée. Le menu n&rsquo;affiche que les ports libres&nbsp;: si
+        l&rsquo;interface demandée n&rsquo;y est pas, un câble l&rsquo;occupe déjà — supprimez-le
+        et recommencez.</p>
       <p class="step-meta">
         <span class="budget" data-budget="10">≈ 10&nbsp;min</span>
         <label class="step-done"><input type="checkbox" data-step="cablage"> Étape terminée</label>
@@ -579,6 +587,20 @@
       </div>
     </div>
 
+
+    <div class="note warn">
+      <span class="label">Les deux tableaux qui suivent&nbsp;: à lire, pas à configurer</span>
+      <p>
+        Le plan d&rsquo;adresses et l&rsquo;association port → VLAN décrivent l&rsquo;<strong>état
+        final</strong> de la maquette. Lisez-les maintenant pour comprendre ce que vous allez
+        construire, mais <strong>ne cherchez pas encore les commandes</strong>&nbsp;: elles sont
+        données, bloc par bloc, prêtes à copier, dans les étapes suivantes. Les VLAN, les SVI
+        et les ports du cœur sont à l&rsquo;<a href="#core">étape&nbsp;4</a>, les ports de
+        SW-N3-01 à l&rsquo;<a href="#sw">étape&nbsp;5</a>, l&rsquo;adresse de la passerelle à
+        l&rsquo;<a href="#gw">étape&nbsp;6</a>, celles du serveur et des postes aux <a href="#serveur">étapes&nbsp;7</a> et <a href="#postes">8</a>.
+        À la fin de cette étape-ci, seuls les câbles sont posés.
+      </p>
+    </div>
 
     <h3 id="plan-ip">Le plan d&rsquo;interfaces&nbsp;: qui porte quelle adresse</h3>
     <div class="note">
@@ -655,6 +677,7 @@
     <div class="note good">
       <span class="label">Vérification</span>
       <p>
+        Rien à vérifier ici&nbsp;: les VLAN n&rsquo;existent pas encore. Une fois l&rsquo;étape&nbsp;5 terminée,
         <code>show vlan brief</code> doit reproduire ces tableaux — à une différence près&nbsp;:
         les trunks actifs n&rsquo;y figurent pas, puisqu&rsquo;ils n&rsquo;appartiennent à aucun VLAN.
         Eux se contrôlent avec <code>show interfaces trunk</code>. Un port déclaré en trunk
@@ -719,7 +742,9 @@
     </div>
 
     <p>
-      La configuration se saisit en quatre blocs, dans cet ordre. Chaque bloc peut être collé
+      C&rsquo;est ici que le plan d&rsquo;interfaces et l&rsquo;association port → VLAN de
+      l&rsquo;<a href="#cablage">étape&nbsp;3</a> deviennent des commandes, toutes fournies&nbsp;:
+      vous n&rsquo;avez rien à écrire vous-même. La configuration se saisit en quatre blocs, dans cet ordre. Chaque bloc peut être collé
       d&rsquo;un seul tenant dans le CLI — vérifiez simplement que le prompt est revenu à
       <code>CORE-NUBLAR(config)#</code> avant de coller le suivant. Le bouton <strong>Copier</strong>
       de chaque bloc met tout le texte dans le presse-papiers&nbsp;; dans le CLI, collez-le avec le
@@ -926,8 +951,9 @@ copy running-config startup-config</code></pre>
     <div class="sec-head">
       <span class="src">Étape 5 — L&rsquo;accès du niveau 3</span>
       <h2 class="sec-title">Configurer SW-N3-01</h2>
-      <p>Le plus court des trois&nbsp;: un commutateur d&rsquo;accès n&rsquo;a ni adresse, ni
-        routage — il range des ports dans des VLAN, rien d&rsquo;autre.</p>
+      <p>Le plus court des trois équipements Cisco&nbsp;: un commutateur d&rsquo;accès n&rsquo;a ni adresse, ni
+        routage — il range des ports dans des VLAN, rien d&rsquo;autre. La configuration ci-dessous
+        applique le second tableau de l&rsquo;<a href="#ports-vlan">étape&nbsp;3</a>.</p>
       <p class="step-meta">
         <span class="budget" data-budget="5">≈ 5&nbsp;min</span>
         <label class="step-done"><input type="checkbox" data-step="sw"> Étape terminée</label>
@@ -1090,7 +1116,9 @@ copy running-config startup-config</code></pre>
     <h3>7.2 — Le service DHCP</h3>
     <p>
       Onglet <strong>Services → DHCP</strong>, interrupteur sur <strong>On</strong>. Créez les
-      deux étendues en remplissant les champs puis <strong>Add</strong> — et
+      deux étendues l&rsquo;une après l&rsquo;autre&nbsp;: remplissez les champs avec la
+      colonne «&nbsp;Étendue VLAN&nbsp;10&nbsp;» du tableau ci-dessous, cliquez sur <strong>Add</strong>, puis
+      recommencez avec la colonne «&nbsp;Étendue VLAN&nbsp;30&nbsp;» — et
       <strong>laissez</strong> le pool par défaut <code>serverPool</code> tel quel&nbsp;: ne le
       modifiez pas et ne le supprimez pas, il fait partie de l&rsquo;existant.
     </p>
@@ -1126,7 +1154,8 @@ copy running-config startup-config</code></pre>
 
     <h3>7.3 — Le service DNS</h3>
     <p>Onglet <strong>Services → DNS</strong>, interrupteur sur <strong>On</strong>, puis cinq
-      enregistrements de type <strong>A Record</strong>&nbsp;:</p>
+      enregistrements de type <strong>A Record</strong>, un par ligne du tableau&nbsp;: champ
+      <em>Name</em>, type, champ <em>Address</em>, puis <strong>Add</strong>.</p>
     <div class="plate">
       <div class="table-wrap">
         <table>
@@ -1248,6 +1277,9 @@ Une question ? Support DSI, poste 2201.&lt;/font&gt;&lt;/p&gt;
       L&rsquo;automate reçoit <code>10.10.70.21</code> conformément à la convention du
       livret&nbsp;: <code>.20&nbsp;+&nbsp;numéro d&rsquo;enclos</code>, et il surveille
       l&rsquo;enclos&nbsp;1. Pas de DNS pour lui&nbsp;: un automate ne résout pas de noms.
+      Si Packet Tracer affiche <em>DHCP request failed</em> juste après le clic, attendez
+      trente secondes que la pastille du port passe au vert, puis cliquez sur
+      <strong>Static</strong> et de nouveau sur <strong>DHCP</strong>.
     </p>
 
     <div class="note good checkpoint">
@@ -1257,8 +1289,9 @@ Une question ? Support DSI, poste 2201.&lt;/font&gt;&lt;/p&gt;
         <code>ipconfig /all</code>. Si un poste affiche <code>169.254.x.x</code> (APIPA), le
         DHCP n&rsquo;est pas arrivé jusqu&rsquo;à lui — dans l&rsquo;ordre&nbsp;: le port est-il
         dans le bon VLAN&nbsp;? la SVI porte-t-elle le <code>ip helper-address</code>&nbsp;? la
-        passerelle du pool correspond-elle à la SVI&nbsp;? Un
-        <code>ipconfig /renew</code> après correction, et le bail tombe.
+        passerelle du pool correspond-elle à la SVI&nbsp;? Après
+        correction, <code>ipconfig /release</code> puis <code>ipconfig /renew</code>&nbsp;: le
+        bail tombe.
       </p>
       <label class="cp-ok"><input type="checkbox" data-cp="6"> Contrôle conforme&nbsp;: je passe à la suite</label>
     </div>
@@ -1273,7 +1306,11 @@ Une question ? Support DSI, poste 2201.&lt;/font&gt;&lt;/p&gt;
         quand chaque résultat — succès <em>et</em> refus — correspond à la matrice des flux du
         livret. Déroulez les dix tests dans l&rsquo;ordre et cochez «&nbsp;Conforme&nbsp;?&nbsp;»
         quand le résultat <strong>obtenu</strong> est celui de la colonne «&nbsp;Résultat
-        attendu&nbsp;», <strong>échec compris</strong>.</p>
+        attendu&nbsp;», <strong>échec compris</strong>. Les commandes se tapent dans
+        <strong>Desktop → Command Prompt</strong> du poste de la colonne «&nbsp;Depuis&nbsp;».
+        Le premier écho d&rsquo;un ping peut se perdre, le temps de la résolution ARP&nbsp;:
+        trois réponses sur quatre valent «&nbsp;Réponse&nbsp;». Un échec, c&rsquo;est quatre
+        échos sans réponse.</p>
       <p class="step-meta">
         <span class="budget" data-budget="15">≈ 15&nbsp;min</span>
         <label class="step-done"><input type="checkbox" data-step="tests"> Étape terminée</label>
@@ -1356,9 +1393,11 @@ Une question ? Support DSI, poste 2201.&lt;/font&gt;&lt;/p&gt;
       <li><strong>Le fichier de maquette</strong> — <em>File → Save As</em>, nommé
         <code>INGEN-Nublar-G&lt;xx&gt;.pkt</code> où <code>&lt;xx&gt;</code> est votre numéro de
         groupe. Un fichier non nommé selon la convention n&rsquo;est pas évalué.</li>
-      <li><strong>La preuve</strong> — exportez le résultat du jeu d&rsquo;essais&nbsp;: copies
-        d&rsquo;écran des dix tests, ou mieux, la sortie texte des commandes
-        <code>show</code> collée dans un document. C&rsquo;est ce document qui fait foi.</li>
+      <li><strong>La preuve</strong> — gardez une trace du jeu d&rsquo;essais&nbsp;: copies
+        d&rsquo;écran des dix tests, ou mieux, la sortie texte des commandes collée dans un
+        document. Dans le Projet&nbsp;00, elle n&rsquo;est pas rendue à part&nbsp;: la fiche
+        d&rsquo;audit et le compte rendu en tiennent lieu, et vous y reprendrez ces
+        sorties.</li>
     </ol>
   </section>
 
